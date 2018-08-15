@@ -27,6 +27,7 @@
 #include <unistd.h>
 
 
+
 #include<opencv2/core/core.hpp>
 
 #include"System.h"
@@ -143,6 +144,26 @@ void LoadImages(const string &strPathToSequence, vector<string> &vstrImageFilena
     
     int count = 0;
 
+
+    while(!fTimes.eof())
+    {
+
+        char s[12];
+
+        fTimes.getline(s, 12, '\n');
+
+        std::cout << "read line" << std::endl;
+
+        std::cout << s << std::endl;
+
+
+        count++;
+
+        if(count > 4541) break;
+    }
+
+    fTimes.close();
+/*
     while(!fTimes.eof())
     {
         string s;
@@ -161,12 +182,15 @@ void LoadImages(const string &strPathToSequence, vector<string> &vstrImageFilena
 	std::cout << "loading time " << count++ << std::endl;
     }
 
+    */
+
     std::cout << "loaded times" << std::endl;
 
     string strPrefixLeft = strPathToSequence + "/image_0/";
 
-    const int nTimes = vTimestamps.size();
-    vstrImageFilenames.resize(nTimes);
+    //const int nTimes = vTimestamps.size();
+    const int nTimes = 4541;
+    //vstrImageFilenames.resize(nTimes);
 
     for(int i=0; i<nTimes; i++)
     {
