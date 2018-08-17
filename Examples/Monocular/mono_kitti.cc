@@ -18,12 +18,14 @@
 * along with ORB-SLAM2. If not, see <http://www.gnu.org/licenses/>.
 */
 
+///Modified by Felix Holz on 2018-08-17
 
-#include<iostream>
-#include<algorithm>
-#include<fstream>
-#include<chrono>
-#include<iomanip>
+
+#include <iostream>
+#include <algorithm>
+#include <fstream>
+#include <chrono>
+#include <iomanip>
 #include <unistd.h>
 
 
@@ -31,6 +33,7 @@
 #include<opencv2/core/core.hpp>
 
 #include"System.h"
+#include "fileutils.h"
 
 using namespace std;
 
@@ -140,30 +143,6 @@ void LoadImages(const string &strPathToSequence, vector<string> &vstrImageFilena
     ifstream fTimes;
     string strPathTimeFile = strPathToSequence + "/times.txt";
     fTimes.open(strPathTimeFile.c_str());
-    std::cout << "loading times from file " << strPathTimeFile << "..." << std::endl;
-    
-    int count = 0;
-
-
-    while(!fTimes.eof())
-    {
-
-        char s[12];
-
-        fTimes.getline(s, 12, '\n');
-
-        std::cout << "read line" << std::endl;
-
-        std::cout << s << std::endl;
-
-
-        count++;
-
-        if(count > 4541) break;
-    }
-
-    fTimes.close();
-/*
     while(!fTimes.eof())
     {
         string s;
@@ -176,27 +155,17 @@ void LoadImages(const string &strPathToSequence, vector<string> &vstrImageFilena
             ss >> t;
             vTimestamps.push_back(t);
         }
-
-	if(count > 10000) break;
-
-	std::cout << "loading time " << count++ << std::endl;
     }
-
-    */
-
-    std::cout << "loaded times" << std::endl;
 
     string strPrefixLeft = strPathToSequence + "/image_0/";
 
-    //const int nTimes = vTimestamps.size();
-    const int nTimes = 4541;
-    //vstrImageFilenames.resize(nTimes);
+    const int nTimes = vTimestamps.size();
+    vstrImageFilenames.resize(nTimes);
 
     for(int i=0; i<nTimes; i++)
     {
         stringstream ss;
         ss << setfill('0') << setw(6) << i;
         vstrImageFilenames[i] = strPrefixLeft + ss.str() + ".png";
-    	std::cout << "loaded image name " << i << std::endl;
     }
 }
