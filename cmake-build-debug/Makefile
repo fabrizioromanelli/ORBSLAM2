@@ -56,16 +56,51 @@ CMAKE_BINARY_DIR = /home/felix/Desktop/ORB_SLAM2/cmake-build-debug
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target rebuild_cache
-rebuild_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/home/felix/Apps/clion-2018.2.1/bin/cmake/linux/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : rebuild_cache
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/home/felix/Apps/clion-2018.2.1/bin/cmake/linux/bin/cmake -P cmake_install.cmake
+.PHONY : install
 
-# Special rule for the target rebuild_cache
-rebuild_cache/fast: rebuild_cache
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/home/felix/Apps/clion-2018.2.1/bin/cmake/linux/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
 
-.PHONY : rebuild_cache/fast
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/home/felix/Apps/clion-2018.2.1/bin/cmake/linux/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/home/felix/Apps/clion-2018.2.1/bin/cmake/linux/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"library\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+
+.PHONY : list_install_components/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/home/felix/Apps/clion-2018.2.1/bin/cmake/linux/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/home/felix/Apps/clion-2018.2.1/bin/cmake/linux/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
 
 # Special rule for the target edit_cache
 edit_cache:
@@ -77,6 +112,17 @@ edit_cache:
 edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
+
+# Special rule for the target rebuild_cache
+rebuild_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
+	/home/felix/Apps/clion-2018.2.1/bin/cmake/linux/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : rebuild_cache
+
+# Special rule for the target rebuild_cache
+rebuild_cache/fast: rebuild_cache
+
+.PHONY : rebuild_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -111,69 +157,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named mono_euroc
+# Target rules for targets named stereo_euroc
 
 # Build rule for target.
-mono_euroc: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 mono_euroc
-.PHONY : mono_euroc
+stereo_euroc: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 stereo_euroc
+.PHONY : stereo_euroc
 
 # fast build rule for target.
-mono_euroc/fast:
-	$(MAKE) -f CMakeFiles/mono_euroc.dir/build.make CMakeFiles/mono_euroc.dir/build
-.PHONY : mono_euroc/fast
-
-#=============================================================================
-# Target rules for targets named mono_kitti
-
-# Build rule for target.
-mono_kitti: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 mono_kitti
-.PHONY : mono_kitti
-
-# fast build rule for target.
-mono_kitti/fast:
-	$(MAKE) -f CMakeFiles/mono_kitti.dir/build.make CMakeFiles/mono_kitti.dir/build
-.PHONY : mono_kitti/fast
-
-#=============================================================================
-# Target rules for targets named mono_tum
-
-# Build rule for target.
-mono_tum: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 mono_tum
-.PHONY : mono_tum
-
-# fast build rule for target.
-mono_tum/fast:
-	$(MAKE) -f CMakeFiles/mono_tum.dir/build.make CMakeFiles/mono_tum.dir/build
-.PHONY : mono_tum/fast
-
-#=============================================================================
-# Target rules for targets named ORB_SLAM2
-
-# Build rule for target.
-ORB_SLAM2: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 ORB_SLAM2
-.PHONY : ORB_SLAM2
-
-# fast build rule for target.
-ORB_SLAM2/fast:
-	$(MAKE) -f CMakeFiles/ORB_SLAM2.dir/build.make CMakeFiles/ORB_SLAM2.dir/build
-.PHONY : ORB_SLAM2/fast
-
-#=============================================================================
-# Target rules for targets named rgbd_tum
-
-# Build rule for target.
-rgbd_tum: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 rgbd_tum
-.PHONY : rgbd_tum
-
-# fast build rule for target.
-rgbd_tum/fast:
-	$(MAKE) -f CMakeFiles/rgbd_tum.dir/build.make CMakeFiles/rgbd_tum.dir/build
-.PHONY : rgbd_tum/fast
+stereo_euroc/fast:
+	$(MAKE) -f CMakeFiles/stereo_euroc.dir/build.make CMakeFiles/stereo_euroc.dir/build
+.PHONY : stereo_euroc/fast
 
 #=============================================================================
 # Target rules for targets named stereo_kitti
@@ -189,17 +183,69 @@ stereo_kitti/fast:
 .PHONY : stereo_kitti/fast
 
 #=============================================================================
-# Target rules for targets named stereo_euroc
+# Target rules for targets named rgbd_tum
 
 # Build rule for target.
-stereo_euroc: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 stereo_euroc
-.PHONY : stereo_euroc
+rgbd_tum: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 rgbd_tum
+.PHONY : rgbd_tum
 
 # fast build rule for target.
-stereo_euroc/fast:
-	$(MAKE) -f CMakeFiles/stereo_euroc.dir/build.make CMakeFiles/stereo_euroc.dir/build
-.PHONY : stereo_euroc/fast
+rgbd_tum/fast:
+	$(MAKE) -f CMakeFiles/rgbd_tum.dir/build.make CMakeFiles/rgbd_tum.dir/build
+.PHONY : rgbd_tum/fast
+
+#=============================================================================
+# Target rules for targets named ORB_SLAM2
+
+# Build rule for target.
+ORB_SLAM2: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 ORB_SLAM2
+.PHONY : ORB_SLAM2
+
+# fast build rule for target.
+ORB_SLAM2/fast:
+	$(MAKE) -f CMakeFiles/ORB_SLAM2.dir/build.make CMakeFiles/ORB_SLAM2.dir/build
+.PHONY : ORB_SLAM2/fast
+
+#=============================================================================
+# Target rules for targets named mono_tum
+
+# Build rule for target.
+mono_tum: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 mono_tum
+.PHONY : mono_tum
+
+# fast build rule for target.
+mono_tum/fast:
+	$(MAKE) -f CMakeFiles/mono_tum.dir/build.make CMakeFiles/mono_tum.dir/build
+.PHONY : mono_tum/fast
+
+#=============================================================================
+# Target rules for targets named mono_kitti
+
+# Build rule for target.
+mono_kitti: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 mono_kitti
+.PHONY : mono_kitti
+
+# fast build rule for target.
+mono_kitti/fast:
+	$(MAKE) -f CMakeFiles/mono_kitti.dir/build.make CMakeFiles/mono_kitti.dir/build
+.PHONY : mono_kitti/fast
+
+#=============================================================================
+# Target rules for targets named mono_euroc
+
+# Build rule for target.
+mono_euroc: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 mono_euroc
+.PHONY : mono_euroc
+
+# fast build rule for target.
+mono_euroc/fast:
+	$(MAKE) -f CMakeFiles/mono_euroc.dir/build.make CMakeFiles/mono_euroc.dir/build
+.PHONY : mono_euroc/fast
 
 Examples/Monocular/mono_euroc.o: Examples/Monocular/mono_euroc.cc.o
 
@@ -882,15 +928,19 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... rebuild_cache"
-	@echo "... edit_cache"
-	@echo "... mono_euroc"
-	@echo "... mono_kitti"
-	@echo "... mono_tum"
-	@echo "... ORB_SLAM2"
-	@echo "... rgbd_tum"
-	@echo "... stereo_kitti"
+	@echo "... install"
 	@echo "... stereo_euroc"
+	@echo "... stereo_kitti"
+	@echo "... install/strip"
+	@echo "... list_install_components"
+	@echo "... install/local"
+	@echo "... rgbd_tum"
+	@echo "... ORB_SLAM2"
+	@echo "... mono_tum"
+	@echo "... mono_kitti"
+	@echo "... mono_euroc"
+	@echo "... edit_cache"
+	@echo "... rebuild_cache"
 	@echo "... Examples/Monocular/mono_euroc.o"
 	@echo "... Examples/Monocular/mono_euroc.i"
 	@echo "... Examples/Monocular/mono_euroc.s"
