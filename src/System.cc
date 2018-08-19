@@ -479,6 +479,16 @@ int System::GetTrackingState()
     return mTrackingState;
 }
 
+vector<KeyFrame*> System::GetKeyFrames() const
+{
+    return mpMap->GetAllKeyFrames();
+}
+
+Tracking* System::GetTracker() const
+{
+    return mpTracker;
+}
+
 vector<MapPoint*> System::GetTrackedMapPoints()
 {
     unique_lock<mutex> lock(mMutexState);

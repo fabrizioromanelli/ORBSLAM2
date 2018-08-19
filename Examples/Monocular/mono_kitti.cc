@@ -49,7 +49,6 @@ int main(int argc, char **argv)
         return 1;
     }
     
-    std::cout << "correct path" << std::endl;
 
     // Retrieve paths to images
     vector<string> vstrImageFilenames;
@@ -64,7 +63,6 @@ int main(int argc, char **argv)
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
     ORB_SLAM2::System SLAM(argv[1],argv[2],ORB_SLAM2::System::MONOCULAR,true);
 	
-    std::cout << "initialized slam system" << std::endl;
 
     // Vector for tracking time statistics
     vector<float> vTimesTrack;
