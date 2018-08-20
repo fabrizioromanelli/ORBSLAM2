@@ -571,16 +571,6 @@ System.h
 /home/felix/Desktop/ORB_SLAM2/Examples/Monocular/System.h
 fileutils.h
 /home/felix/Desktop/ORB_SLAM2/Examples/Monocular/fileutils.h
-tmp_test.h
-/home/felix/Desktop/ORB_SLAM2/Examples/Monocular/tmp_test.h
-
-/home/felix/Desktop/ORB_SLAM2/Examples/Monocular/tmp_test.cpp
-tmp_test.h
-/home/felix/Desktop/ORB_SLAM2/Examples/Monocular/tmp_test.h
-
-/home/felix/Desktop/ORB_SLAM2/Examples/Monocular/tmp_test.h
-iostream
--
 
 /usr/local/include/eigen3/Eigen/Cholesky
 Core

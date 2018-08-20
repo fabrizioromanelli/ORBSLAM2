@@ -35,8 +35,6 @@
 #include"System.h"
 #include "fileutils.h"
 
-#include "tmp_test.h"
-
 using namespace std;
 
 void LoadImages(const string &strSequence, vector<string> &vstrImageFilenames,
@@ -45,8 +43,7 @@ void LoadImages(const string &strSequence, vector<string> &vstrImageFilenames,
 int main(int argc, char **argv)
 {
 
-    tmp_test gas;
-    gas.werner();
+
     std::cout << "Starting..." << std::endl;
     if(argc != 4)
     {
@@ -64,6 +61,7 @@ int main(int argc, char **argv)
     std::cout << "loaded images" << std::endl;
 
     int nImages = vstrImageFilenames.size();
+    nImages = 100;
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
     ORB_SLAM2::System SLAM(argv[1],argv[2],ORB_SLAM2::System::MONOCULAR,true);
@@ -79,7 +77,7 @@ int main(int argc, char **argv)
 
     // Main loop
     cv::Mat im;
-    for(int ni=0; ni<nImages; ni++)
+    for(int ni=0; ni<nImages*1.8; ni++)
     {
         // Read image from file
         im = cv::imread(vstrImageFilenames[ni],CV_LOAD_IMAGE_UNCHANGED);
@@ -119,6 +117,9 @@ int main(int argc, char **argv)
 
         if(ttrack<T)
             usleep((T-ttrack)*1e6);
+
+
+        if(ni > nImages) break;
     }
 
     // Stop all threads

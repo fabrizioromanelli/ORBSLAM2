@@ -52,7 +52,6 @@ CMakeFiles/mono_kitti.dir/Examples/Monocular/mono_kitti.cc.o
  ../include/Viewer.h
  ../include/fileutils.h
  /home/felix/Desktop/ORB_SLAM2/Examples/Monocular/mono_kitti.cc
- /home/felix/Desktop/ORB_SLAM2/Examples/Monocular/tmp_test.h
  /usr/local/include/eigen3/Eigen/Cholesky
  /usr/local/include/eigen3/Eigen/Core
  /usr/local/include/eigen3/Eigen/Dense
@@ -497,6 +496,3 @@ CMakeFiles/mono_kitti.dir/Examples/Monocular/mono_kitti.cc.o
  /usr/local/lib/cmake/Pangolin/../../../include/pangolin/video/video_interface.h
  /usr/local/lib/cmake/Pangolin/../../../include/pangolin/video/video_output.h
  /usr/local/lib/cmake/Pangolin/../../../include/pangolin/video/video_output_interface.h
-CMakeFiles/mono_kitti.dir/Examples/Monocular/tmp_test.cpp.o
- /home/felix/Desktop/ORB_SLAM2/Examples/Monocular/tmp_test.cpp
- /home/felix/Desktop/ORB_SLAM2/Examples/Monocular/tmp_test.h

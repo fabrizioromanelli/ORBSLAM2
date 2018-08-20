@@ -51,7 +51,6 @@ CMakeFiles/mono_kitti.dir/Examples/Monocular/mono_kitti.cc.o: ../include/Trackin
 CMakeFiles/mono_kitti.dir/Examples/Monocular/mono_kitti.cc.o: ../include/Viewer.h
 CMakeFiles/mono_kitti.dir/Examples/Monocular/mono_kitti.cc.o: ../include/fileutils.h
 CMakeFiles/mono_kitti.dir/Examples/Monocular/mono_kitti.cc.o: ../Examples/Monocular/mono_kitti.cc
-CMakeFiles/mono_kitti.dir/Examples/Monocular/mono_kitti.cc.o: ../Examples/Monocular/tmp_test.h
 CMakeFiles/mono_kitti.dir/Examples/Monocular/mono_kitti.cc.o: /usr/local/include/eigen3/Eigen/Cholesky
 CMakeFiles/mono_kitti.dir/Examples/Monocular/mono_kitti.cc.o: /usr/local/include/eigen3/Eigen/Core
 CMakeFiles/mono_kitti.dir/Examples/Monocular/mono_kitti.cc.o: /usr/local/include/eigen3/Eigen/Dense
@@ -496,7 +495,4 @@ CMakeFiles/mono_kitti.dir/Examples/Monocular/mono_kitti.cc.o: /usr/local/lib/cma
 CMakeFiles/mono_kitti.dir/Examples/Monocular/mono_kitti.cc.o: /usr/local/lib/cmake/Pangolin/../../../include/pangolin/video/video_interface.h
 CMakeFiles/mono_kitti.dir/Examples/Monocular/mono_kitti.cc.o: /usr/local/lib/cmake/Pangolin/../../../include/pangolin/video/video_output.h
 CMakeFiles/mono_kitti.dir/Examples/Monocular/mono_kitti.cc.o: /usr/local/lib/cmake/Pangolin/../../../include/pangolin/video/video_output_interface.h
-
-CMakeFiles/mono_kitti.dir/Examples/Monocular/tmp_test.cpp.o: ../Examples/Monocular/tmp_test.cpp
-CMakeFiles/mono_kitti.dir/Examples/Monocular/tmp_test.cpp.o: ../Examples/Monocular/tmp_test.h
 

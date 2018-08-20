@@ -58,6 +58,7 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/DA.dir/DependInfo.cmake"
   "CMakeFiles/ORB_SLAM2.dir/DependInfo.cmake"
+  "CMakeFiles/DA.dir/DependInfo.cmake"
+  "CMakeFiles/mono_kitti.dir/DependInfo.cmake"
   )

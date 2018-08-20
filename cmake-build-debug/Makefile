@@ -111,6 +111,19 @@ depend:
 .PHONY : depend
 
 #=============================================================================
+# Target rules for targets named ORB_SLAM2
+
+# Build rule for target.
+ORB_SLAM2: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 ORB_SLAM2
+.PHONY : ORB_SLAM2
+
+# fast build rule for target.
+ORB_SLAM2/fast:
+	$(MAKE) -f CMakeFiles/ORB_SLAM2.dir/build.make CMakeFiles/ORB_SLAM2.dir/build
+.PHONY : ORB_SLAM2/fast
+
+#=============================================================================
 # Target rules for targets named DA
 
 # Build rule for target.
@@ -124,17 +137,44 @@ DA/fast:
 .PHONY : DA/fast
 
 #=============================================================================
-# Target rules for targets named ORB_SLAM2
+# Target rules for targets named mono_kitti
 
 # Build rule for target.
-ORB_SLAM2: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 ORB_SLAM2
-.PHONY : ORB_SLAM2
+mono_kitti: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 mono_kitti
+.PHONY : mono_kitti
 
 # fast build rule for target.
-ORB_SLAM2/fast:
-	$(MAKE) -f CMakeFiles/ORB_SLAM2.dir/build.make CMakeFiles/ORB_SLAM2.dir/build
-.PHONY : ORB_SLAM2/fast
+mono_kitti/fast:
+	$(MAKE) -f CMakeFiles/mono_kitti.dir/build.make CMakeFiles/mono_kitti.dir/build
+.PHONY : mono_kitti/fast
+
+Examples/Monocular/mono_kitti.o: Examples/Monocular/mono_kitti.cc.o
+
+.PHONY : Examples/Monocular/mono_kitti.o
+
+# target to build an object file
+Examples/Monocular/mono_kitti.cc.o:
+	$(MAKE) -f CMakeFiles/mono_kitti.dir/build.make CMakeFiles/mono_kitti.dir/Examples/Monocular/mono_kitti.cc.o
+.PHONY : Examples/Monocular/mono_kitti.cc.o
+
+Examples/Monocular/mono_kitti.i: Examples/Monocular/mono_kitti.cc.i
+
+.PHONY : Examples/Monocular/mono_kitti.i
+
+# target to preprocess a source file
+Examples/Monocular/mono_kitti.cc.i:
+	$(MAKE) -f CMakeFiles/mono_kitti.dir/build.make CMakeFiles/mono_kitti.dir/Examples/Monocular/mono_kitti.cc.i
+.PHONY : Examples/Monocular/mono_kitti.cc.i
+
+Examples/Monocular/mono_kitti.s: Examples/Monocular/mono_kitti.cc.s
+
+.PHONY : Examples/Monocular/mono_kitti.s
+
+# target to generate assembly for a file
+Examples/Monocular/mono_kitti.cc.s:
+	$(MAKE) -f CMakeFiles/mono_kitti.dir/build.make CMakeFiles/mono_kitti.dir/Examples/Monocular/mono_kitti.cc.s
+.PHONY : Examples/Monocular/mono_kitti.cc.s
 
 _da/src/main.o: _da/src/main.cpp.o
 
@@ -683,9 +723,13 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
-	@echo "... edit_cache"
-	@echo "... DA"
 	@echo "... ORB_SLAM2"
+	@echo "... DA"
+	@echo "... mono_kitti"
+	@echo "... edit_cache"
+	@echo "... Examples/Monocular/mono_kitti.o"
+	@echo "... Examples/Monocular/mono_kitti.i"
+	@echo "... Examples/Monocular/mono_kitti.s"
 	@echo "... _da/src/main.o"
 	@echo "... _da/src/main.i"
 	@echo "... _da/src/main.s"
