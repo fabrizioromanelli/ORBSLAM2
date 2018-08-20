@@ -35,9 +35,10 @@ set(CMAKE_MAKEFILE_DEPENDS
   "CMakeFiles/3.12.0/CMakeCXXCompiler.cmake"
   "CMakeFiles/3.12.0/CMakeSystem.cmake"
   "../cmake_modules/FindEigen3.cmake"
-  "/home/felix/Desktop/Pangolin/build/src/PangolinConfig.cmake"
-  "/home/felix/Desktop/Pangolin/build/src/PangolinConfigVersion.cmake"
-  "/home/felix/Desktop/Pangolin/build/src/PangolinTargets.cmake"
+  "/usr/local/lib/cmake/Pangolin/PangolinConfig.cmake"
+  "/usr/local/lib/cmake/Pangolin/PangolinConfigVersion.cmake"
+  "/usr/local/lib/cmake/Pangolin/PangolinTargets-release.cmake"
+  "/usr/local/lib/cmake/Pangolin/PangolinTargets.cmake"
   "/usr/local/share/OpenCV/OpenCVConfig-version.cmake"
   "/usr/local/share/OpenCV/OpenCVConfig.cmake"
   "/usr/local/share/OpenCV/OpenCVModules-release.cmake"
@@ -57,11 +58,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/stereo_euroc.dir/DependInfo.cmake"
-  "CMakeFiles/stereo_kitti.dir/DependInfo.cmake"
-  "CMakeFiles/rgbd_tum.dir/DependInfo.cmake"
+  "CMakeFiles/DA.dir/DependInfo.cmake"
   "CMakeFiles/ORB_SLAM2.dir/DependInfo.cmake"
-  "CMakeFiles/mono_tum.dir/DependInfo.cmake"
-  "CMakeFiles/mono_kitti.dir/DependInfo.cmake"
-  "CMakeFiles/mono_euroc.dir/DependInfo.cmake"
   )

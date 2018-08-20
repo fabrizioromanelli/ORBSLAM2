@@ -56,51 +56,16 @@ CMAKE_BINARY_DIR = /home/felix/Desktop/ORB_SLAM2/cmake-build-debug
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target install
-install: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/home/felix/Apps/clion-2018.2.1/bin/cmake/linux/bin/cmake -P cmake_install.cmake
-.PHONY : install
+# Special rule for the target rebuild_cache
+rebuild_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
+	/home/felix/Apps/clion-2018.2.1/bin/cmake/linux/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : rebuild_cache
 
-# Special rule for the target install
-install/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/home/felix/Apps/clion-2018.2.1/bin/cmake/linux/bin/cmake -P cmake_install.cmake
-.PHONY : install/fast
+# Special rule for the target rebuild_cache
+rebuild_cache/fast: rebuild_cache
 
-# Special rule for the target install/strip
-install/strip: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/home/felix/Apps/clion-2018.2.1/bin/cmake/linux/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip
-
-# Special rule for the target install/strip
-install/strip/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/home/felix/Apps/clion-2018.2.1/bin/cmake/linux/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip/fast
-
-# Special rule for the target list_install_components
-list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"library\""
-.PHONY : list_install_components
-
-# Special rule for the target list_install_components
-list_install_components/fast: list_install_components
-
-.PHONY : list_install_components/fast
-
-# Special rule for the target install/local
-install/local: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/home/felix/Apps/clion-2018.2.1/bin/cmake/linux/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local
-
-# Special rule for the target install/local
-install/local/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/home/felix/Apps/clion-2018.2.1/bin/cmake/linux/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local/fast
+.PHONY : rebuild_cache/fast
 
 # Special rule for the target edit_cache
 edit_cache:
@@ -112,17 +77,6 @@ edit_cache:
 edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
-
-# Special rule for the target rebuild_cache
-rebuild_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/home/felix/Apps/clion-2018.2.1/bin/cmake/linux/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : rebuild_cache
-
-# Special rule for the target rebuild_cache
-rebuild_cache/fast: rebuild_cache
-
-.PHONY : rebuild_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -157,43 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named stereo_euroc
+# Target rules for targets named DA
 
 # Build rule for target.
-stereo_euroc: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 stereo_euroc
-.PHONY : stereo_euroc
+DA: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 DA
+.PHONY : DA
 
 # fast build rule for target.
-stereo_euroc/fast:
-	$(MAKE) -f CMakeFiles/stereo_euroc.dir/build.make CMakeFiles/stereo_euroc.dir/build
-.PHONY : stereo_euroc/fast
-
-#=============================================================================
-# Target rules for targets named stereo_kitti
-
-# Build rule for target.
-stereo_kitti: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 stereo_kitti
-.PHONY : stereo_kitti
-
-# fast build rule for target.
-stereo_kitti/fast:
-	$(MAKE) -f CMakeFiles/stereo_kitti.dir/build.make CMakeFiles/stereo_kitti.dir/build
-.PHONY : stereo_kitti/fast
-
-#=============================================================================
-# Target rules for targets named rgbd_tum
-
-# Build rule for target.
-rgbd_tum: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 rgbd_tum
-.PHONY : rgbd_tum
-
-# fast build rule for target.
-rgbd_tum/fast:
-	$(MAKE) -f CMakeFiles/rgbd_tum.dir/build.make CMakeFiles/rgbd_tum.dir/build
-.PHONY : rgbd_tum/fast
+DA/fast:
+	$(MAKE) -f CMakeFiles/DA.dir/build.make CMakeFiles/DA.dir/build
+.PHONY : DA/fast
 
 #=============================================================================
 # Target rules for targets named ORB_SLAM2
@@ -208,206 +136,32 @@ ORB_SLAM2/fast:
 	$(MAKE) -f CMakeFiles/ORB_SLAM2.dir/build.make CMakeFiles/ORB_SLAM2.dir/build
 .PHONY : ORB_SLAM2/fast
 
-#=============================================================================
-# Target rules for targets named mono_tum
+_da/src/main.o: _da/src/main.cpp.o
 
-# Build rule for target.
-mono_tum: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 mono_tum
-.PHONY : mono_tum
-
-# fast build rule for target.
-mono_tum/fast:
-	$(MAKE) -f CMakeFiles/mono_tum.dir/build.make CMakeFiles/mono_tum.dir/build
-.PHONY : mono_tum/fast
-
-#=============================================================================
-# Target rules for targets named mono_kitti
-
-# Build rule for target.
-mono_kitti: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 mono_kitti
-.PHONY : mono_kitti
-
-# fast build rule for target.
-mono_kitti/fast:
-	$(MAKE) -f CMakeFiles/mono_kitti.dir/build.make CMakeFiles/mono_kitti.dir/build
-.PHONY : mono_kitti/fast
-
-#=============================================================================
-# Target rules for targets named mono_euroc
-
-# Build rule for target.
-mono_euroc: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 mono_euroc
-.PHONY : mono_euroc
-
-# fast build rule for target.
-mono_euroc/fast:
-	$(MAKE) -f CMakeFiles/mono_euroc.dir/build.make CMakeFiles/mono_euroc.dir/build
-.PHONY : mono_euroc/fast
-
-Examples/Monocular/mono_euroc.o: Examples/Monocular/mono_euroc.cc.o
-
-.PHONY : Examples/Monocular/mono_euroc.o
+.PHONY : _da/src/main.o
 
 # target to build an object file
-Examples/Monocular/mono_euroc.cc.o:
-	$(MAKE) -f CMakeFiles/mono_euroc.dir/build.make CMakeFiles/mono_euroc.dir/Examples/Monocular/mono_euroc.cc.o
-.PHONY : Examples/Monocular/mono_euroc.cc.o
+_da/src/main.cpp.o:
+	$(MAKE) -f CMakeFiles/DA.dir/build.make CMakeFiles/DA.dir/_da/src/main.cpp.o
+.PHONY : _da/src/main.cpp.o
 
-Examples/Monocular/mono_euroc.i: Examples/Monocular/mono_euroc.cc.i
+_da/src/main.i: _da/src/main.cpp.i
 
-.PHONY : Examples/Monocular/mono_euroc.i
-
-# target to preprocess a source file
-Examples/Monocular/mono_euroc.cc.i:
-	$(MAKE) -f CMakeFiles/mono_euroc.dir/build.make CMakeFiles/mono_euroc.dir/Examples/Monocular/mono_euroc.cc.i
-.PHONY : Examples/Monocular/mono_euroc.cc.i
-
-Examples/Monocular/mono_euroc.s: Examples/Monocular/mono_euroc.cc.s
-
-.PHONY : Examples/Monocular/mono_euroc.s
-
-# target to generate assembly for a file
-Examples/Monocular/mono_euroc.cc.s:
-	$(MAKE) -f CMakeFiles/mono_euroc.dir/build.make CMakeFiles/mono_euroc.dir/Examples/Monocular/mono_euroc.cc.s
-.PHONY : Examples/Monocular/mono_euroc.cc.s
-
-Examples/Monocular/mono_kitti.o: Examples/Monocular/mono_kitti.cc.o
-
-.PHONY : Examples/Monocular/mono_kitti.o
-
-# target to build an object file
-Examples/Monocular/mono_kitti.cc.o:
-	$(MAKE) -f CMakeFiles/mono_kitti.dir/build.make CMakeFiles/mono_kitti.dir/Examples/Monocular/mono_kitti.cc.o
-.PHONY : Examples/Monocular/mono_kitti.cc.o
-
-Examples/Monocular/mono_kitti.i: Examples/Monocular/mono_kitti.cc.i
-
-.PHONY : Examples/Monocular/mono_kitti.i
+.PHONY : _da/src/main.i
 
 # target to preprocess a source file
-Examples/Monocular/mono_kitti.cc.i:
-	$(MAKE) -f CMakeFiles/mono_kitti.dir/build.make CMakeFiles/mono_kitti.dir/Examples/Monocular/mono_kitti.cc.i
-.PHONY : Examples/Monocular/mono_kitti.cc.i
+_da/src/main.cpp.i:
+	$(MAKE) -f CMakeFiles/DA.dir/build.make CMakeFiles/DA.dir/_da/src/main.cpp.i
+.PHONY : _da/src/main.cpp.i
 
-Examples/Monocular/mono_kitti.s: Examples/Monocular/mono_kitti.cc.s
+_da/src/main.s: _da/src/main.cpp.s
 
-.PHONY : Examples/Monocular/mono_kitti.s
-
-# target to generate assembly for a file
-Examples/Monocular/mono_kitti.cc.s:
-	$(MAKE) -f CMakeFiles/mono_kitti.dir/build.make CMakeFiles/mono_kitti.dir/Examples/Monocular/mono_kitti.cc.s
-.PHONY : Examples/Monocular/mono_kitti.cc.s
-
-Examples/Monocular/mono_tum.o: Examples/Monocular/mono_tum.cc.o
-
-.PHONY : Examples/Monocular/mono_tum.o
-
-# target to build an object file
-Examples/Monocular/mono_tum.cc.o:
-	$(MAKE) -f CMakeFiles/mono_tum.dir/build.make CMakeFiles/mono_tum.dir/Examples/Monocular/mono_tum.cc.o
-.PHONY : Examples/Monocular/mono_tum.cc.o
-
-Examples/Monocular/mono_tum.i: Examples/Monocular/mono_tum.cc.i
-
-.PHONY : Examples/Monocular/mono_tum.i
-
-# target to preprocess a source file
-Examples/Monocular/mono_tum.cc.i:
-	$(MAKE) -f CMakeFiles/mono_tum.dir/build.make CMakeFiles/mono_tum.dir/Examples/Monocular/mono_tum.cc.i
-.PHONY : Examples/Monocular/mono_tum.cc.i
-
-Examples/Monocular/mono_tum.s: Examples/Monocular/mono_tum.cc.s
-
-.PHONY : Examples/Monocular/mono_tum.s
+.PHONY : _da/src/main.s
 
 # target to generate assembly for a file
-Examples/Monocular/mono_tum.cc.s:
-	$(MAKE) -f CMakeFiles/mono_tum.dir/build.make CMakeFiles/mono_tum.dir/Examples/Monocular/mono_tum.cc.s
-.PHONY : Examples/Monocular/mono_tum.cc.s
-
-Examples/RGB-D/rgbd_tum.o: Examples/RGB-D/rgbd_tum.cc.o
-
-.PHONY : Examples/RGB-D/rgbd_tum.o
-
-# target to build an object file
-Examples/RGB-D/rgbd_tum.cc.o:
-	$(MAKE) -f CMakeFiles/rgbd_tum.dir/build.make CMakeFiles/rgbd_tum.dir/Examples/RGB-D/rgbd_tum.cc.o
-.PHONY : Examples/RGB-D/rgbd_tum.cc.o
-
-Examples/RGB-D/rgbd_tum.i: Examples/RGB-D/rgbd_tum.cc.i
-
-.PHONY : Examples/RGB-D/rgbd_tum.i
-
-# target to preprocess a source file
-Examples/RGB-D/rgbd_tum.cc.i:
-	$(MAKE) -f CMakeFiles/rgbd_tum.dir/build.make CMakeFiles/rgbd_tum.dir/Examples/RGB-D/rgbd_tum.cc.i
-.PHONY : Examples/RGB-D/rgbd_tum.cc.i
-
-Examples/RGB-D/rgbd_tum.s: Examples/RGB-D/rgbd_tum.cc.s
-
-.PHONY : Examples/RGB-D/rgbd_tum.s
-
-# target to generate assembly for a file
-Examples/RGB-D/rgbd_tum.cc.s:
-	$(MAKE) -f CMakeFiles/rgbd_tum.dir/build.make CMakeFiles/rgbd_tum.dir/Examples/RGB-D/rgbd_tum.cc.s
-.PHONY : Examples/RGB-D/rgbd_tum.cc.s
-
-Examples/Stereo/stereo_euroc.o: Examples/Stereo/stereo_euroc.cc.o
-
-.PHONY : Examples/Stereo/stereo_euroc.o
-
-# target to build an object file
-Examples/Stereo/stereo_euroc.cc.o:
-	$(MAKE) -f CMakeFiles/stereo_euroc.dir/build.make CMakeFiles/stereo_euroc.dir/Examples/Stereo/stereo_euroc.cc.o
-.PHONY : Examples/Stereo/stereo_euroc.cc.o
-
-Examples/Stereo/stereo_euroc.i: Examples/Stereo/stereo_euroc.cc.i
-
-.PHONY : Examples/Stereo/stereo_euroc.i
-
-# target to preprocess a source file
-Examples/Stereo/stereo_euroc.cc.i:
-	$(MAKE) -f CMakeFiles/stereo_euroc.dir/build.make CMakeFiles/stereo_euroc.dir/Examples/Stereo/stereo_euroc.cc.i
-.PHONY : Examples/Stereo/stereo_euroc.cc.i
-
-Examples/Stereo/stereo_euroc.s: Examples/Stereo/stereo_euroc.cc.s
-
-.PHONY : Examples/Stereo/stereo_euroc.s
-
-# target to generate assembly for a file
-Examples/Stereo/stereo_euroc.cc.s:
-	$(MAKE) -f CMakeFiles/stereo_euroc.dir/build.make CMakeFiles/stereo_euroc.dir/Examples/Stereo/stereo_euroc.cc.s
-.PHONY : Examples/Stereo/stereo_euroc.cc.s
-
-Examples/Stereo/stereo_kitti.o: Examples/Stereo/stereo_kitti.cc.o
-
-.PHONY : Examples/Stereo/stereo_kitti.o
-
-# target to build an object file
-Examples/Stereo/stereo_kitti.cc.o:
-	$(MAKE) -f CMakeFiles/stereo_kitti.dir/build.make CMakeFiles/stereo_kitti.dir/Examples/Stereo/stereo_kitti.cc.o
-.PHONY : Examples/Stereo/stereo_kitti.cc.o
-
-Examples/Stereo/stereo_kitti.i: Examples/Stereo/stereo_kitti.cc.i
-
-.PHONY : Examples/Stereo/stereo_kitti.i
-
-# target to preprocess a source file
-Examples/Stereo/stereo_kitti.cc.i:
-	$(MAKE) -f CMakeFiles/stereo_kitti.dir/build.make CMakeFiles/stereo_kitti.dir/Examples/Stereo/stereo_kitti.cc.i
-.PHONY : Examples/Stereo/stereo_kitti.cc.i
-
-Examples/Stereo/stereo_kitti.s: Examples/Stereo/stereo_kitti.cc.s
-
-.PHONY : Examples/Stereo/stereo_kitti.s
-
-# target to generate assembly for a file
-Examples/Stereo/stereo_kitti.cc.s:
-	$(MAKE) -f CMakeFiles/stereo_kitti.dir/build.make CMakeFiles/stereo_kitti.dir/Examples/Stereo/stereo_kitti.cc.s
-.PHONY : Examples/Stereo/stereo_kitti.cc.s
+_da/src/main.cpp.s:
+	$(MAKE) -f CMakeFiles/DA.dir/build.make CMakeFiles/DA.dir/_da/src/main.cpp.s
+.PHONY : _da/src/main.cpp.s
 
 src/Converter.o: src/Converter.cc.o
 
@@ -928,37 +682,13 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... install"
-	@echo "... stereo_euroc"
-	@echo "... stereo_kitti"
-	@echo "... install/strip"
-	@echo "... list_install_components"
-	@echo "... install/local"
-	@echo "... rgbd_tum"
-	@echo "... ORB_SLAM2"
-	@echo "... mono_tum"
-	@echo "... mono_kitti"
-	@echo "... mono_euroc"
-	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... Examples/Monocular/mono_euroc.o"
-	@echo "... Examples/Monocular/mono_euroc.i"
-	@echo "... Examples/Monocular/mono_euroc.s"
-	@echo "... Examples/Monocular/mono_kitti.o"
-	@echo "... Examples/Monocular/mono_kitti.i"
-	@echo "... Examples/Monocular/mono_kitti.s"
-	@echo "... Examples/Monocular/mono_tum.o"
-	@echo "... Examples/Monocular/mono_tum.i"
-	@echo "... Examples/Monocular/mono_tum.s"
-	@echo "... Examples/RGB-D/rgbd_tum.o"
-	@echo "... Examples/RGB-D/rgbd_tum.i"
-	@echo "... Examples/RGB-D/rgbd_tum.s"
-	@echo "... Examples/Stereo/stereo_euroc.o"
-	@echo "... Examples/Stereo/stereo_euroc.i"
-	@echo "... Examples/Stereo/stereo_euroc.s"
-	@echo "... Examples/Stereo/stereo_kitti.o"
-	@echo "... Examples/Stereo/stereo_kitti.i"
-	@echo "... Examples/Stereo/stereo_kitti.s"
+	@echo "... edit_cache"
+	@echo "... DA"
+	@echo "... ORB_SLAM2"
+	@echo "... _da/src/main.o"
+	@echo "... _da/src/main.i"
+	@echo "... _da/src/main.s"
 	@echo "... src/Converter.o"
 	@echo "... src/Converter.i"
 	@echo "... src/Converter.s"

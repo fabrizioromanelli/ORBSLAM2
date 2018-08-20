@@ -34,12 +34,11 @@ set(CMAKE_TARGET_DEFINITIONS_CXX
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "/usr/local/include/opencv"
-  "/usr/local/include"
   "../"
   "../include"
+  "/usr/local/lib/cmake/Pangolin/../../../include"
+  "/usr/local/include"
   "/usr/local/include/eigen3"
-  "/home/felix/Desktop/Pangolin/include"
-  "/home/felix/Desktop/Pangolin/build/src/include"
   )
 
 # Targets to which this target links.

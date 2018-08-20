@@ -5,7 +5,7 @@
 		<Option title="ORB_SLAM2"/>
 		<Option makefile_is_custom="1"/>
 		<Option compiler="gcc"/>
-		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\usr\;CMake Files\..\..\..\..\usr\local\;CMake Files\..\..\..\..\usr\local\share\;CMake Files\..\..\..\..\usr\local\share\OpenCV\;CMake Files\..\Pangolin\;CMake Files\..\Pangolin\build\;CMake Files\..\Pangolin\build\src\;CMake Files\cmake_modules\;"/>
+		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\usr\;CMake Files\..\..\..\..\usr\local\;CMake Files\..\..\..\..\usr\local\share\;CMake Files\..\..\..\..\usr\local\share\OpenCV\;CMake Files\..\..\..\..\usr\local\lib\;CMake Files\..\..\..\..\usr\local\lib\cmake\;CMake Files\..\..\..\..\usr\local\lib\cmake\Pangolin\;CMake Files\cmake_modules\;"/>
 		<Build>
 			<Target title="all">
 				<Option working_dir="/home/felix/Desktop/ORB_SLAM2/cmake-build-debug"/>
@@ -17,181 +17,40 @@
 					<DistClean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
-			<Target title="install">
+			<Target title="rebuild_cache">
 				<Option working_dir="/home/felix/Desktop/ORB_SLAM2/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 install"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
 					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
 					<Clean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 					<DistClean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
-			<Target title="stereo_euroc">
-				<Option output="/home/felix/Desktop/ORB_SLAM2/Examples/Stereo/stereo_euroc" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/felix/Desktop/ORB_SLAM2/Examples/Monocular"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add option="-DCOMPILEDWITHC11"/>
-					<Add directory="/usr/local/include/opencv"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/home/felix/Desktop/ORB_SLAM2"/>
-					<Add directory="/home/felix/Desktop/ORB_SLAM2/include"/>
-					<Add directory="/usr/local/include/eigen3"/>
-					<Add directory="/home/felix/Desktop/Pangolin/include"/>
-					<Add directory="/home/felix/Desktop/Pangolin/build/src/include"/>
-					<Add directory="/usr/include/c++/7"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
-					<Add directory="/usr/include/c++/7/backward"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
-					<Add directory="/usr/include/x86_64-linux-gnu"/>
-					<Add directory="/usr/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 stereo_euroc"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="stereo_euroc/fast">
-				<Option output="/home/felix/Desktop/ORB_SLAM2/Examples/Stereo/stereo_euroc" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/felix/Desktop/ORB_SLAM2/Examples/Monocular"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add option="-DCOMPILEDWITHC11"/>
-					<Add directory="/usr/local/include/opencv"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/home/felix/Desktop/ORB_SLAM2"/>
-					<Add directory="/home/felix/Desktop/ORB_SLAM2/include"/>
-					<Add directory="/usr/local/include/eigen3"/>
-					<Add directory="/home/felix/Desktop/Pangolin/include"/>
-					<Add directory="/home/felix/Desktop/Pangolin/build/src/include"/>
-					<Add directory="/usr/include/c++/7"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
-					<Add directory="/usr/include/c++/7/backward"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
-					<Add directory="/usr/include/x86_64-linux-gnu"/>
-					<Add directory="/usr/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 stereo_euroc/fast"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="stereo_kitti">
-				<Option output="/home/felix/Desktop/ORB_SLAM2/Examples/Stereo/stereo_kitti" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/felix/Desktop/ORB_SLAM2/Examples/Monocular"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add option="-DCOMPILEDWITHC11"/>
-					<Add directory="/usr/local/include/opencv"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/home/felix/Desktop/ORB_SLAM2"/>
-					<Add directory="/home/felix/Desktop/ORB_SLAM2/include"/>
-					<Add directory="/usr/local/include/eigen3"/>
-					<Add directory="/home/felix/Desktop/Pangolin/include"/>
-					<Add directory="/home/felix/Desktop/Pangolin/build/src/include"/>
-					<Add directory="/usr/include/c++/7"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
-					<Add directory="/usr/include/c++/7/backward"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
-					<Add directory="/usr/include/x86_64-linux-gnu"/>
-					<Add directory="/usr/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 stereo_kitti"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="stereo_kitti/fast">
-				<Option output="/home/felix/Desktop/ORB_SLAM2/Examples/Stereo/stereo_kitti" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/felix/Desktop/ORB_SLAM2/Examples/Monocular"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add option="-DCOMPILEDWITHC11"/>
-					<Add directory="/usr/local/include/opencv"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/home/felix/Desktop/ORB_SLAM2"/>
-					<Add directory="/home/felix/Desktop/ORB_SLAM2/include"/>
-					<Add directory="/usr/local/include/eigen3"/>
-					<Add directory="/home/felix/Desktop/Pangolin/include"/>
-					<Add directory="/home/felix/Desktop/Pangolin/build/src/include"/>
-					<Add directory="/usr/include/c++/7"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
-					<Add directory="/usr/include/c++/7/backward"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
-					<Add directory="/usr/include/x86_64-linux-gnu"/>
-					<Add directory="/usr/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 stereo_kitti/fast"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="install/strip">
+			<Target title="edit_cache">
 				<Option working_dir="/home/felix/Desktop/ORB_SLAM2/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 install/strip"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
 					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
 					<Clean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 					<DistClean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
-			<Target title="list_install_components">
-				<Option working_dir="/home/felix/Desktop/ORB_SLAM2/cmake-build-debug"/>
-				<Option type="4"/>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 list_install_components"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="install/local">
-				<Option working_dir="/home/felix/Desktop/ORB_SLAM2/cmake-build-debug"/>
-				<Option type="4"/>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 install/local"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="rgbd_tum">
-				<Option output="/home/felix/Desktop/ORB_SLAM2/Examples/RGB-D/rgbd_tum" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/felix/Desktop/ORB_SLAM2/Examples/Monocular"/>
+			<Target title="DA">
+				<Option output="/home/felix/Desktop/ORB_SLAM2/_da/DA" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/felix/Desktop/ORB_SLAM2/_da"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
 					<Add option="-DCOMPILEDWITHC11"/>
 					<Add directory="/usr/local/include/opencv"/>
-					<Add directory="/usr/local/include"/>
 					<Add directory="/home/felix/Desktop/ORB_SLAM2"/>
 					<Add directory="/home/felix/Desktop/ORB_SLAM2/include"/>
+					<Add directory="/usr/local/lib/cmake/Pangolin/../../../include"/>
+					<Add directory="/usr/local/include"/>
 					<Add directory="/usr/local/include/eigen3"/>
-					<Add directory="/home/felix/Desktop/Pangolin/include"/>
-					<Add directory="/home/felix/Desktop/Pangolin/build/src/include"/>
 					<Add directory="/usr/include/c++/7"/>
 					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
 					<Add directory="/usr/include/c++/7/backward"/>
@@ -201,27 +60,26 @@
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 rgbd_tum"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 DA"/>
 					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
 					<Clean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 					<DistClean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
-			<Target title="rgbd_tum/fast">
-				<Option output="/home/felix/Desktop/ORB_SLAM2/Examples/RGB-D/rgbd_tum" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/felix/Desktop/ORB_SLAM2/Examples/Monocular"/>
+			<Target title="DA/fast">
+				<Option output="/home/felix/Desktop/ORB_SLAM2/_da/DA" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/felix/Desktop/ORB_SLAM2/_da"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
 					<Add option="-DCOMPILEDWITHC11"/>
 					<Add directory="/usr/local/include/opencv"/>
-					<Add directory="/usr/local/include"/>
 					<Add directory="/home/felix/Desktop/ORB_SLAM2"/>
 					<Add directory="/home/felix/Desktop/ORB_SLAM2/include"/>
+					<Add directory="/usr/local/lib/cmake/Pangolin/../../../include"/>
+					<Add directory="/usr/local/include"/>
 					<Add directory="/usr/local/include/eigen3"/>
-					<Add directory="/home/felix/Desktop/Pangolin/include"/>
-					<Add directory="/home/felix/Desktop/Pangolin/build/src/include"/>
 					<Add directory="/usr/include/c++/7"/>
 					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
 					<Add directory="/usr/include/c++/7/backward"/>
@@ -231,7 +89,7 @@
 					<Add directory="/usr/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 rgbd_tum/fast"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 DA/fast"/>
 					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
 					<Clean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 					<DistClean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
@@ -246,12 +104,11 @@
 				<Compiler>
 					<Add option="-DCOMPILEDWITHC11"/>
 					<Add directory="/usr/local/include/opencv"/>
-					<Add directory="/usr/local/include"/>
 					<Add directory="/home/felix/Desktop/ORB_SLAM2"/>
 					<Add directory="/home/felix/Desktop/ORB_SLAM2/include"/>
+					<Add directory="/usr/local/lib/cmake/Pangolin/../../../include"/>
+					<Add directory="/usr/local/include"/>
 					<Add directory="/usr/local/include/eigen3"/>
-					<Add directory="/home/felix/Desktop/Pangolin/include"/>
-					<Add directory="/home/felix/Desktop/Pangolin/build/src/include"/>
 					<Add directory="/usr/include/c++/7"/>
 					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
 					<Add directory="/usr/include/c++/7/backward"/>
@@ -276,12 +133,11 @@
 				<Compiler>
 					<Add option="-DCOMPILEDWITHC11"/>
 					<Add directory="/usr/local/include/opencv"/>
-					<Add directory="/usr/local/include"/>
 					<Add directory="/home/felix/Desktop/ORB_SLAM2"/>
 					<Add directory="/home/felix/Desktop/ORB_SLAM2/include"/>
+					<Add directory="/usr/local/lib/cmake/Pangolin/../../../include"/>
+					<Add directory="/usr/local/include"/>
 					<Add directory="/usr/local/include/eigen3"/>
-					<Add directory="/home/felix/Desktop/Pangolin/include"/>
-					<Add directory="/home/felix/Desktop/Pangolin/build/src/include"/>
 					<Add directory="/usr/include/c++/7"/>
 					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
 					<Add directory="/usr/include/c++/7/backward"/>
@@ -297,224 +153,9 @@
 					<DistClean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
-			<Target title="mono_tum">
-				<Option output="/home/felix/Desktop/ORB_SLAM2/Examples/Monocular/mono_tum" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/felix/Desktop/ORB_SLAM2/Examples/Monocular"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add option="-DCOMPILEDWITHC11"/>
-					<Add directory="/usr/local/include/opencv"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/home/felix/Desktop/ORB_SLAM2"/>
-					<Add directory="/home/felix/Desktop/ORB_SLAM2/include"/>
-					<Add directory="/usr/local/include/eigen3"/>
-					<Add directory="/home/felix/Desktop/Pangolin/include"/>
-					<Add directory="/home/felix/Desktop/Pangolin/build/src/include"/>
-					<Add directory="/usr/include/c++/7"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
-					<Add directory="/usr/include/c++/7/backward"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
-					<Add directory="/usr/include/x86_64-linux-gnu"/>
-					<Add directory="/usr/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 mono_tum"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="mono_tum/fast">
-				<Option output="/home/felix/Desktop/ORB_SLAM2/Examples/Monocular/mono_tum" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/felix/Desktop/ORB_SLAM2/Examples/Monocular"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add option="-DCOMPILEDWITHC11"/>
-					<Add directory="/usr/local/include/opencv"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/home/felix/Desktop/ORB_SLAM2"/>
-					<Add directory="/home/felix/Desktop/ORB_SLAM2/include"/>
-					<Add directory="/usr/local/include/eigen3"/>
-					<Add directory="/home/felix/Desktop/Pangolin/include"/>
-					<Add directory="/home/felix/Desktop/Pangolin/build/src/include"/>
-					<Add directory="/usr/include/c++/7"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
-					<Add directory="/usr/include/c++/7/backward"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
-					<Add directory="/usr/include/x86_64-linux-gnu"/>
-					<Add directory="/usr/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 mono_tum/fast"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="mono_kitti">
-				<Option output="/home/felix/Desktop/ORB_SLAM2/Examples/Monocular/mono_kitti" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/felix/Desktop/ORB_SLAM2/Examples/Monocular"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add option="-DCOMPILEDWITHC11"/>
-					<Add directory="/usr/local/include/opencv"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/home/felix/Desktop/ORB_SLAM2"/>
-					<Add directory="/home/felix/Desktop/ORB_SLAM2/include"/>
-					<Add directory="/usr/local/include/eigen3"/>
-					<Add directory="/home/felix/Desktop/Pangolin/include"/>
-					<Add directory="/home/felix/Desktop/Pangolin/build/src/include"/>
-					<Add directory="/usr/include/c++/7"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
-					<Add directory="/usr/include/c++/7/backward"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
-					<Add directory="/usr/include/x86_64-linux-gnu"/>
-					<Add directory="/usr/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 mono_kitti"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="mono_kitti/fast">
-				<Option output="/home/felix/Desktop/ORB_SLAM2/Examples/Monocular/mono_kitti" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/felix/Desktop/ORB_SLAM2/Examples/Monocular"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add option="-DCOMPILEDWITHC11"/>
-					<Add directory="/usr/local/include/opencv"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/home/felix/Desktop/ORB_SLAM2"/>
-					<Add directory="/home/felix/Desktop/ORB_SLAM2/include"/>
-					<Add directory="/usr/local/include/eigen3"/>
-					<Add directory="/home/felix/Desktop/Pangolin/include"/>
-					<Add directory="/home/felix/Desktop/Pangolin/build/src/include"/>
-					<Add directory="/usr/include/c++/7"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
-					<Add directory="/usr/include/c++/7/backward"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
-					<Add directory="/usr/include/x86_64-linux-gnu"/>
-					<Add directory="/usr/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 mono_kitti/fast"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="mono_euroc">
-				<Option output="/home/felix/Desktop/ORB_SLAM2/Examples/Monocular/mono_euroc" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/felix/Desktop/ORB_SLAM2/Examples/Monocular"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add option="-DCOMPILEDWITHC11"/>
-					<Add directory="/usr/local/include/opencv"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/home/felix/Desktop/ORB_SLAM2"/>
-					<Add directory="/home/felix/Desktop/ORB_SLAM2/include"/>
-					<Add directory="/usr/local/include/eigen3"/>
-					<Add directory="/home/felix/Desktop/Pangolin/include"/>
-					<Add directory="/home/felix/Desktop/Pangolin/build/src/include"/>
-					<Add directory="/usr/include/c++/7"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
-					<Add directory="/usr/include/c++/7/backward"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
-					<Add directory="/usr/include/x86_64-linux-gnu"/>
-					<Add directory="/usr/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 mono_euroc"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="mono_euroc/fast">
-				<Option output="/home/felix/Desktop/ORB_SLAM2/Examples/Monocular/mono_euroc" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/felix/Desktop/ORB_SLAM2/Examples/Monocular"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add option="-DCOMPILEDWITHC11"/>
-					<Add directory="/usr/local/include/opencv"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/home/felix/Desktop/ORB_SLAM2"/>
-					<Add directory="/home/felix/Desktop/ORB_SLAM2/include"/>
-					<Add directory="/usr/local/include/eigen3"/>
-					<Add directory="/home/felix/Desktop/Pangolin/include"/>
-					<Add directory="/home/felix/Desktop/Pangolin/build/src/include"/>
-					<Add directory="/usr/include/c++/7"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
-					<Add directory="/usr/include/c++/7/backward"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
-					<Add directory="/usr/include/x86_64-linux-gnu"/>
-					<Add directory="/usr/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 mono_euroc/fast"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="edit_cache">
-				<Option working_dir="/home/felix/Desktop/ORB_SLAM2/cmake-build-debug"/>
-				<Option type="4"/>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="rebuild_cache">
-				<Option working_dir="/home/felix/Desktop/ORB_SLAM2/cmake-build-debug"/>
-				<Option type="4"/>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
-					<CompileFile command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j8 -f &quot;/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
 		</Build>
-		<Unit filename="/home/felix/Desktop/ORB_SLAM2/Examples/Monocular/mono_euroc.cc">
-			<Option target="mono_euroc"/>
-		</Unit>
-		<Unit filename="/home/felix/Desktop/ORB_SLAM2/Examples/Monocular/mono_kitti.cc">
-			<Option target="mono_kitti"/>
-		</Unit>
-		<Unit filename="/home/felix/Desktop/ORB_SLAM2/Examples/Monocular/mono_tum.cc">
-			<Option target="mono_tum"/>
-		</Unit>
-		<Unit filename="/home/felix/Desktop/ORB_SLAM2/Examples/RGB-D/rgbd_tum.cc">
-			<Option target="rgbd_tum"/>
-		</Unit>
-		<Unit filename="/home/felix/Desktop/ORB_SLAM2/Examples/Stereo/stereo_euroc.cc">
-			<Option target="stereo_euroc"/>
-		</Unit>
-		<Unit filename="/home/felix/Desktop/ORB_SLAM2/Examples/Stereo/stereo_kitti.cc">
-			<Option target="stereo_kitti"/>
+		<Unit filename="/home/felix/Desktop/ORB_SLAM2/_da/src/main.cpp">
+			<Option target="DA"/>
 		</Unit>
 		<Unit filename="/home/felix/Desktop/ORB_SLAM2/src/Converter.cc">
 			<Option target="ORB_SLAM2"/>
@@ -588,14 +229,17 @@
 		<Unit filename="/home/felix/Desktop/ORB_SLAM2/../../../../usr/local/share/OpenCV/OpenCVModules.cmake">
 			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\share\OpenCV\"/>
 		</Unit>
-		<Unit filename="/home/felix/Desktop/ORB_SLAM2/../Pangolin/build/src/PangolinConfig.cmake">
-			<Option virtualFolder="CMake Files\..\Pangolin\build\src\"/>
+		<Unit filename="/home/felix/Desktop/ORB_SLAM2/../../../../usr/local/lib/cmake/Pangolin/PangolinConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\lib\cmake\Pangolin\"/>
 		</Unit>
-		<Unit filename="/home/felix/Desktop/ORB_SLAM2/../Pangolin/build/src/PangolinConfigVersion.cmake">
-			<Option virtualFolder="CMake Files\..\Pangolin\build\src\"/>
+		<Unit filename="/home/felix/Desktop/ORB_SLAM2/../../../../usr/local/lib/cmake/Pangolin/PangolinConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\lib\cmake\Pangolin\"/>
 		</Unit>
-		<Unit filename="/home/felix/Desktop/ORB_SLAM2/../Pangolin/build/src/PangolinTargets.cmake">
-			<Option virtualFolder="CMake Files\..\Pangolin\build\src\"/>
+		<Unit filename="/home/felix/Desktop/ORB_SLAM2/../../../../usr/local/lib/cmake/Pangolin/PangolinTargets-release.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\lib\cmake\Pangolin\"/>
+		</Unit>
+		<Unit filename="/home/felix/Desktop/ORB_SLAM2/../../../../usr/local/lib/cmake/Pangolin/PangolinTargets.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\lib\cmake\Pangolin\"/>
 		</Unit>
 		<Unit filename="/home/felix/Desktop/ORB_SLAM2/cmake_modules/FindEigen3.cmake">
 			<Option virtualFolder="CMake Files\cmake_modules\"/>

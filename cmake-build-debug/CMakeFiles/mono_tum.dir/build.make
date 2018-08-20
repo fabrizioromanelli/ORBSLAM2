@@ -99,7 +99,7 @@ mono_tum_EXTERNAL_OBJECTS =
 ../Examples/Monocular/mono_tum: /usr/local/lib/libopencv_imgproc.so.2.4.13
 ../Examples/Monocular/mono_tum: /usr/local/lib/libopencv_flann.so.2.4.13
 ../Examples/Monocular/mono_tum: /usr/local/lib/libopencv_core.so.2.4.13
-../Examples/Monocular/mono_tum: /home/felix/Desktop/Pangolin/build/src/libpangolin.so
+../Examples/Monocular/mono_tum: /usr/local/lib/libpangolin.so
 ../Examples/Monocular/mono_tum: /usr/lib/x86_64-linux-gnu/libGLU.so
 ../Examples/Monocular/mono_tum: /usr/lib/x86_64-linux-gnu/libGL.so
 ../Examples/Monocular/mono_tum: /usr/lib/x86_64-linux-gnu/libGLEW.so

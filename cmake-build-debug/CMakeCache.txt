@@ -235,13 +235,19 @@ OpenCV_LIB_DIR_DBG:PATH=
 OpenCV_LIB_DIR_OPT:PATH=
 
 //The directory containing a CMake configuration file for Pangolin.
-Pangolin_DIR:PATH=/home/felix/Desktop/Pangolin/build/src
+Pangolin_DIR:PATH=/usr/local/lib/cmake/Pangolin
 
 //Path to a program.
 ProcessorCount_cmd_getconf:FILEPATH=/usr/bin/getconf
 
 //Path to a program.
 ProcessorCount_cmd_sysctl:FILEPATH=/sbin/sysctl
+
+//Value Computed by CMake
+Project_BINARY_DIR:STATIC=/home/felix/Desktop/ORB_SLAM2/cmake-build-debug
+
+//Value Computed by CMake
+Project_SOURCE_DIR:STATIC=/home/felix/Desktop/ORB_SLAM2
 
 
 ########################

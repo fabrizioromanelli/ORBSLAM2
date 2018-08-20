@@ -35,6 +35,8 @@
 #include"System.h"
 #include "fileutils.h"
 
+#include "tmp_test.h"
+
 using namespace std;
 
 void LoadImages(const string &strSequence, vector<string> &vstrImageFilenames,
@@ -42,6 +44,9 @@ void LoadImages(const string &strSequence, vector<string> &vstrImageFilenames,
 
 int main(int argc, char **argv)
 {
+
+    tmp_test gas;
+    gas.werner();
     std::cout << "Starting..." << std::endl;
     if(argc != 4)
     {
