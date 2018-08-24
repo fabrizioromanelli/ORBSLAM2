@@ -5691,6 +5691,7 @@ CMakeFiles/ORB_SLAM2.dir/src/System.cc.o: ../Thirdparty/DBoW2/DBoW2/FeatureVecto
 CMakeFiles/ORB_SLAM2.dir/src/System.cc.o: ../Thirdparty/DBoW2/DBoW2/TemplatedVocabulary.h
 CMakeFiles/ORB_SLAM2.dir/src/System.cc.o: ../Thirdparty/g2o/g2o/types/types_seven_dof_expmap.h
 CMakeFiles/ORB_SLAM2.dir/src/System.cc.o: ../Thirdparty/g2o/g2o/types/types_six_dof_expmap.h
+CMakeFiles/ORB_SLAM2.dir/src/System.cc.o: ../include/System.h
 CMakeFiles/ORB_SLAM2.dir/src/System.cc.o: ../Thirdparty/DBoW2/DBoW2/BowVector.h
 CMakeFiles/ORB_SLAM2.dir/src/System.cc.o: ../Thirdparty/DBoW2/DBoW2/FClass.h
 CMakeFiles/ORB_SLAM2.dir/src/System.cc.o: ../Thirdparty/DBoW2/DBoW2/FeatureVector.h

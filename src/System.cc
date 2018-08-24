@@ -26,6 +26,7 @@
 #include <pangolin/pangolin.h>
 #include <iomanip>
 #include <unistd.h>
+#include <include/System.h>
 
 
 namespace ORB_SLAM2
@@ -500,5 +501,6 @@ vector<cv::KeyPoint> System::GetTrackedKeyPointsUn()
     unique_lock<mutex> lock(mMutexState);
     return mTrackedKeyPointsUn;
 }
+
 
 } //namespace ORB_SLAM

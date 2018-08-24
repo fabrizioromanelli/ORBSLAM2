@@ -150,6 +150,32 @@ types_sba.h
 Eigen/Geometry
 -
 
+..//include/System.h
+string
+-
+thread
+-
+opencv2/core/core.hpp
+-
+Tracking.h
+../include/Tracking.h
+FrameDrawer.h
+../include/FrameDrawer.h
+MapDrawer.h
+../include/MapDrawer.h
+Map.h
+../include/Map.h
+LocalMapping.h
+../include/LocalMapping.h
+LoopClosing.h
+../include/LoopClosing.h
+KeyFrameDatabase.h
+../include/KeyFrameDatabase.h
+ORBVocabulary.h
+../include/ORBVocabulary.h
+Viewer.h
+../include/Viewer.h
+
 ../Thirdparty/DBoW2/DBoW2/BowVector.h
 iostream
 -
@@ -910,18 +936,6 @@ thread
 unistd.h
 -
 
-/home/felix/Desktop/ORB_SLAM2/src/MapDrawer.cc
-MapDrawer.h
-/home/felix/Desktop/ORB_SLAM2/src/MapDrawer.h
-MapPoint.h
-/home/felix/Desktop/ORB_SLAM2/src/MapPoint.h
-KeyFrame.h
-/home/felix/Desktop/ORB_SLAM2/src/KeyFrame.h
-pangolin/pangolin.h
--
-mutex
--
-
 /home/felix/Desktop/ORB_SLAM2/src/Optimizer.cc
 Optimizer.h
 /home/felix/Desktop/ORB_SLAM2/src/Optimizer.h
@@ -958,6 +972,8 @@ pangolin/pangolin.h
 iomanip
 -
 unistd.h
+-
+include/System.h
 -
 
 /home/felix/Desktop/ORB_SLAM2/src/Tracking.cc

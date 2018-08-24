@@ -24,8 +24,8 @@ typedef std::vector<cv::Point3f>  obj_points; // object points (3D) for one imag
 typedef std::vector<cv::Point2f>  img_points; // image point (2D) for one image
 
 
-#define CHESS_ROWS 9
-#define CHESS_COLS 6
+#define CHESS_ROWS 7
+#define CHESS_COLS 7
 #define BACKSPACE ' '
 
 void			find_corners(std::vector<obj_points>&, std::vector<img_points>&, cv::Size &img_size);
@@ -134,7 +134,8 @@ void   calibrate_camera(cv::Mat &cam_matrix, cv::Mat &dist_coeffs, std::vector<o
 std::string get_path(std::string message){
 	std::string path;
 	std::cout << message;
-	std::getline(std::cin, path);
+	//std::getline(std::cin, path);
+	path = "/home/felix/Desktop/calib_images/oneplus/";
 	if (path.empty()) {
 		std::cout << " Exitting program...\n" << std::endl;
 		exit(101);

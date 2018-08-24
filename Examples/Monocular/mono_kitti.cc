@@ -40,6 +40,29 @@ using namespace std;
 void LoadImages(const string &strSequence, vector<string> &vstrImageFilenames,
                 vector<double> &vTimestamps);
 
+string type2str(int type) {
+    string r;
+
+    uchar depth = type & CV_MAT_DEPTH_MASK;
+    uchar chans = 1 + (type >> CV_CN_SHIFT);
+
+    switch ( depth ) {
+        case CV_8U:  r = "8U"; break;
+        case CV_8S:  r = "8S"; break;
+        case CV_16U: r = "16U"; break;
+        case CV_16S: r = "16S"; break;
+        case CV_32S: r = "32S"; break;
+        case CV_32F: r = "32F"; break;
+        case CV_64F: r = "64F"; break;
+        default:     r = "User"; break;
+    }
+
+    r += "C";
+    r += (chans+'0');
+
+    return r;
+}
+
 int main(int argc, char **argv)
 {
 
@@ -61,7 +84,6 @@ int main(int argc, char **argv)
     std::cout << "loaded images" << std::endl;
 
     int nImages = vstrImageFilenames.size();
-    nImages = 100;
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
     ORB_SLAM2::System SLAM(argv[1],argv[2],ORB_SLAM2::System::MONOCULAR,true);
@@ -77,7 +99,7 @@ int main(int argc, char **argv)
 
     // Main loop
     cv::Mat im;
-    for(int ni=0; ni<nImages*1.8; ni++)
+    for(int ni=0; ni<nImages; ni++)
     {
         // Read image from file
         im = cv::imread(vstrImageFilenames[ni],CV_LOAD_IMAGE_UNCHANGED);
@@ -118,6 +140,15 @@ int main(int argc, char **argv)
         if(ttrack<T)
             usleep((T-ttrack)*1e6);
 
+        //if(cv::waitKey(1) >= 0)
+        {
+            if(!SLAM.GetKeyFrames().empty())
+            {
+                std::cout << SLAM.GetKeyFrames().back()->GetPose().at<float>(0, 3) << ";";
+                std::cout << SLAM.GetKeyFrames().back()->GetPose().at<float>(2, 3) << std::endl;
+
+            }
+        }
 
         if(ni > nImages) break;
     }
