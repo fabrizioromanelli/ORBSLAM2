@@ -18,6 +18,10 @@ Thirdparty/g2o/build/
 Thirdparty/g2o/config.h
 Thirdparty/g2o/lib/
 Vocabulary/ORBvoc.txt
+
+cmake-build-debug/
+cmake-build-release/
+
 build/
 *~
 lib/

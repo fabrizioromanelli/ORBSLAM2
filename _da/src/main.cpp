@@ -12,6 +12,7 @@
 #include "opencv2/opencv.hpp"
 
 
+
 using namespace cv;
 
 const std::string path_vocab = "/home/felix/Desktop/ORB_SLAM2/Vocabulary/ORBvoc.txt";

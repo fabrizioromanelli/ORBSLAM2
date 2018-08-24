@@ -40,5 +40,7 @@ For versions greater than 3.1.1 is MPL2, earlier versions are LGPLv3.
 BSD license. In the manifest.xml the only declared package dependencies are roscpp, tf, sensor_msgs, image_transport, cv_bridge, which are all BSD licensed.
 
 
+#####Camera Calibration
 
-
+* [Webcam Calibration Tool](https://github.com/datlife/webcam-calibration-tool)
+MIT license.
