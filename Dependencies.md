@@ -44,3 +44,6 @@ BSD license. In the manifest.xml the only declared package dependencies are rosc
 
 * [Webcam Calibration Tool](https://github.com/datlife/webcam-calibration-tool)
 MIT license.
+
+#####Saving and loading map data
+* [ORB_SLAM2_Enhanced](https://github.com/Jiankai-Sun/ORB_SLAM2_Enhanced) GPLv3 license.
