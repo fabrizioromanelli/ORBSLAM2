@@ -14,6 +14,9 @@
 # EXTERNAL cache entries
 ########################
 
+//Path to a library.
+BOOST_SERIALIZATION:FILEPATH=/usr/local/lib/libboost_serialization.so
+
 //Path to a program.
 CMAKE_AR:FILEPATH=/usr/bin/ar
 
@@ -212,7 +215,7 @@ EIGEN3_INCLUDE_DIR:PATH=/usr/local/include/eigen3
 ORB_SLAM2_BINARY_DIR:STATIC=/home/felix/Desktop/ORB_SLAM2/cmake-build-debug
 
 //Dependencies for the target
-ORB_SLAM2_LIB_DEPENDS:STATIC=general;opencv_videostab;general;opencv_video;general;opencv_ts;general;opencv_superres;general;opencv_stitching;general;opencv_photo;general;opencv_ocl;general;opencv_objdetect;general;opencv_nonfree;general;opencv_ml;general;opencv_legacy;general;opencv_imgproc;general;opencv_highgui;general;opencv_gpu;general;opencv_flann;general;opencv_features2d;general;opencv_core;general;opencv_contrib;general;opencv_calib3d;general;pangolin;general;/home/felix/Desktop/ORB_SLAM2/Thirdparty/DBoW2/lib/libDBoW2.so;general;/home/felix/Desktop/ORB_SLAM2/Thirdparty/g2o/lib/libg2o.so;
+ORB_SLAM2_LIB_DEPENDS:STATIC=general;opencv_videostab;general;opencv_video;general;opencv_ts;general;opencv_superres;general;opencv_stitching;general;opencv_photo;general;opencv_ocl;general;opencv_objdetect;general;opencv_nonfree;general;opencv_ml;general;opencv_legacy;general;opencv_imgproc;general;opencv_highgui;general;opencv_gpu;general;opencv_flann;general;opencv_features2d;general;opencv_core;general;opencv_contrib;general;opencv_calib3d;general;pangolin;general;/home/felix/Desktop/ORB_SLAM2/Thirdparty/DBoW2/lib/libDBoW2.so;general;/home/felix/Desktop/ORB_SLAM2/Thirdparty/g2o/lib/libg2o.so;general;/usr/local/lib/libboost_serialization.so;
 
 //Value Computed by CMake
 ORB_SLAM2_SOURCE_DIR:STATIC=/home/felix/Desktop/ORB_SLAM2

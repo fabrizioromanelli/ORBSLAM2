@@ -116,6 +116,7 @@ mono_kitti_EXTERNAL_OBJECTS =
 ../Examples/Monocular/mono_kitti: /usr/lib/x86_64-linux-gnu/libz.so
 ../Examples/Monocular/mono_kitti: ../Thirdparty/DBoW2/lib/libDBoW2.so
 ../Examples/Monocular/mono_kitti: ../Thirdparty/g2o/lib/libg2o.so
+../Examples/Monocular/mono_kitti: /usr/local/lib/libboost_serialization.so
 ../Examples/Monocular/mono_kitti: CMakeFiles/mono_kitti.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/felix/Desktop/ORB_SLAM2/cmake-build-release/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable ../Examples/Monocular/mono_kitti"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/mono_kitti.dir/link.txt --verbose=$(VERBOSE)

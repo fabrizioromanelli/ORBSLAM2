@@ -79,6 +79,7 @@ DA_EXTERNAL_OBJECTS =
 
 ../_da/DA: CMakeFiles/DA.dir/_da/src/main.cpp.o
 ../_da/DA: CMakeFiles/DA.dir/build.make
+../_da/DA: /usr/local/lib/libboost_serialization.so
 ../_da/DA: ../lib/libORB_SLAM2.so
 ../_da/DA: /usr/local/lib/libopencv_videostab.so.2.4.13
 ../_da/DA: /usr/local/lib/libopencv_ts.a
@@ -116,6 +117,7 @@ DA_EXTERNAL_OBJECTS =
 ../_da/DA: /usr/lib/x86_64-linux-gnu/libz.so
 ../_da/DA: ../Thirdparty/DBoW2/lib/libDBoW2.so
 ../_da/DA: ../Thirdparty/g2o/lib/libg2o.so
+../_da/DA: /usr/local/lib/libboost_serialization.so
 ../_da/DA: CMakeFiles/DA.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/felix/Desktop/ORB_SLAM2/cmake-build-release/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable ../_da/DA"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/DA.dir/link.txt --verbose=$(VERBOSE)

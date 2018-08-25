@@ -27,6 +27,7 @@ int main(int, char**)
         return -1;
 
 
+
     ORB_SLAM2::System slam(path_vocab, path_yaml, ORB_SLAM2::System::MONOCULAR, true);
 
     Mat curr_frame;
@@ -50,13 +51,15 @@ int main(int, char**)
         {
             if(!slam.GetKeyFrames().empty())
             {
+                slam.GetKeyFrames()
                 std::cout << slam.GetKeyFrames().back()->GetPose() << std::endl;
+                slam.GetKeyFrames();
             }
         }
 
 
 
-        //if(waitKey(1) >= 0) break;
+        if(waitKey(1) >= 0) break;
 
 
     }

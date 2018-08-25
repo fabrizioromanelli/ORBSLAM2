@@ -357,6 +357,7 @@ ORB_SLAM2_EXTERNAL_OBJECTS =
 ../lib/libORB_SLAM2.so: /usr/local/lib/libpangolin.so
 ../lib/libORB_SLAM2.so: ../Thirdparty/DBoW2/lib/libDBoW2.so
 ../lib/libORB_SLAM2.so: ../Thirdparty/g2o/lib/libg2o.so
+../lib/libORB_SLAM2.so: /usr/local/lib/libboost_serialization.so
 ../lib/libORB_SLAM2.so: /usr/local/lib/libopencv_nonfree.so.2.4.13
 ../lib/libORB_SLAM2.so: /usr/local/lib/libopencv_ocl.so.2.4.13
 ../lib/libORB_SLAM2.so: /usr/local/lib/libopencv_gpu.so.2.4.13

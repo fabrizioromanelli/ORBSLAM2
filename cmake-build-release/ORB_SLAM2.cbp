@@ -44,6 +44,7 @@
 				<Option type="3"/>
 				<Option compiler="gcc"/>
 				<Compiler>
+					<Add option="-DFUNC_MAP_SAVE_LOAD=1"/>
 					<Add option="-DCOMPILEDWITHC11"/>
 					<Add directory="/usr/local/include/opencv"/>
 					<Add directory="/home/felix/Desktop/ORB_SLAM2"/>
@@ -73,6 +74,7 @@
 				<Option type="3"/>
 				<Option compiler="gcc"/>
 				<Compiler>
+					<Add option="-DFUNC_MAP_SAVE_LOAD=1"/>
 					<Add option="-DCOMPILEDWITHC11"/>
 					<Add directory="/usr/local/include/opencv"/>
 					<Add directory="/home/felix/Desktop/ORB_SLAM2"/>
@@ -102,6 +104,7 @@
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
+					<Add option="-DFUNC_MAP_SAVE_LOAD=1"/>
 					<Add option="-DCOMPILEDWITHC11"/>
 					<Add directory="/usr/local/include/opencv"/>
 					<Add directory="/home/felix/Desktop/ORB_SLAM2"/>
@@ -131,6 +134,7 @@
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
+					<Add option="-DFUNC_MAP_SAVE_LOAD=1"/>
 					<Add option="-DCOMPILEDWITHC11"/>
 					<Add directory="/usr/local/include/opencv"/>
 					<Add directory="/home/felix/Desktop/ORB_SLAM2"/>
@@ -161,6 +165,7 @@
 				<Option compiler="gcc"/>
 				<Compiler>
 					<Add option="-DCOMPILEDWITHC11"/>
+					<Add option="-DFUNC_MAP_SAVE_LOAD=1"/>
 					<Add directory="/usr/local/include/opencv"/>
 					<Add directory="/home/felix/Desktop/ORB_SLAM2"/>
 					<Add directory="/home/felix/Desktop/ORB_SLAM2/include"/>
@@ -190,6 +195,7 @@
 				<Option compiler="gcc"/>
 				<Compiler>
 					<Add option="-DCOMPILEDWITHC11"/>
+					<Add option="-DFUNC_MAP_SAVE_LOAD=1"/>
 					<Add directory="/usr/local/include/opencv"/>
 					<Add directory="/home/felix/Desktop/ORB_SLAM2"/>
 					<Add directory="/home/felix/Desktop/ORB_SLAM2/include"/>
@@ -219,6 +225,7 @@
 				<Option compiler="gcc"/>
 				<Compiler>
 					<Add option="-DCOMPILEDWITHC11"/>
+					<Add option="-DFUNC_MAP_SAVE_LOAD=1"/>
 					<Add directory="/usr/local/include/opencv"/>
 					<Add directory="/home/felix/Desktop/ORB_SLAM2"/>
 					<Add directory="/home/felix/Desktop/ORB_SLAM2/include"/>
@@ -248,6 +255,7 @@
 				<Option compiler="gcc"/>
 				<Compiler>
 					<Add option="-DCOMPILEDWITHC11"/>
+					<Add option="-DFUNC_MAP_SAVE_LOAD=1"/>
 					<Add directory="/usr/local/include/opencv"/>
 					<Add directory="/home/felix/Desktop/ORB_SLAM2"/>
 					<Add directory="/home/felix/Desktop/ORB_SLAM2/include"/>
