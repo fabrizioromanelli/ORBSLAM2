@@ -1,6 +1,0 @@
-/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/CMakeFiles/ORB_SLAM2.dir
-/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/CMakeFiles/DA.dir
-/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/CMakeFiles/mono_kitti.dir
-/home/felix/Desktop/ORB_SLAM2/cmake-build-debug/CMakeFiles/Camera_Calibration_Tool.dir

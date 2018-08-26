@@ -1,8 +1,0 @@
-/home/felix/Apps/clion-2018.2.1/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Release -G "CodeBlocks - Unix Makefiles" /home/felix/Desktop/ORB_SLAM2
-Build type: Release
--- Using flag -std=c++11.
--- WERNER FINDENIG
--- Compile With map save/load function
--- Configuring done
--- Generating done
--- Build files have been written to: /home/felix/Desktop/ORB_SLAM2/cmake-build-release
