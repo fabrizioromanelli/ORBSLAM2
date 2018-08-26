@@ -22,18 +22,15 @@
 #include <pangolin/pangolin.h>
 
 #include <mutex>
+#include <unistd.h>
+
 
 namespace ORB_SLAM2
 {
-#ifdef FUNC_MAP_SAVE_LOAD
-Viewer::Viewer(System* pSystem, FrameDrawer *pFrameDrawer, MapDrawer *pMapDrawer, Tracking *pTracking, const string &strSettingPath, bool mbReuseMap_):
-    mpSystem(pSystem), mpFrameDrawer(pFrameDrawer),mpMapDrawer(pMapDrawer), mpTracker(pTracking),
-    mbFinishRequested(false), mbFinished(true), mbStopped(true), mbStopRequested(false), mbReuseMap(mbReuseMap_)
-#else
+
 Viewer::Viewer(System* pSystem, FrameDrawer *pFrameDrawer, MapDrawer *pMapDrawer, Tracking *pTracking, const string &strSettingPath):
     mpSystem(pSystem), mpFrameDrawer(pFrameDrawer),mpMapDrawer(pMapDrawer), mpTracker(pTracking),
     mbFinishRequested(false), mbFinished(true), mbStopped(true), mbStopRequested(false)
-#endif
 {
     cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
 
@@ -75,11 +72,7 @@ void Viewer::Run()
     pangolin::Var<bool> menuShowPoints("menu.Show Points",true,true);
     pangolin::Var<bool> menuShowKeyFrames("menu.Show KeyFrames",true,true);
     pangolin::Var<bool> menuShowGraph("menu.Show Graph",true,true);
-#ifdef FUNC_MAP_SAVE_LOAD
-    pangolin::Var<bool> menuLocalizationMode("menu.Localization Mode",mbReuseMap,true);
-#else
     pangolin::Var<bool> menuLocalizationMode("menu.Localization Mode",false,true);
-#endif
     pangolin::Var<bool> menuReset("menu.Reset",false,false);
 
     // Define Camera Render Object (for view / scene browsing)
@@ -166,7 +159,7 @@ void Viewer::Run()
         {
             while(isStopped())
             {
-                std::this_thread::sleep_for(std::chrono::microseconds(3000));
+                usleep(3000);
             }
         }
 

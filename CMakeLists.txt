@@ -79,7 +79,7 @@ target_link_libraries(${PROJECT_NAME}
         )
 
 # ORBSLAM2_ENHANCED
-
+#[[
 set(USE_MAP_SAVE_LOAD ON)
 MESSAGE(STATUS "WERNER FINDENIG")
 if (NOT DEFINED USE_MAP_SAVE_LOAD)
@@ -94,7 +94,7 @@ if(USE_MAP_SAVE_LOAD)
     target_link_libraries(${PROJECT_NAME} ${BOOST_SERIALIZATION})
     target_compile_definitions(${PROJECT_NAME} PUBLIC FUNC_MAP_SAVE_LOAD=1)
 endif()
-
+]]
 # END ORBSLAM2_ENHANCED
 
 

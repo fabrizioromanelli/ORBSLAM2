@@ -23,8 +23,8 @@ int main(int, char**)
 {
     VideoCapture cap("http://10.0.0.8:8080/video");
 
-    if(!cap.isOpened())
-        return -1;
+    //if(!cap.isOpened())
+    //    return -1;
 
 
 
@@ -46,14 +46,11 @@ int main(int, char**)
 
         imshow("werner", curr_frame);
         slam.TrackMonocular(curr_frame, curr_time);
-
         if(waitKey(1) >= 0)
         {
             if(!slam.GetKeyFrames().empty())
             {
-                slam.GetKeyFrames()
                 std::cout << slam.GetKeyFrames().back()->GetPose() << std::endl;
-                slam.GetKeyFrames();
             }
         }
 

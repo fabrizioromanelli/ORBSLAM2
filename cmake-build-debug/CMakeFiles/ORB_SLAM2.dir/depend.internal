@@ -667,7 +667,6 @@ CMakeFiles/ORB_SLAM2.dir/src/FrameDrawer.cc.o
  /usr/local/include/eigen3/Eigen/src/Cholesky/LDLT.h
  /usr/local/include/eigen3/Eigen/src/Cholesky/LLT.h
  /usr/local/include/eigen3/Eigen/src/Cholesky/LLT_LAPACKE.h
- /usr/local/include/eigen3/Eigen/src/Core/ArithmeticSequence.h
  /usr/local/include/eigen3/Eigen/src/Core/Array.h
  /usr/local/include/eigen3/Eigen/src/Core/ArrayBase.h
  /usr/local/include/eigen3/Eigen/src/Core/ArrayWrapper.h
@@ -699,7 +698,6 @@ CMakeFiles/ORB_SLAM2.dir/src/FrameDrawer.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/GenericPacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/GlobalFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/IO.h
- /usr/local/include/eigen3/Eigen/src/Core/IndexedView.h
  /usr/local/include/eigen3/Eigen/src/Core/Inverse.h
  /usr/local/include/eigen3/Eigen/src/Core/Map.h
  /usr/local/include/eigen3/Eigen/src/Core/MapBase.h
@@ -745,29 +743,20 @@ CMakeFiles/ORB_SLAM2.dir/src/FrameDrawer.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/arch/AltiVec/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/AltiVec/PacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/Complex.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/Half.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/MathFunctions.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/PacketMath.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/PacketMathHalf.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/TypeCasting.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/Default/ConjHelper.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/Default/Settings.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/Half.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/MathFunctions.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/PacketMath.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/PacketMathHalf.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/TypeCasting.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/HIP/hcc/math_constants.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/MSA/Complex.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/MSA/MathFunctions.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/MSA/PacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/Complex.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/PacketMath.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/TypeCasting.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/Complex.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/PacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/TypeCasting.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/InteropHeaders.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/MathFunctions.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/PacketMath.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/TypeCasting.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/ZVector/Complex.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/ZVector/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/ZVector/PacketMath.h
@@ -799,19 +788,15 @@ CMakeFiles/ORB_SLAM2.dir/src/FrameDrawer.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/products/TriangularSolverMatrix_BLAS.h
  /usr/local/include/eigen3/Eigen/src/Core/products/TriangularSolverVector.h
  /usr/local/include/eigen3/Eigen/src/Core/util/BlasUtil.h
- /usr/local/include/eigen3/Eigen/src/Core/util/ConfigureVectorization.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Constants.h
  /usr/local/include/eigen3/Eigen/src/Core/util/DisableStupidWarnings.h
  /usr/local/include/eigen3/Eigen/src/Core/util/ForwardDeclarations.h
- /usr/local/include/eigen3/Eigen/src/Core/util/IndexedViewHelper.h
- /usr/local/include/eigen3/Eigen/src/Core/util/IntegralConstant.h
  /usr/local/include/eigen3/Eigen/src/Core/util/MKL_support.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Macros.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Memory.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Meta.h
  /usr/local/include/eigen3/Eigen/src/Core/util/ReenableStupidWarnings.h
  /usr/local/include/eigen3/Eigen/src/Core/util/StaticAssert.h
- /usr/local/include/eigen3/Eigen/src/Core/util/SymbolicIndex.h
  /usr/local/include/eigen3/Eigen/src/Core/util/XprHelper.h
  /usr/local/include/eigen3/Eigen/src/Eigenvalues/./ComplexSchur.h
  /usr/local/include/eigen3/Eigen/src/Eigenvalues/./HessenbergDecomposition.h
@@ -881,7 +866,6 @@ CMakeFiles/ORB_SLAM2.dir/src/FrameDrawer.cc.o
  /usr/local/include/eigen3/Eigen/src/plugins/BlockMethods.h
  /usr/local/include/eigen3/Eigen/src/plugins/CommonCwiseBinaryOps.h
  /usr/local/include/eigen3/Eigen/src/plugins/CommonCwiseUnaryOps.h
- /usr/local/include/eigen3/Eigen/src/plugins/IndexedViewMethods.h
  /usr/local/include/eigen3/Eigen/src/plugins/MatrixCwiseBinaryOps.h
  /usr/local/include/eigen3/Eigen/src/plugins/MatrixCwiseUnaryOps.h
  /usr/local/lib/cmake/Pangolin/../../../include/boost/assert.hpp
@@ -1180,7 +1164,6 @@ CMakeFiles/ORB_SLAM2.dir/src/Initializer.cc.o
  /usr/local/include/eigen3/Eigen/src/Cholesky/LDLT.h
  /usr/local/include/eigen3/Eigen/src/Cholesky/LLT.h
  /usr/local/include/eigen3/Eigen/src/Cholesky/LLT_LAPACKE.h
- /usr/local/include/eigen3/Eigen/src/Core/ArithmeticSequence.h
  /usr/local/include/eigen3/Eigen/src/Core/Array.h
  /usr/local/include/eigen3/Eigen/src/Core/ArrayBase.h
  /usr/local/include/eigen3/Eigen/src/Core/ArrayWrapper.h
@@ -1212,7 +1195,6 @@ CMakeFiles/ORB_SLAM2.dir/src/Initializer.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/GenericPacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/GlobalFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/IO.h
- /usr/local/include/eigen3/Eigen/src/Core/IndexedView.h
  /usr/local/include/eigen3/Eigen/src/Core/Inverse.h
  /usr/local/include/eigen3/Eigen/src/Core/Map.h
  /usr/local/include/eigen3/Eigen/src/Core/MapBase.h
@@ -1258,29 +1240,20 @@ CMakeFiles/ORB_SLAM2.dir/src/Initializer.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/arch/AltiVec/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/AltiVec/PacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/Complex.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/Half.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/MathFunctions.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/PacketMath.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/PacketMathHalf.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/TypeCasting.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/Default/ConjHelper.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/Default/Settings.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/Half.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/MathFunctions.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/PacketMath.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/PacketMathHalf.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/TypeCasting.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/HIP/hcc/math_constants.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/MSA/Complex.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/MSA/MathFunctions.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/MSA/PacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/Complex.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/PacketMath.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/TypeCasting.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/Complex.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/PacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/TypeCasting.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/InteropHeaders.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/MathFunctions.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/PacketMath.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/TypeCasting.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/ZVector/Complex.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/ZVector/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/ZVector/PacketMath.h
@@ -1312,19 +1285,15 @@ CMakeFiles/ORB_SLAM2.dir/src/Initializer.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/products/TriangularSolverMatrix_BLAS.h
  /usr/local/include/eigen3/Eigen/src/Core/products/TriangularSolverVector.h
  /usr/local/include/eigen3/Eigen/src/Core/util/BlasUtil.h
- /usr/local/include/eigen3/Eigen/src/Core/util/ConfigureVectorization.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Constants.h
  /usr/local/include/eigen3/Eigen/src/Core/util/DisableStupidWarnings.h
  /usr/local/include/eigen3/Eigen/src/Core/util/ForwardDeclarations.h
- /usr/local/include/eigen3/Eigen/src/Core/util/IndexedViewHelper.h
- /usr/local/include/eigen3/Eigen/src/Core/util/IntegralConstant.h
  /usr/local/include/eigen3/Eigen/src/Core/util/MKL_support.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Macros.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Memory.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Meta.h
  /usr/local/include/eigen3/Eigen/src/Core/util/ReenableStupidWarnings.h
  /usr/local/include/eigen3/Eigen/src/Core/util/StaticAssert.h
- /usr/local/include/eigen3/Eigen/src/Core/util/SymbolicIndex.h
  /usr/local/include/eigen3/Eigen/src/Core/util/XprHelper.h
  /usr/local/include/eigen3/Eigen/src/Eigenvalues/./ComplexSchur.h
  /usr/local/include/eigen3/Eigen/src/Eigenvalues/./HessenbergDecomposition.h
@@ -1394,7 +1363,6 @@ CMakeFiles/ORB_SLAM2.dir/src/Initializer.cc.o
  /usr/local/include/eigen3/Eigen/src/plugins/BlockMethods.h
  /usr/local/include/eigen3/Eigen/src/plugins/CommonCwiseBinaryOps.h
  /usr/local/include/eigen3/Eigen/src/plugins/CommonCwiseUnaryOps.h
- /usr/local/include/eigen3/Eigen/src/plugins/IndexedViewMethods.h
  /usr/local/include/eigen3/Eigen/src/plugins/MatrixCwiseBinaryOps.h
  /usr/local/include/eigen3/Eigen/src/plugins/MatrixCwiseUnaryOps.h
  /usr/local/lib/cmake/Pangolin/../../../include/boost/assert.hpp
@@ -2266,7 +2234,6 @@ CMakeFiles/ORB_SLAM2.dir/src/LocalMapping.cc.o
  /usr/local/include/eigen3/Eigen/src/Cholesky/LDLT.h
  /usr/local/include/eigen3/Eigen/src/Cholesky/LLT.h
  /usr/local/include/eigen3/Eigen/src/Cholesky/LLT_LAPACKE.h
- /usr/local/include/eigen3/Eigen/src/Core/ArithmeticSequence.h
  /usr/local/include/eigen3/Eigen/src/Core/Array.h
  /usr/local/include/eigen3/Eigen/src/Core/ArrayBase.h
  /usr/local/include/eigen3/Eigen/src/Core/ArrayWrapper.h
@@ -2298,7 +2265,6 @@ CMakeFiles/ORB_SLAM2.dir/src/LocalMapping.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/GenericPacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/GlobalFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/IO.h
- /usr/local/include/eigen3/Eigen/src/Core/IndexedView.h
  /usr/local/include/eigen3/Eigen/src/Core/Inverse.h
  /usr/local/include/eigen3/Eigen/src/Core/Map.h
  /usr/local/include/eigen3/Eigen/src/Core/MapBase.h
@@ -2344,29 +2310,20 @@ CMakeFiles/ORB_SLAM2.dir/src/LocalMapping.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/arch/AltiVec/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/AltiVec/PacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/Complex.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/Half.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/MathFunctions.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/PacketMath.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/PacketMathHalf.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/TypeCasting.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/Default/ConjHelper.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/Default/Settings.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/Half.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/MathFunctions.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/PacketMath.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/PacketMathHalf.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/TypeCasting.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/HIP/hcc/math_constants.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/MSA/Complex.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/MSA/MathFunctions.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/MSA/PacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/Complex.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/PacketMath.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/TypeCasting.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/Complex.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/PacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/TypeCasting.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/InteropHeaders.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/MathFunctions.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/PacketMath.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/TypeCasting.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/ZVector/Complex.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/ZVector/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/ZVector/PacketMath.h
@@ -2398,19 +2355,15 @@ CMakeFiles/ORB_SLAM2.dir/src/LocalMapping.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/products/TriangularSolverMatrix_BLAS.h
  /usr/local/include/eigen3/Eigen/src/Core/products/TriangularSolverVector.h
  /usr/local/include/eigen3/Eigen/src/Core/util/BlasUtil.h
- /usr/local/include/eigen3/Eigen/src/Core/util/ConfigureVectorization.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Constants.h
  /usr/local/include/eigen3/Eigen/src/Core/util/DisableStupidWarnings.h
  /usr/local/include/eigen3/Eigen/src/Core/util/ForwardDeclarations.h
- /usr/local/include/eigen3/Eigen/src/Core/util/IndexedViewHelper.h
- /usr/local/include/eigen3/Eigen/src/Core/util/IntegralConstant.h
  /usr/local/include/eigen3/Eigen/src/Core/util/MKL_support.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Macros.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Memory.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Meta.h
  /usr/local/include/eigen3/Eigen/src/Core/util/ReenableStupidWarnings.h
  /usr/local/include/eigen3/Eigen/src/Core/util/StaticAssert.h
- /usr/local/include/eigen3/Eigen/src/Core/util/SymbolicIndex.h
  /usr/local/include/eigen3/Eigen/src/Core/util/XprHelper.h
  /usr/local/include/eigen3/Eigen/src/Eigenvalues/./ComplexSchur.h
  /usr/local/include/eigen3/Eigen/src/Eigenvalues/./HessenbergDecomposition.h
@@ -2480,7 +2433,6 @@ CMakeFiles/ORB_SLAM2.dir/src/LocalMapping.cc.o
  /usr/local/include/eigen3/Eigen/src/plugins/BlockMethods.h
  /usr/local/include/eigen3/Eigen/src/plugins/CommonCwiseBinaryOps.h
  /usr/local/include/eigen3/Eigen/src/plugins/CommonCwiseUnaryOps.h
- /usr/local/include/eigen3/Eigen/src/plugins/IndexedViewMethods.h
  /usr/local/include/eigen3/Eigen/src/plugins/MatrixCwiseBinaryOps.h
  /usr/local/include/eigen3/Eigen/src/plugins/MatrixCwiseUnaryOps.h
  /usr/local/lib/cmake/Pangolin/../../../include/boost/assert.hpp
@@ -2781,7 +2733,6 @@ CMakeFiles/ORB_SLAM2.dir/src/LoopClosing.cc.o
  /usr/local/include/eigen3/Eigen/src/Cholesky/LDLT.h
  /usr/local/include/eigen3/Eigen/src/Cholesky/LLT.h
  /usr/local/include/eigen3/Eigen/src/Cholesky/LLT_LAPACKE.h
- /usr/local/include/eigen3/Eigen/src/Core/ArithmeticSequence.h
  /usr/local/include/eigen3/Eigen/src/Core/Array.h
  /usr/local/include/eigen3/Eigen/src/Core/ArrayBase.h
  /usr/local/include/eigen3/Eigen/src/Core/ArrayWrapper.h
@@ -2813,7 +2764,6 @@ CMakeFiles/ORB_SLAM2.dir/src/LoopClosing.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/GenericPacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/GlobalFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/IO.h
- /usr/local/include/eigen3/Eigen/src/Core/IndexedView.h
  /usr/local/include/eigen3/Eigen/src/Core/Inverse.h
  /usr/local/include/eigen3/Eigen/src/Core/Map.h
  /usr/local/include/eigen3/Eigen/src/Core/MapBase.h
@@ -2859,29 +2809,20 @@ CMakeFiles/ORB_SLAM2.dir/src/LoopClosing.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/arch/AltiVec/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/AltiVec/PacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/Complex.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/Half.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/MathFunctions.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/PacketMath.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/PacketMathHalf.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/TypeCasting.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/Default/ConjHelper.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/Default/Settings.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/Half.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/MathFunctions.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/PacketMath.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/PacketMathHalf.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/TypeCasting.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/HIP/hcc/math_constants.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/MSA/Complex.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/MSA/MathFunctions.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/MSA/PacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/Complex.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/PacketMath.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/TypeCasting.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/Complex.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/PacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/TypeCasting.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/InteropHeaders.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/MathFunctions.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/PacketMath.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/TypeCasting.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/ZVector/Complex.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/ZVector/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/ZVector/PacketMath.h
@@ -2913,19 +2854,15 @@ CMakeFiles/ORB_SLAM2.dir/src/LoopClosing.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/products/TriangularSolverMatrix_BLAS.h
  /usr/local/include/eigen3/Eigen/src/Core/products/TriangularSolverVector.h
  /usr/local/include/eigen3/Eigen/src/Core/util/BlasUtil.h
- /usr/local/include/eigen3/Eigen/src/Core/util/ConfigureVectorization.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Constants.h
  /usr/local/include/eigen3/Eigen/src/Core/util/DisableStupidWarnings.h
  /usr/local/include/eigen3/Eigen/src/Core/util/ForwardDeclarations.h
- /usr/local/include/eigen3/Eigen/src/Core/util/IndexedViewHelper.h
- /usr/local/include/eigen3/Eigen/src/Core/util/IntegralConstant.h
  /usr/local/include/eigen3/Eigen/src/Core/util/MKL_support.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Macros.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Memory.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Meta.h
  /usr/local/include/eigen3/Eigen/src/Core/util/ReenableStupidWarnings.h
  /usr/local/include/eigen3/Eigen/src/Core/util/StaticAssert.h
- /usr/local/include/eigen3/Eigen/src/Core/util/SymbolicIndex.h
  /usr/local/include/eigen3/Eigen/src/Core/util/XprHelper.h
  /usr/local/include/eigen3/Eigen/src/Eigenvalues/./ComplexSchur.h
  /usr/local/include/eigen3/Eigen/src/Eigenvalues/./HessenbergDecomposition.h
@@ -2995,7 +2932,6 @@ CMakeFiles/ORB_SLAM2.dir/src/LoopClosing.cc.o
  /usr/local/include/eigen3/Eigen/src/plugins/BlockMethods.h
  /usr/local/include/eigen3/Eigen/src/plugins/CommonCwiseBinaryOps.h
  /usr/local/include/eigen3/Eigen/src/plugins/CommonCwiseUnaryOps.h
- /usr/local/include/eigen3/Eigen/src/plugins/IndexedViewMethods.h
  /usr/local/include/eigen3/Eigen/src/plugins/MatrixCwiseBinaryOps.h
  /usr/local/include/eigen3/Eigen/src/plugins/MatrixCwiseUnaryOps.h
  /usr/local/lib/cmake/Pangolin/../../../include/boost/assert.hpp
@@ -4700,7 +4636,6 @@ CMakeFiles/ORB_SLAM2.dir/src/Optimizer.cc.o
  /usr/local/include/eigen3/Eigen/src/Cholesky/LDLT.h
  /usr/local/include/eigen3/Eigen/src/Cholesky/LLT.h
  /usr/local/include/eigen3/Eigen/src/Cholesky/LLT_LAPACKE.h
- /usr/local/include/eigen3/Eigen/src/Core/ArithmeticSequence.h
  /usr/local/include/eigen3/Eigen/src/Core/Array.h
  /usr/local/include/eigen3/Eigen/src/Core/ArrayBase.h
  /usr/local/include/eigen3/Eigen/src/Core/ArrayWrapper.h
@@ -4732,7 +4667,6 @@ CMakeFiles/ORB_SLAM2.dir/src/Optimizer.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/GenericPacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/GlobalFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/IO.h
- /usr/local/include/eigen3/Eigen/src/Core/IndexedView.h
  /usr/local/include/eigen3/Eigen/src/Core/Inverse.h
  /usr/local/include/eigen3/Eigen/src/Core/Map.h
  /usr/local/include/eigen3/Eigen/src/Core/MapBase.h
@@ -4778,29 +4712,20 @@ CMakeFiles/ORB_SLAM2.dir/src/Optimizer.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/arch/AltiVec/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/AltiVec/PacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/Complex.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/Half.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/MathFunctions.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/PacketMath.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/PacketMathHalf.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/TypeCasting.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/Default/ConjHelper.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/Default/Settings.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/Half.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/MathFunctions.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/PacketMath.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/PacketMathHalf.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/TypeCasting.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/HIP/hcc/math_constants.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/MSA/Complex.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/MSA/MathFunctions.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/MSA/PacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/Complex.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/PacketMath.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/TypeCasting.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/Complex.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/PacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/TypeCasting.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/InteropHeaders.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/MathFunctions.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/PacketMath.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/TypeCasting.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/ZVector/Complex.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/ZVector/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/ZVector/PacketMath.h
@@ -4832,12 +4757,9 @@ CMakeFiles/ORB_SLAM2.dir/src/Optimizer.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/products/TriangularSolverMatrix_BLAS.h
  /usr/local/include/eigen3/Eigen/src/Core/products/TriangularSolverVector.h
  /usr/local/include/eigen3/Eigen/src/Core/util/BlasUtil.h
- /usr/local/include/eigen3/Eigen/src/Core/util/ConfigureVectorization.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Constants.h
  /usr/local/include/eigen3/Eigen/src/Core/util/DisableStupidWarnings.h
  /usr/local/include/eigen3/Eigen/src/Core/util/ForwardDeclarations.h
- /usr/local/include/eigen3/Eigen/src/Core/util/IndexedViewHelper.h
- /usr/local/include/eigen3/Eigen/src/Core/util/IntegralConstant.h
  /usr/local/include/eigen3/Eigen/src/Core/util/MKL_support.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Macros.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Memory.h
@@ -4845,7 +4767,6 @@ CMakeFiles/ORB_SLAM2.dir/src/Optimizer.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/util/NonMPL2.h
  /usr/local/include/eigen3/Eigen/src/Core/util/ReenableStupidWarnings.h
  /usr/local/include/eigen3/Eigen/src/Core/util/StaticAssert.h
- /usr/local/include/eigen3/Eigen/src/Core/util/SymbolicIndex.h
  /usr/local/include/eigen3/Eigen/src/Core/util/XprHelper.h
  /usr/local/include/eigen3/Eigen/src/Eigenvalues/./ComplexSchur.h
  /usr/local/include/eigen3/Eigen/src/Eigenvalues/./HessenbergDecomposition.h
@@ -4976,7 +4897,6 @@ CMakeFiles/ORB_SLAM2.dir/src/Optimizer.cc.o
  /usr/local/include/eigen3/Eigen/src/plugins/BlockMethods.h
  /usr/local/include/eigen3/Eigen/src/plugins/CommonCwiseBinaryOps.h
  /usr/local/include/eigen3/Eigen/src/plugins/CommonCwiseUnaryOps.h
- /usr/local/include/eigen3/Eigen/src/plugins/IndexedViewMethods.h
  /usr/local/include/eigen3/Eigen/src/plugins/MatrixCwiseBinaryOps.h
  /usr/local/include/eigen3/Eigen/src/plugins/MatrixCwiseUnaryOps.h
  /usr/local/lib/cmake/Pangolin/../../../include/boost/assert.hpp
@@ -5752,7 +5672,6 @@ CMakeFiles/ORB_SLAM2.dir/src/System.cc.o
  /usr/local/include/eigen3/Eigen/src/Cholesky/LDLT.h
  /usr/local/include/eigen3/Eigen/src/Cholesky/LLT.h
  /usr/local/include/eigen3/Eigen/src/Cholesky/LLT_LAPACKE.h
- /usr/local/include/eigen3/Eigen/src/Core/ArithmeticSequence.h
  /usr/local/include/eigen3/Eigen/src/Core/Array.h
  /usr/local/include/eigen3/Eigen/src/Core/ArrayBase.h
  /usr/local/include/eigen3/Eigen/src/Core/ArrayWrapper.h
@@ -5784,7 +5703,6 @@ CMakeFiles/ORB_SLAM2.dir/src/System.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/GenericPacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/GlobalFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/IO.h
- /usr/local/include/eigen3/Eigen/src/Core/IndexedView.h
  /usr/local/include/eigen3/Eigen/src/Core/Inverse.h
  /usr/local/include/eigen3/Eigen/src/Core/Map.h
  /usr/local/include/eigen3/Eigen/src/Core/MapBase.h
@@ -5830,29 +5748,20 @@ CMakeFiles/ORB_SLAM2.dir/src/System.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/arch/AltiVec/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/AltiVec/PacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/Complex.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/Half.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/MathFunctions.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/PacketMath.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/PacketMathHalf.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/TypeCasting.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/Default/ConjHelper.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/Default/Settings.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/Half.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/MathFunctions.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/PacketMath.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/PacketMathHalf.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/TypeCasting.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/HIP/hcc/math_constants.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/MSA/Complex.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/MSA/MathFunctions.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/MSA/PacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/Complex.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/PacketMath.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/TypeCasting.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/Complex.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/PacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/TypeCasting.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/InteropHeaders.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/MathFunctions.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/PacketMath.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/TypeCasting.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/ZVector/Complex.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/ZVector/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/ZVector/PacketMath.h
@@ -5884,19 +5793,15 @@ CMakeFiles/ORB_SLAM2.dir/src/System.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/products/TriangularSolverMatrix_BLAS.h
  /usr/local/include/eigen3/Eigen/src/Core/products/TriangularSolverVector.h
  /usr/local/include/eigen3/Eigen/src/Core/util/BlasUtil.h
- /usr/local/include/eigen3/Eigen/src/Core/util/ConfigureVectorization.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Constants.h
  /usr/local/include/eigen3/Eigen/src/Core/util/DisableStupidWarnings.h
  /usr/local/include/eigen3/Eigen/src/Core/util/ForwardDeclarations.h
- /usr/local/include/eigen3/Eigen/src/Core/util/IndexedViewHelper.h
- /usr/local/include/eigen3/Eigen/src/Core/util/IntegralConstant.h
  /usr/local/include/eigen3/Eigen/src/Core/util/MKL_support.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Macros.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Memory.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Meta.h
  /usr/local/include/eigen3/Eigen/src/Core/util/ReenableStupidWarnings.h
  /usr/local/include/eigen3/Eigen/src/Core/util/StaticAssert.h
- /usr/local/include/eigen3/Eigen/src/Core/util/SymbolicIndex.h
  /usr/local/include/eigen3/Eigen/src/Core/util/XprHelper.h
  /usr/local/include/eigen3/Eigen/src/Eigenvalues/./ComplexSchur.h
  /usr/local/include/eigen3/Eigen/src/Eigenvalues/./HessenbergDecomposition.h
@@ -5966,7 +5871,6 @@ CMakeFiles/ORB_SLAM2.dir/src/System.cc.o
  /usr/local/include/eigen3/Eigen/src/plugins/BlockMethods.h
  /usr/local/include/eigen3/Eigen/src/plugins/CommonCwiseBinaryOps.h
  /usr/local/include/eigen3/Eigen/src/plugins/CommonCwiseUnaryOps.h
- /usr/local/include/eigen3/Eigen/src/plugins/IndexedViewMethods.h
  /usr/local/include/eigen3/Eigen/src/plugins/MatrixCwiseBinaryOps.h
  /usr/local/include/eigen3/Eigen/src/plugins/MatrixCwiseUnaryOps.h
  /usr/local/lib/cmake/Pangolin/../../../include/boost/assert.hpp
@@ -6267,7 +6171,6 @@ CMakeFiles/ORB_SLAM2.dir/src/Tracking.cc.o
  /usr/local/include/eigen3/Eigen/src/Cholesky/LDLT.h
  /usr/local/include/eigen3/Eigen/src/Cholesky/LLT.h
  /usr/local/include/eigen3/Eigen/src/Cholesky/LLT_LAPACKE.h
- /usr/local/include/eigen3/Eigen/src/Core/ArithmeticSequence.h
  /usr/local/include/eigen3/Eigen/src/Core/Array.h
  /usr/local/include/eigen3/Eigen/src/Core/ArrayBase.h
  /usr/local/include/eigen3/Eigen/src/Core/ArrayWrapper.h
@@ -6299,7 +6202,6 @@ CMakeFiles/ORB_SLAM2.dir/src/Tracking.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/GenericPacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/GlobalFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/IO.h
- /usr/local/include/eigen3/Eigen/src/Core/IndexedView.h
  /usr/local/include/eigen3/Eigen/src/Core/Inverse.h
  /usr/local/include/eigen3/Eigen/src/Core/Map.h
  /usr/local/include/eigen3/Eigen/src/Core/MapBase.h
@@ -6345,29 +6247,20 @@ CMakeFiles/ORB_SLAM2.dir/src/Tracking.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/arch/AltiVec/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/AltiVec/PacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/Complex.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/Half.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/MathFunctions.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/PacketMath.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/PacketMathHalf.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/TypeCasting.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/Default/ConjHelper.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/Default/Settings.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/Half.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/MathFunctions.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/PacketMath.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/PacketMathHalf.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/TypeCasting.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/HIP/hcc/math_constants.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/MSA/Complex.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/MSA/MathFunctions.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/MSA/PacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/Complex.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/PacketMath.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/TypeCasting.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/Complex.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/PacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/TypeCasting.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/InteropHeaders.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/MathFunctions.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/PacketMath.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/TypeCasting.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/ZVector/Complex.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/ZVector/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/ZVector/PacketMath.h
@@ -6399,19 +6292,15 @@ CMakeFiles/ORB_SLAM2.dir/src/Tracking.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/products/TriangularSolverMatrix_BLAS.h
  /usr/local/include/eigen3/Eigen/src/Core/products/TriangularSolverVector.h
  /usr/local/include/eigen3/Eigen/src/Core/util/BlasUtil.h
- /usr/local/include/eigen3/Eigen/src/Core/util/ConfigureVectorization.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Constants.h
  /usr/local/include/eigen3/Eigen/src/Core/util/DisableStupidWarnings.h
  /usr/local/include/eigen3/Eigen/src/Core/util/ForwardDeclarations.h
- /usr/local/include/eigen3/Eigen/src/Core/util/IndexedViewHelper.h
- /usr/local/include/eigen3/Eigen/src/Core/util/IntegralConstant.h
  /usr/local/include/eigen3/Eigen/src/Core/util/MKL_support.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Macros.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Memory.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Meta.h
  /usr/local/include/eigen3/Eigen/src/Core/util/ReenableStupidWarnings.h
  /usr/local/include/eigen3/Eigen/src/Core/util/StaticAssert.h
- /usr/local/include/eigen3/Eigen/src/Core/util/SymbolicIndex.h
  /usr/local/include/eigen3/Eigen/src/Core/util/XprHelper.h
  /usr/local/include/eigen3/Eigen/src/Eigenvalues/./ComplexSchur.h
  /usr/local/include/eigen3/Eigen/src/Eigenvalues/./HessenbergDecomposition.h
@@ -6481,7 +6370,6 @@ CMakeFiles/ORB_SLAM2.dir/src/Tracking.cc.o
  /usr/local/include/eigen3/Eigen/src/plugins/BlockMethods.h
  /usr/local/include/eigen3/Eigen/src/plugins/CommonCwiseBinaryOps.h
  /usr/local/include/eigen3/Eigen/src/plugins/CommonCwiseUnaryOps.h
- /usr/local/include/eigen3/Eigen/src/plugins/IndexedViewMethods.h
  /usr/local/include/eigen3/Eigen/src/plugins/MatrixCwiseBinaryOps.h
  /usr/local/include/eigen3/Eigen/src/plugins/MatrixCwiseUnaryOps.h
  /usr/local/lib/cmake/Pangolin/../../../include/boost/assert.hpp
@@ -6777,7 +6665,6 @@ CMakeFiles/ORB_SLAM2.dir/src/Viewer.cc.o
  /usr/local/include/eigen3/Eigen/src/Cholesky/LDLT.h
  /usr/local/include/eigen3/Eigen/src/Cholesky/LLT.h
  /usr/local/include/eigen3/Eigen/src/Cholesky/LLT_LAPACKE.h
- /usr/local/include/eigen3/Eigen/src/Core/ArithmeticSequence.h
  /usr/local/include/eigen3/Eigen/src/Core/Array.h
  /usr/local/include/eigen3/Eigen/src/Core/ArrayBase.h
  /usr/local/include/eigen3/Eigen/src/Core/ArrayWrapper.h
@@ -6809,7 +6696,6 @@ CMakeFiles/ORB_SLAM2.dir/src/Viewer.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/GenericPacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/GlobalFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/IO.h
- /usr/local/include/eigen3/Eigen/src/Core/IndexedView.h
  /usr/local/include/eigen3/Eigen/src/Core/Inverse.h
  /usr/local/include/eigen3/Eigen/src/Core/Map.h
  /usr/local/include/eigen3/Eigen/src/Core/MapBase.h
@@ -6855,29 +6741,20 @@ CMakeFiles/ORB_SLAM2.dir/src/Viewer.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/arch/AltiVec/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/AltiVec/PacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/Complex.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/Half.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/MathFunctions.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/PacketMath.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/PacketMathHalf.h
+ /usr/local/include/eigen3/Eigen/src/Core/arch/CUDA/TypeCasting.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/Default/ConjHelper.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/Default/Settings.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/Half.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/MathFunctions.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/PacketMath.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/PacketMathHalf.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/GPU/TypeCasting.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/HIP/hcc/math_constants.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/MSA/Complex.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/MSA/MathFunctions.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/MSA/PacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/Complex.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/PacketMath.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/NEON/TypeCasting.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/Complex.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/PacketMath.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/SSE/TypeCasting.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/InteropHeaders.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/MathFunctions.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/PacketMath.h
- /usr/local/include/eigen3/Eigen/src/Core/arch/SYCL/TypeCasting.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/ZVector/Complex.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/ZVector/MathFunctions.h
  /usr/local/include/eigen3/Eigen/src/Core/arch/ZVector/PacketMath.h
@@ -6909,19 +6786,15 @@ CMakeFiles/ORB_SLAM2.dir/src/Viewer.cc.o
  /usr/local/include/eigen3/Eigen/src/Core/products/TriangularSolverMatrix_BLAS.h
  /usr/local/include/eigen3/Eigen/src/Core/products/TriangularSolverVector.h
  /usr/local/include/eigen3/Eigen/src/Core/util/BlasUtil.h
- /usr/local/include/eigen3/Eigen/src/Core/util/ConfigureVectorization.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Constants.h
  /usr/local/include/eigen3/Eigen/src/Core/util/DisableStupidWarnings.h
  /usr/local/include/eigen3/Eigen/src/Core/util/ForwardDeclarations.h
- /usr/local/include/eigen3/Eigen/src/Core/util/IndexedViewHelper.h
- /usr/local/include/eigen3/Eigen/src/Core/util/IntegralConstant.h
  /usr/local/include/eigen3/Eigen/src/Core/util/MKL_support.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Macros.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Memory.h
  /usr/local/include/eigen3/Eigen/src/Core/util/Meta.h
  /usr/local/include/eigen3/Eigen/src/Core/util/ReenableStupidWarnings.h
  /usr/local/include/eigen3/Eigen/src/Core/util/StaticAssert.h
- /usr/local/include/eigen3/Eigen/src/Core/util/SymbolicIndex.h
  /usr/local/include/eigen3/Eigen/src/Core/util/XprHelper.h
  /usr/local/include/eigen3/Eigen/src/Eigenvalues/./ComplexSchur.h
  /usr/local/include/eigen3/Eigen/src/Eigenvalues/./HessenbergDecomposition.h
@@ -6991,7 +6864,6 @@ CMakeFiles/ORB_SLAM2.dir/src/Viewer.cc.o
  /usr/local/include/eigen3/Eigen/src/plugins/BlockMethods.h
  /usr/local/include/eigen3/Eigen/src/plugins/CommonCwiseBinaryOps.h
  /usr/local/include/eigen3/Eigen/src/plugins/CommonCwiseUnaryOps.h
- /usr/local/include/eigen3/Eigen/src/plugins/IndexedViewMethods.h
  /usr/local/include/eigen3/Eigen/src/plugins/MatrixCwiseBinaryOps.h
  /usr/local/include/eigen3/Eigen/src/plugins/MatrixCwiseUnaryOps.h
  /usr/local/lib/cmake/Pangolin/../../../include/boost/assert.hpp
