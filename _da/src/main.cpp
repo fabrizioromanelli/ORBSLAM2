@@ -18,14 +18,20 @@ const std::string path_vocab = "/home/felix/Desktop/ORB_SLAM2/Vocabulary/ORBvoc.
 const std::string path_yaml = "/home/felix/Desktop/ORB_SLAM2/_da/oneplus.yaml";
 const std::string path_dataset = "/home/felix/Desktop/kitti/dataset/sequences/00";
 
+const Size slam_resolution(720, 480);
 
 int main(int, char**)
 {
-    VideoCapture cap("http://10.0.0.8:8080/video");
+    VideoCapture cap("/home/felix/Desktop/Kaefer1.mp4");
 
-    //if(!cap.isOpened())
-    //    return -1;
+    if(!cap.isOpened())
+        return -1;
 
+    Mat t;
+    for(int i = 0; i < 2500; i++)
+    {
+        cap >> t;
+    }
 
 
     ORB_SLAM2::System slam(path_vocab, path_yaml, ORB_SLAM2::System::MONOCULAR, true);
@@ -34,7 +40,13 @@ int main(int, char**)
     auto start_time = std::chrono::steady_clock::now();
     while(true)
     {
-        cap >> curr_frame;
+        Mat tmp;
+        cap >> tmp;
+        cap >> tmp;
+
+
+        resize(tmp, curr_frame, slam_resolution);
+
         cvtColor(curr_frame, curr_frame, COLOR_BGR2GRAY);
 
 
@@ -42,15 +54,24 @@ int main(int, char**)
         auto curr_time_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now-start_time).count();
         double curr_time = curr_time_ms / 1000.0f;
 
-        std::cout << curr_time << std::endl;
 
         imshow("werner", curr_frame);
+
+
+        auto t1 = std::chrono::high_resolution_clock::now();
         slam.TrackMonocular(curr_frame, curr_time);
-        if(waitKey(1) >= 0)
+        auto t2 = std::chrono::high_resolution_clock::now();
+
+        auto duration = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
+        std::cout << "SLAM Time: " << duration.count() << std::endl;
+
+        //if(waitKey(1) >= 0)
         {
-            if(!slam.GetKeyFrames().empty())
+            if(!slam.GetKeyFrames().empty() && false)
             {
-                std::cout << slam.GetKeyFrames().back()->GetPose() << std::endl;
+                std::cout << "X: " << slam.GetKeyFrames().back()->GetPose().at<float>(0, 3) << ", Y:";
+                std::cout << slam.GetKeyFrames().back()->GetPose().at<float>(2, 3) << std::endl << std::flush;
+
             }
         }
 
