@@ -147,3 +147,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/camera_calibration)
 
 add_executable(Camera_Calibration_Tool camera_calibration/camera_calibration_tool.cpp)
 target_link_libraries(Camera_Calibration_Tool ${PROJECT_NAME})
+
+# Build tools
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Vocabulary)
+add_executable(bin_vocabulary
+        Vocabulary/bin_vocabulary.cpp)
+target_link_libraries(bin_vocabulary ${PROJECT_NAME})
