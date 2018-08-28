@@ -7,14 +7,14 @@
 #include <chrono>
 #include <unistd.h>
 
-#include <ORB_SLAM2/System.h>
+#include "System.h"
 
 #include "opencv2/opencv.hpp"
 #include "pangolin/pangolin.h"
 
 using namespace cv;
 
-const std::string path_vocab = "/home/felix/Desktop/ORB_SLAM2/Vocabulary/ORBvoc.txt";
+const std::string path_vocab = "/home/felix/Desktop/ORB_SLAM2/Vocabulary/ORBvoc.bin";
 const std::string path_yaml = "/home/felix/Desktop/ORB_SLAM2/_da/oneplus.yaml";
 const std::string path_dataset = "/home/felix/Desktop/kitti/dataset/sequences/00";
 
@@ -33,8 +33,8 @@ int main(int, char**)
         cap >> t;
     }
 
-
-    ORB_SLAM2::System slam(path_vocab, path_yaml, ORB_SLAM2::System::MONOCULAR, true);
+    //voc file, settings file, sensor type, use viewer, save map
+    ORB_SLAM2::System slam(path_vocab, path_yaml, ORB_SLAM2::System::MONOCULAR, true, true);
 
     Mat curr_frame;
     auto start_time = std::chrono::steady_clock::now();
@@ -66,14 +66,14 @@ int main(int, char**)
         std::cout << "SLAM Time: " << duration.count() << std::endl;
 
         //if(waitKey(1) >= 0)
-        {
-            if(!slam.GetKeyFrames().empty() && false)
-            {
-                std::cout << "X: " << slam.GetKeyFrames().back()->GetPose().at<float>(0, 3) << ", Y:";
-                std::cout << slam.GetKeyFrames().back()->GetPose().at<float>(2, 3) << std::endl << std::flush;
-
-            }
-        }
+//        {
+//            if(!slam.GetKeyFrames().empty() && false)
+//            {
+//                std::cout << "X: " << slam.GetKeyFrames().back()->GetPose().at<float>(0, 3) << ", Y:";
+//                std::cout << slam.GetKeyFrames().back()->GetPose().at<float>(2, 3) << std::endl << std::flush;
+//
+//            }
+//        }
 
 
 

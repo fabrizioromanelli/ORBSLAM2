@@ -78,25 +78,14 @@ target_link_libraries(${PROJECT_NAME}
         ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
         )
 
-# ORBSLAM2_ENHANCED
-#[[
-set(USE_MAP_SAVE_LOAD ON)
-MESSAGE(STATUS "WERNER FINDENIG")
-if (NOT DEFINED USE_MAP_SAVE_LOAD)
-    set(USE_MAP_SAVE_LOAD OFF)
-endif()
-if(USE_MAP_SAVE_LOAD)
-    message(STATUS "Compile With map save/load function")
-    find_library(BOOST_SERIALIZATION boost_serialization)
-    if (NOT BOOST_SERIALIZATION)
-        message(FATAL_ERROR "Can't find libboost_serialization")
-    endif()
-    target_link_libraries(${PROJECT_NAME} ${BOOST_SERIALIZATION})
-    target_compile_definitions(${PROJECT_NAME} PUBLIC FUNC_MAP_SAVE_LOAD=1)
-endif()
-]]
-# END ORBSLAM2_ENHANCED
 
+        
+message(STATUS "Compile With map save/load function")
+find_library(BOOST_SERIALIZATION boost_serialization)
+if (NOT BOOST_SERIALIZATION)
+    message(FATAL_ERROR "Can't find libboost_serialization")
+endif()
+target_link_libraries(${PROJECT_NAME} ${BOOST_SERIALIZATION})
 
 
 # Build examples
@@ -130,6 +119,7 @@ add_executable(mono_euroc
 target_link_libraries(mono_euroc ${PROJECT_NAME})
 ]]
 
+
 # DA Directory
 
 
@@ -158,3 +148,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/camera_calibration)
 add_executable(Camera_Calibration_Tool camera_calibration/camera_calibration_tool.cpp)
 target_link_libraries(Camera_Calibration_Tool ${PROJECT_NAME})
 
+# Build tools
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Vocabulary)
+add_executable(bin_vocabulary
+        Vocabulary/bin_vocabulary.cpp)
+target_link_libraries(bin_vocabulary ${PROJECT_NAME})

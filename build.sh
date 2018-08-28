@@ -27,5 +27,12 @@ echo "Configuring and building ORB_SLAM2 ..."
 
 mkdir build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release -D OpenCV_DIR=/home/felix/Desktop/OpenCV/build
+cmake .. -DCMAKE_BUILD_TYPE=Release
 make -j
+
+cd ..
+
+cd Vocabulary
+echo "Converting vocabulary to binary version"
+./bin_vocabulary
+cd ..
