@@ -14,7 +14,7 @@
 
 using namespace cv;
 
-const std::string path_vocab = "/home/felix/Desktop/ORB_SLAM2/Vocabulary/ORBvoc.txt";
+const std::string path_vocab = "/home/felix/Desktop/ORB_SLAM2/Vocabulary/ORBvoc.bin";
 const std::string path_yaml = "/home/felix/Desktop/ORB_SLAM2/_da/oneplus.yaml";
 const std::string path_dataset = "/home/felix/Desktop/kitti/dataset/sequences/00";
 
