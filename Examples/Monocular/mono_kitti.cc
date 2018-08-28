@@ -32,7 +32,7 @@
 
 #include<opencv2/core/core.hpp>
 
-#include"System.h"
+#include "System.h"
 #include "fileutils.h"
 
 using namespace std;
@@ -86,7 +86,7 @@ int main(int argc, char **argv)
     int nImages = vstrImageFilenames.size();
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
-    ORB_SLAM2::System SLAM(argv[1],argv[2],ORB_SLAM2::System::MONOCULAR,true);
+    ORB_SLAM2::System SLAM(argv[1], argv[2], ORB_SLAM2::System::MONOCULAR, true, true);
 	
 
     // Vector for tracking time statistics
@@ -140,21 +140,28 @@ int main(int argc, char **argv)
         if(ttrack<T)
             usleep((T-ttrack)*1e6);
 
-        //if(cv::waitKey(1) >= 0)
+        if(cv::waitKey(10) >= 0)
         {
-            if(!SLAM.GetKeyFrames().empty())
-            {
-                std::cout << SLAM.GetKeyFrames().back()->GetPose().at<float>(0, 3) << ";";
-                std::cout << SLAM.GetKeyFrames().back()->GetPose().at<float>(2, 3) << std::endl;
-
-            }
+            std::cout << "Key Pressed" << std::endl;
+            break;
         }
+
+//        {
+//            if(!SLAM.GetKeyFrames().empty())
+//            {
+//                std::cout << SLAM.GetKeyFrames().back()->GetPose().at<float>(0, 3) << ";";
+//                std::cout << SLAM.GetKeyFrames().back()->GetPose().at<float>(2, 3) << std::endl;
+//
+//            }
+//        }
 
         if(ni > nImages) break;
     }
 
     // Stop all threads
+    std::cout << "Shutting down SLAM..." << std::endl;
     SLAM.Shutdown();
+    std::cout << "Shut down SLAM." << std::endl;
 
     // Tracking time statistics
     sort(vTimesTrack.begin(),vTimesTrack.end());

@@ -95,9 +95,11 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     if (!mapfile.empty() && LoadMap(mapfile))
     {
         bReuseMap = true;
+        std::cout << "Loaded Map" << std::endl;
     }
     else
     {
+        std::cout << "Map NOT loaded" << std::endl;
         mpKeyFrameDatabase = new KeyFrameDatabase(mpVocabulary);
         mpMap = new Map();
     }
@@ -325,26 +327,40 @@ void System::Reset()
 
 void System::Shutdown()
 {
+    std::cout << "Shutting DOWN RENDL" << std::endl;
     mpLocalMapper->RequestFinish();
+    std::cout << "local mapper finished" << std::endl;
     mpLoopCloser->RequestFinish();
+    std::cout << "local mapper loop closer" << std::endl;
     if(mpViewer)
     {
         mpViewer->RequestFinish();
         while(!mpViewer->isFinished())
         {
+            std::cout << "waiting for mapviewer to finish" << std::endl;
             std::this_thread::sleep_for(std::chrono::microseconds(5000));
         }
     }
 
+    std::cout << "mapviewer finished" << std::endl;
+
     // Wait until all thread have effectively stopped
     while(!mpLocalMapper->isFinished() || !mpLoopCloser->isFinished() || mpLoopCloser->isRunningGBA())
     {
+        std::cout << "werner" << std::endl;
         std::this_thread::sleep_for(std::chrono::microseconds(5000));
+        std::cout << "waiting for everything to finish" << std::endl;
     }
+
+    std::cout << "peter after while" << std::endl;
     if(mpViewer)
-        pangolin::BindToContext("ORB-SLAM2: Map Viewer");
+        //pangolin::BindToContext("ORB-SLAM2: Map Viewer");
+
     if (is_save_map)
+    {
+        std::cout << "Saving map..." << std::endl;
         SaveMap(mapfile);
+    }
 }
 
 void System::SaveTrajectoryTUM(const string &filename)
