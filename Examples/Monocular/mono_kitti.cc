@@ -153,10 +153,7 @@ int main(int argc, char **argv)
 
 
 
-
-
-
-
+        
         if(ni > nImages) break;
     }
 

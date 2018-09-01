@@ -22,31 +22,23 @@ const Size slam_resolution(720, 480);
 
 int main(int, char**)
 {
-    VideoCapture cap("/home/felix/Desktop/Kaefer1.mp4");
+    VideoCapture cap("http://10.0.0.12:8080/video");
+
+    std::cout << "starting.." << std::endl;
 
     if(!cap.isOpened())
         return -1;
 
-    Mat t;
-    for(int i = 0; i < 2500; i++)
-    {
-        cap >> t;
-    }
 
     //voc file, settings file, sensor type, use viewer, save map
-    ORB_SLAM2::System slam(path_vocab, path_yaml, ORB_SLAM2::System::MONOCULAR, true, true);
+    ORB_SLAM2::System slam(path_vocab, path_yaml, ORB_SLAM2::System::MONOCULAR, true, false);
 
     Mat curr_frame;
+
     auto start_time = std::chrono::steady_clock::now();
     while(true)
     {
-        Mat tmp;
-        cap >> tmp;
-        cap >> tmp;
-
-
-        resize(tmp, curr_frame, slam_resolution);
-
+        cap >> curr_frame;
         cvtColor(curr_frame, curr_frame, COLOR_BGR2GRAY);
 
 
@@ -55,32 +47,15 @@ int main(int, char**)
         double curr_time = curr_time_ms / 1000.0f;
 
 
-        imshow("werner", curr_frame);
-
-
-        auto t1 = std::chrono::high_resolution_clock::now();
         slam.TrackMonocular(curr_frame, curr_time);
-        auto t2 = std::chrono::high_resolution_clock::now();
 
-        auto duration = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
-        std::cout << "SLAM Time: " << duration.count() << std::endl;
-
-        //if(waitKey(1) >= 0)
-//        {
-//            if(!slam.GetKeyFrames().empty() && false)
-//            {
-//                std::cout << "X: " << slam.GetKeyFrames().back()->GetPose().at<float>(0, 3) << ", Y:";
-//                std::cout << slam.GetKeyFrames().back()->GetPose().at<float>(2, 3) << std::endl << std::flush;
-//
-//            }
-//        }
-
-
+        std::cout << slam.GetCurrentCameraPose() << std::endl;
 
         if(waitKey(1) >= 0) break;
 
 
     }
+
 
     slam.Shutdown();
 

@@ -32,7 +32,6 @@ namespace ORB_SLAM2
 
         inline cv::Vec3f GetPosition() const;
 
-
     private:
         cv::Vec3f m_Position;    // Position (x, y, z)
         cv::Vec4f m_Rotation;    // Rotation (Quaternion)
