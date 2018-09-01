@@ -44,6 +44,9 @@ public:
     void SetCurrentCameraPose(const cv::Mat &Tcw);
     void SetReferenceKeyFrame(KeyFrame *pKF);
     void GetCurrentOpenGLCameraMatrix(pangolin::OpenGlMatrix &M);
+    void SetSystemCameraPose(void* mpSystem); //Twc matrix, system pointer
+
+
 
 private:
 

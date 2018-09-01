@@ -27,7 +27,7 @@
 #include <chrono>
 #include <iomanip>
 #include <unistd.h>
-
+#include <math.h>
 
 
 #include<opencv2/core/core.hpp>
@@ -39,6 +39,8 @@ using namespace std;
 
 void LoadImages(const string &strSequence, vector<string> &vstrImageFilenames,
                 vector<double> &vTimestamps);
+
+cv::Vec3d GetEulerFromMatrix(const cv::Mat& matrix);
 
 string type2str(int type) {
     string r;
@@ -86,8 +88,8 @@ int main(int argc, char **argv)
     int nImages = vstrImageFilenames.size();
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
-    ORB_SLAM2::System SLAM(argv[1], argv[2], ORB_SLAM2::System::MONOCULAR, true, true);
-	
+    ORB_SLAM2::System slam(argv[1], argv[2], ORB_SLAM2::System::MONOCULAR, true, true);
+
 
     // Vector for tracking time statistics
     vector<float> vTimesTrack;
@@ -96,6 +98,11 @@ int main(int argc, char **argv)
     cout << endl << "-------" << endl;
     cout << "Start processing sequence ..." << endl;
     cout << "Images in the sequence: " << nImages << endl << endl;
+
+
+    bool slam_mode = false;
+
+
 
     // Main loop
     cv::Mat im;
@@ -111,20 +118,15 @@ int main(int argc, char **argv)
             return 1;
         }
 
-#ifdef COMPILEDWITHC11
+        if(!slam_mode)
+        {
+            slam.DeactivateLocalizationMode();
+            slam_mode = true;
+        }
+
         std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
-#else
-        std::chrono::monotonic_clock::time_point t1 = std::chrono::monotonic_clock::now();
-#endif
-
-        // Pass the image to the SLAM system
-        SLAM.TrackMonocular(im,tframe);
-
-#ifdef COMPILEDWITHC11
+        slam.TrackMonocular(im,tframe);
         std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
-#else
-        std::chrono::monotonic_clock::time_point t2 = std::chrono::monotonic_clock::now();
-#endif
 
         double ttrack= std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1).count();
 
@@ -146,21 +148,21 @@ int main(int argc, char **argv)
             break;
         }
 
-//        {
-//            if(!SLAM.GetKeyFrames().empty())
-//            {
-//                std::cout << SLAM.GetKeyFrames().back()->GetPose().at<float>(0, 3) << ";";
-//                std::cout << SLAM.GetKeyFrames().back()->GetPose().at<float>(2, 3) << std::endl;
-//
-//            }
-//        }
+
+        std::cout << slam.GetCurrentCameraPose() << std::endl;
+
+
+
+
+
+
 
         if(ni > nImages) break;
     }
 
     // Stop all threads
     std::cout << "Shutting down SLAM..." << std::endl;
-    SLAM.Shutdown();
+    slam.Shutdown();
     std::cout << "Shut down SLAM." << std::endl;
 
     // Tracking time statistics
@@ -175,7 +177,7 @@ int main(int argc, char **argv)
     cout << "mean tracking time: " << totaltime/nImages << endl;
 
     // Save camera trajectory
-    SLAM.SaveKeyFrameTrajectoryTUM("KeyFrameTrajectory.txt");    
+    slam.SaveKeyFrameTrajectoryTUM("KeyFrameTrajectory.txt");
 
     return 0;
 }
@@ -210,4 +212,14 @@ void LoadImages(const string &strPathToSequence, vector<string> &vstrImageFilena
         ss << setfill('0') << setw(6) << i;
         vstrImageFilenames[i] = strPrefixLeft + ss.str() + ".png";
     }
+}
+
+// http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToEuler/
+cv::Vec3d GetEulerFromMatrix(const cv::Mat& matrix)
+{
+    double heading = atan2(-matrix.at<double>(2, 0), matrix.at<double>(0, 0));
+    double bank = atan2(-matrix.at<double>(1, 2), matrix.at<double>(1, 1));
+    double attitude = asin(matrix.at<double>(1, 0));
+
+    return cv::Vec3d(heading, bank, attitude);
 }

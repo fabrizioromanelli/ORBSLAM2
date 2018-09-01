@@ -23,6 +23,11 @@
 #include "KeyFrame.h"
 #include <pangolin/pangolin.h>
 #include <mutex>
+#include <include/Converter.h>
+#include <include/MapDrawer.h>
+
+#include "System.h"
+
 
 namespace ORB_SLAM2
 {
@@ -182,6 +187,10 @@ void MapDrawer::DrawCurrentCamera(pangolin::OpenGlMatrix &Twc)
     const float h = w*0.75;
     const float z = w*0.6;
 
+
+    //std::cout << Twc << std::endl;
+
+
     glPushMatrix();
 
 #ifdef HAVE_GLES
@@ -237,6 +246,9 @@ void MapDrawer::GetCurrentOpenGLCameraMatrix(pangolin::OpenGlMatrix &M)
             twc = -Rwc*mCameraPose.rowRange(0,3).col(3);
         }
 
+
+
+
         M.m[0] = Rwc.at<float>(0,0);
         M.m[1] = Rwc.at<float>(1,0);
         M.m[2] = Rwc.at<float>(2,0);
@@ -259,6 +271,23 @@ void MapDrawer::GetCurrentOpenGLCameraMatrix(pangolin::OpenGlMatrix &M)
     }
     else
         M.SetIdentity();
+}
+
+void MapDrawer::SetSystemCameraPose(void *mpSystem)
+{
+    if(!mCameraPose.empty()) {
+        System* system = (System*) mpSystem;
+        cv::Mat Rwc(3, 3, CV_32F);
+        cv::Mat twc(3, 1, CV_32F);
+        {
+            unique_lock<mutex> lock(mMutexCamera);
+            Rwc = mCameraPose.rowRange(0, 3).colRange(0, 3).t();
+            twc = -Rwc * mCameraPose.rowRange(0, 3).col(3);
+        }
+
+        system->GetCurrentCameraPose().SetPosition(twc);
+        system->GetCurrentCameraPose().SetRotation(Rwc);
+    }
 }
 
 } //namespace ORB_SLAM

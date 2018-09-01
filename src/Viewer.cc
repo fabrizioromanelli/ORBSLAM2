@@ -98,6 +98,9 @@ void Viewer::Run()
 
         mpMapDrawer->GetCurrentOpenGLCameraMatrix(Twc);
 
+        mpMapDrawer->SetSystemCameraPose(mpSystem); //Because there is no System pointer in MapDrawer
+
+
         if(menuFollowCamera && bFollow)
         {
             s_cam.Follow(Twc);

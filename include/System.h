@@ -35,6 +35,7 @@
 #include "KeyFrameDatabase.h"
 #include "ORBVocabulary.h"
 #include "Viewer.h"
+#include "HPose.h"
 
 #include "BoostArchiver.h"
 // for map file io
@@ -121,6 +122,8 @@ public:
     std::vector<MapPoint*> GetTrackedMapPoints();
     std::vector<cv::KeyPoint> GetTrackedKeyPointsUn();
 
+    HPose& GetCurrentCameraPose();
+
 private:
     // Save/Load functions
     void SaveMap(const string &filename);
@@ -181,6 +184,9 @@ private:
     std::vector<MapPoint*> mTrackedMapPoints;
     std::vector<cv::KeyPoint> mTrackedKeyPointsUn;
     std::mutex mMutexState;
+
+    // Current camera pose
+    HPose mCurrCameraPose;
 };
 
 }// namespace ORB_SLAM

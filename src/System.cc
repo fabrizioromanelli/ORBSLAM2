@@ -37,7 +37,7 @@ namespace ORB_SLAM2
 
 System::System(const string &strVocFile, const string &strSettingsFile, const eSensor sensor,
                const bool bUseViewer, bool is_save_map_):mSensor(sensor), is_save_map(is_save_map_), mpViewer(static_cast<Viewer*>(NULL)), mbReset(false),
-        mbActivateLocalizationMode(false), mbDeactivateLocalizationMode(false)
+        mbActivateLocalizationMode(false), mbDeactivateLocalizationMode(false), mCurrCameraPose()
 {
     // Output welcome message
     cout << endl <<
@@ -392,6 +392,7 @@ void System::SaveTrajectoryTUM(const string &filename)
     list<ORB_SLAM2::KeyFrame*>::iterator lRit = mpTracker->mlpReferences.begin();
     list<double>::iterator lT = mpTracker->mlFrameTimes.begin();
     list<bool>::iterator lbL = mpTracker->mlbLost.begin();
+
     for(list<cv::Mat>::iterator lit=mpTracker->mlRelativeFramePoses.begin(),
         lend=mpTracker->mlRelativeFramePoses.end();lit!=lend;lit++, lRit++, lT++, lbL++)
     {
@@ -575,6 +576,11 @@ bool System::LoadMap(const string &filename)
     cout << " ...done" << endl;
     in.close();
     return true;
+}
+
+HPose& System::GetCurrentCameraPose()
+{
+    return mCurrCameraPose;
 }
 
 } //namespace ORB_SLAM
