@@ -22,7 +22,10 @@ const Size slam_resolution(720, 480);
 
 int main(int, char**)
 {
-    VideoCapture cap("http://10.0.0.12:8080/video");
+    //VideoCapture cap("http://10.0.0.12:8080/video");
+    VideoCapture cap("http://tr3z0r.synology.me:8080/?action=stream");
+
+
 
     std::cout << "starting.." << std::endl;
 

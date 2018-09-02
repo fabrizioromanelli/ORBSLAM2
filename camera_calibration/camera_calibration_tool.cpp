@@ -135,7 +135,7 @@ std::string get_path(std::string message){
 	std::string path;
 	std::cout << message;
 	//std::getline(std::cin, path);
-	path = "/home/felix/Desktop/calib_images/oneplus/";
+	path = "/home/felix/Desktop/calib_images/webcam_rauter1/";
 	if (path.empty()) {
 		std::cout << " Exitting program...\n" << std::endl;
 		exit(101);
