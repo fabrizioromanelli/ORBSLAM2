@@ -142,6 +142,15 @@ add_executable(mono_kitti
 target_link_libraries(mono_kitti ${PROJECT_NAME})
 
 
+# TUM RGB-D Example
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/RGB-D)
+
+add_executable(RGBD-tum
+        Examples/RGB-D/rgbd_tum.cc)
+target_link_libraries(RGBD-tum ${PROJECT_NAME})
+
+
 # Camera Calibration Tool
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/camera_calibration)
