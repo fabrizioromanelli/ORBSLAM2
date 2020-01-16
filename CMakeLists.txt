@@ -91,7 +91,6 @@ target_link_libraries(${PROJECT_NAME} ${BOOST_SERIALIZATION})
 
 # Build examples
 
-#[[
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/RGB-D)
 
 add_executable(rgbd_tum
@@ -118,8 +117,6 @@ target_link_libraries(mono_tum ${PROJECT_NAME})
 add_executable(mono_euroc
         Examples/Monocular/mono_euroc.cc)
 target_link_libraries(mono_euroc ${PROJECT_NAME})
-]]
-
 
 # DA Directory
 
