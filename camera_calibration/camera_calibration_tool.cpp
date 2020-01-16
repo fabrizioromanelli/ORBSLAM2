@@ -145,14 +145,14 @@ std::string get_path(std::string message){
 }
 void 	get_chess_size() {
 	int rows, cols;
-	bool good = FALSE;
+	bool good = false;
 	do {
 		std::cout << "Enter number of rows: ";
 		std::cin >> rows;
 		std::cout << "Enter number of columns: ";
 		std::cin >> cols;
 		if (rows > 0 && cols > 0) {
-			good = TRUE;
+			good = true;
 			printf("You have selected chess board size has %d rows and %d cols.\n", rows, cols);
 #undef CHESS_ROWS
 #define CHESS_ROWS rows
@@ -162,5 +162,5 @@ void 	get_chess_size() {
 		else {
 			printf("Please only enter possitive numbers.\n");
 		}
-	} while (good == FALSE);
+	} while (good == false);
 }
