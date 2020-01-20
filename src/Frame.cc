@@ -492,6 +492,10 @@ void Frame::ComputeStereoMatches()
             vRowIndices[yi].push_back(iR);
     }
 
+    // This check is necessary as it would lead to maxD -> infinite
+    if (mb == 0)
+        continue;
+
     // Set limits for search
     const float minZ = mb;
     const float minD = 0;
