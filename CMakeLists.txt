@@ -146,6 +146,6 @@ target_link_libraries(bin_vocabulary ${PROJECT_NAME})
 
 # Build V-SLAM application
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Drone)
-add_executable(drone_vslam
-Drone/drone_vslam.cc)
-target_link_libraries(drone_vslam ${PROJECT_NAME})
+add_executable(DroneVslam
+Drone/DroneVslam.cc)
+target_link_libraries(DroneVslam ${PROJECT_NAME})
