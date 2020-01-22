@@ -1,7 +1,9 @@
 # ORB-SLAM2
 **Authors:** [Raul Mur-Artal](http://webdiis.unizar.es/~raulmur/), [Juan D. Tardos](http://webdiis.unizar.es/~jdtardos/), [J. M. M. Montiel](http://webdiis.unizar.es/~josemari/) and [Dorian Galvez-Lopez](http://doriangalvez.com/) ([DBoW2](https://github.com/dorian3d/DBoW2))
 
-**14 Jul 2017**: Binary format ORB vocabulary and Map save/load are now supported(See section 10 and 11).
+**22 Jan 2020**: OpenCV 4.2.0 is now supported.
+
+**14 Jul 2017**: Binary format ORB vocabulary and Map save/load are now supported (See section 10 and 11).
 
 **13 Jan 2017**: OpenCV 3 and Eigen 3.3 are now supported.
 
