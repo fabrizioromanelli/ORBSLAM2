@@ -29,3 +29,5 @@ lib/
 
 
 *.mapfile
+Vocabulary/ORBvoc.bin
+Vocabulary/bin_vocabulary
