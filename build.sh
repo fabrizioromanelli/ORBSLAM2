@@ -6,7 +6,7 @@
 echo "Configuring and building Thirdparty/DBoW2 ..."
 
 cd Thirdparty/DBoW2
-mkdir build
+mkdir -p build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 make $1
@@ -15,7 +15,7 @@ cd ../../g2o
 
 echo "Configuring and building Thirdparty/g2o ..."
 
-mkdir build
+mkdir -p build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 make $1
@@ -30,7 +30,7 @@ cd ..
 
 echo "Configuring and building ORB_SLAM2 ..."
 
-mkdir build
+mkdir -p build
 cd build
 if [ "$2" == "Release" ] || [ "$2" == "Debug" ]; then
   cmake .. -DCMAKE_BUILD_TYPE=$2
@@ -51,7 +51,7 @@ if [ "$3" == "ROS" ]; then
   echo "Building ROS nodes"
 
   cd Examples/ROS/ORB_SLAM2
-  mkdir build
+  mkdir -p build
   cd build
   cmake .. -DROS_BUILD_TYPE=Release
   make $1
