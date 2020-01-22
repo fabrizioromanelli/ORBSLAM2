@@ -12,12 +12,12 @@ Date   : Feb 24, 2016
 #include <iostream>
 #include <stdlib.h>
 
-#include "opencv2/opencv.hpp"
-
 #include <vector>
 #include <string>
 #include <dirent.h>		  // Used Nuget: Install-Package dirent
-#include <cv.h>
+#include <opencv2/core/core.hpp>
+#include <opencv2/core/types_c.h>
+#include <opencv2/opencv.hpp>
 
 
 typedef std::vector<cv::Point3f>  obj_points; // object points (3D) for one image
@@ -33,6 +33,7 @@ void			get_corners(std::string img_name, std::vector<obj_points> &arr_obj_points
 std::string		get_path(std::string message);
 void			calibrate_camera(cv::Mat &, cv::Mat &, std::vector<obj_points>&, std::vector<img_points>&, cv::Size &);
 void 			get_chess_size();
+
 int main()
 {
 	std::vector<obj_points> arr_obj_points; //array of object points for an array of images
@@ -61,13 +62,12 @@ int main()
 }
 
 void find_corners(std::vector<obj_points> &arr_obj_points, std::vector<img_points> &arr_img_points, cv::Size &img_size) {
-
 	std::string path = get_path("Please enter image folder (leave blank to quit): ");
 	DIR *folder = opendir(path.c_str());
 	dirent *pent = NULL;
 	if (folder != NULL) {
 		// while there is still something to read in current dir
-		while (pent = readdir(folder)) {
+		while ( (pent = readdir(folder)) ) {
 			if (pent){	// is readable 
 				if (strstr(pent->d_name, ".jpg") != 0) { //and is image
 					get_corners(path + pent->d_name, arr_obj_points, arr_img_points, img_size);
@@ -100,9 +100,9 @@ void    get_corners(std::string img_name, std::vector<obj_points> &arr_obj_point
 
 		// Find Chess corners
 		bool found = cv::findChessboardCorners(image, board_sz, corners,
-												CV_CALIB_CB_ADAPTIVE_THRESH |
-												CV_CALIB_CB_FAST_CHECK |
-												CV_CALIB_CB_NORMALIZE_IMAGE);
+												cv::CALIB_CB_ADAPTIVE_THRESH |
+												cv::CALIB_CB_FAST_CHECK |
+												cv::CALIB_CB_NORMALIZE_IMAGE);
 		// ***KEY*** 
 		if (found)
 		{
@@ -119,19 +119,20 @@ void    get_corners(std::string img_name, std::vector<obj_points> &arr_obj_point
 			//int key = cv::waitKey(500);	// wait 2 secs
 		}
 		img_size = image.size();
-
 	}
 	else
 		std::cout << "Could not read image " + img_name << std::endl;
 }
-void   calibrate_camera(cv::Mat &cam_matrix, cv::Mat &dist_coeffs, std::vector<obj_points>& arr_obj_points, std::vector<img_points>& arr_img_points, cv::Size &img_size) {
+
+void calibrate_camera(cv::Mat &cam_matrix, cv::Mat &dist_coeffs, std::vector<obj_points>& arr_obj_points, std::vector<img_points>& arr_img_points, cv::Size &img_size) {
 	std::vector<cv::Mat> rotation_vectors;
 	std::vector<cv::Mat> translation_vectors;
 	cam_matrix.ptr<float>(0)[0] = 1;
 	cam_matrix.ptr<float>(1)[1] = 1;
 	cv::calibrateCamera(arr_obj_points, arr_img_points, img_size, cam_matrix, dist_coeffs, rotation_vectors, translation_vectors);
 }
-std::string get_path(std::string message){
+
+std::string get_path(std::string message) {
 	std::string path;
 	std::cout << message;
 	//std::getline(std::cin, path);
@@ -143,6 +144,7 @@ std::string get_path(std::string message){
 	//TOKENIZE HEREEEEEE
 	return path;
 }
+
 void 	get_chess_size() {
 	int rows, cols;
 	bool good = false;
