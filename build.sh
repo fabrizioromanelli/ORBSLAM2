@@ -32,7 +32,12 @@ echo "Configuring and building ORB_SLAM2 ..."
 
 mkdir build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
+if [ "$2" == "Release" ] || [ "$2" == "Debug" ]; then
+  cmake .. -DCMAKE_BUILD_TYPE=$2
+else
+  echo "[ERROR] Invalid build type. Should be one of the following: Release/Debug."
+  exit 1
+fi
 make $1
 
 cd ..
@@ -41,3 +46,13 @@ cd Vocabulary
 echo "Converting vocabulary to binary version"
 ./bin_vocabulary
 cd ..
+
+if [ "$3" == "ROS" ]; then
+  echo "Building ROS nodes"
+
+  cd Examples/ROS/ORB_SLAM2
+  mkdir build
+  cd build
+  cmake .. -DROS_BUILD_TYPE=Release
+  make $1
+fi
