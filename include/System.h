@@ -116,6 +116,13 @@ public:
     // Call first Shutdown()
     // See format details at: http://www.cvlibs.net/datasets/kitti/eval_odometry.php
     void SaveTrajectoryKITTI(const string &filename);
+
+    // Save camera trajectory (for stereo and RGB-D)
+    void SaveTrajectory(const string &filename);
+
+    // Save keyframe poses (for all sensor inputs)
+    void SaveKeyFrameTrajectory(const string &filename);
+
     // Information from most recent processed frame
     // You can call this right after TrackMonocular (or stereo or RGBD)
     int GetTrackingState();
