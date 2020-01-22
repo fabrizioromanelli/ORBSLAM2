@@ -347,12 +347,10 @@ void System::Shutdown()
     // Wait until all thread have effectively stopped
     while(!mpLocalMapper->isFinished() || !mpLoopCloser->isFinished() || mpLoopCloser->isRunningGBA())
     {
-        std::cout << "werner" << std::endl;
         std::this_thread::sleep_for(std::chrono::microseconds(5000));
         std::cout << "waiting for everything to finish" << std::endl;
     }
 
-    std::cout << "peter after while" << std::endl;
     if(mpViewer)
         //pangolin::BindToContext("ORB-SLAM2: Map Viewer");
 
