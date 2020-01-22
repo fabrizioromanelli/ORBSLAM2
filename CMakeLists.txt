@@ -7,8 +7,8 @@ ENDIF()
 
 MESSAGE("Build type: " ${CMAKE_BUILD_TYPE})
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -Wall  -O3 -march=native ")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall   -O3 -march=native")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -Wall  -O3 -march=native -D EIGEN_NO_DEPRECATED_WARNING")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall   -O3 -march=native -D EIGEN_NO_DEPRECATED_WARNING")
 
 # Check C++11 or C++0x support
 include(CheckCXXCompilerFlag)
@@ -28,12 +28,9 @@ endif()
 
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 
-find_package(OpenCV 3.0 QUIET)
+find_package(OpenCV 4.2.0 QUIET)
 if(NOT OpenCV_FOUND)
-    find_package(OpenCV 2.4.3 QUIET)
-    if(NOT OpenCV_FOUND)
-        message(FATAL_ERROR "OpenCV > 2.4.3 not found.")
-    endif()
+   message(FATAL_ERROR "OpenCV > 4.2.0 not found.")
 endif()
 
 find_package(Eigen3 3.1.0 REQUIRED)
@@ -118,18 +115,6 @@ add_executable(mono_euroc
         Examples/Monocular/mono_euroc.cc)
 target_link_libraries(mono_euroc ${PROJECT_NAME})
 
-# DA Directory
-
-
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/_da)
-
-add_executable(DA _da/src/main.cpp)
-
-target_link_libraries(DA ${BOOST_SERIALIZATION})
-target_compile_definitions(DA PUBLIC FUNC_MAP_SAVE_LOAD=1)
-
-target_link_libraries(DA ${PROJECT_NAME})
-
 # KITTI Mono Example
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Monocular)
@@ -138,7 +123,6 @@ add_executable(mono_kitti
         Examples/Monocular/mono_kitti.cc)
 target_link_libraries(mono_kitti ${PROJECT_NAME})
 
-
 # TUM RGB-D Example
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/RGB-D)
@@ -146,7 +130,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/RGB-D)
 add_executable(RGBD-tum
         Examples/RGB-D/rgbd_tum.cc)
 target_link_libraries(RGBD-tum ${PROJECT_NAME})
-
 
 # Camera Calibration Tool
 
@@ -160,3 +143,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Vocabulary)
 add_executable(bin_vocabulary
         Vocabulary/bin_vocabulary.cpp)
 target_link_libraries(bin_vocabulary ${PROJECT_NAME})
+
+# Build V-SLAM application
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Drone)
+add_executable(drone_vslam
+Drone/drone_vslam.cc)
+target_link_libraries(drone_vslam ${PROJECT_NAME})

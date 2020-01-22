@@ -494,7 +494,7 @@ void Frame::ComputeStereoMatches()
 
     // This check is necessary as it would lead to maxD -> infinite
     if (mb == 0)
-        continue;
+        return;
 
     // Set limits for search
     const float minZ = mb;
