@@ -244,7 +244,7 @@ This mode can be used when you have a good map of your working area. In this mod
 
 # 10. Binary Format ORB Vocabulary
 
-You can load ORB vocabulary in either text or binary format. The format is determined by suffix(.txt for text format and .bin for binary format).
+You can load ORB vocabulary in either text or binary format. The format is determined by suffix (.txt for text format and .bin for binary format).
 
 `build.sh` will generate a text-to-binary convertor `bin_vocabulary` in `Vocabulary/` . You can also find it as a target in `CMakeLists.txt`.
 
