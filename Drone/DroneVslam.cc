@@ -39,7 +39,7 @@ int main(int argc, char **argv)
         cerr << endl << "No images found in provided path." << endl;
         return 1;
     }
-    else if(vstrImageFilenamesD.size()!=vstrImageFilenamesRGB.size())
+    else if(vstrImageFilenamesD.size() != vstrImageFilenamesRGB.size())
     {
         cerr << endl << "Different number of images for rgb and depth." << endl;
         return 1;
@@ -61,8 +61,8 @@ int main(int argc, char **argv)
     for(int ni=0; ni<nImages; ni++)
     {
         // Read image and depthmap from file
-        imRGB = cv::imread(string(argv[3])+"/"+vstrImageFilenamesRGB[ni],cv::IMREAD_UNCHANGED);
-        imD = cv::imread(string(argv[3])+"/"+vstrImageFilenamesD[ni],cv::IMREAD_UNCHANGED);
+        imRGB = cv::imread(string(argv[3])+"/"+vstrImageFilenamesRGB[ni], cv::IMREAD_UNCHANGED);
+        imD = cv::imread(string(argv[3])+"/"+vstrImageFilenamesD[ni], cv::IMREAD_UNCHANGED);
         double tframe = vTimestamps[ni];
 
         if(imRGB.empty())
@@ -92,21 +92,21 @@ int main(int argc, char **argv)
         vTimesTrack[ni]=ttrack;
 
         // Wait to load the next frame
-        double T=0;
-        if(ni<nImages-1)
-            T = vTimestamps[ni+1]-tframe;
+        double T = 0;
+        if(ni  <nImages-1)
+            T = vTimestamps[ni+1] - tframe;
         else if(ni>0)
-            T = tframe-vTimestamps[ni-1];
+            T = tframe - vTimestamps[ni-1];
 
-        if(ttrack<T)
-            usleep((T-ttrack)*1e6);
+        if(ttrack < T)
+            usleep((T - ttrack)*1e6);
     }
 
     // Stop all threads
     SLAM.Shutdown();
 
     // Tracking time statistics
-    sort(vTimesTrack.begin(),vTimesTrack.end());
+    sort(vTimesTrack.begin(), vTimesTrack.end());
     float totaltime = 0;
     for(int ni=0; ni<nImages; ni++)
     {
@@ -145,7 +145,6 @@ void LoadImages(const string &strAssociationFilename, vector<string> &vstrImageF
             ss >> t;
             ss >> sD;
             vstrImageFilenamesD.push_back(sD);
-
         }
     }
 }

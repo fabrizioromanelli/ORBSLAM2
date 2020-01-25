@@ -39,23 +39,16 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
                const bool bUseViewer, bool is_save_map_):mSensor(sensor), is_save_map(is_save_map_), mpViewer(static_cast<Viewer*>(NULL)), mbReset(false),
         mbActivateLocalizationMode(false), mbDeactivateLocalizationMode(false), mCurrCameraPose()
 {
-    // Output welcome message
-    cout << endl <<
-    "ORB-SLAM2 Copyright (C) 2014-2016 Raul Mur-Artal, University of Zaragoza." << endl <<
-    "This program comes with ABSOLUTELY NO WARRANTY;" << endl  <<
-    "This is free software, and you are welcome to redistribute it" << endl <<
-    "under certain conditions. See LICENSE.txt." << endl << endl;
-
     cout << "Input sensor was set to: ";
 
-    if(mSensor==MONOCULAR)
+    if (mSensor == MONOCULAR)
         cout << "Monocular" << endl;
-    else if(mSensor==STEREO)
+    else if (mSensor == STEREO)
         cout << "Stereo" << endl;
-    else if(mSensor==RGBD)
+    else if (mSensor == RGBD)
         cout << "RGB-D" << endl;
 
-    //Check settings file
+    // Check settings file
     cv::FileStorage fsSettings(strSettingsFile.c_str(), cv::FileStorage::READ);
     if(!fsSettings.isOpened())
     {
@@ -69,8 +62,14 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     {
         mapfile = (string)mapfilen;
     }
+    else if (is_save_map)
+    {
+        cerr << "Save map is on but no file has been specified in yaml configuration." << endl;
+        cerr << "Set Map.mapfile: <filename> in the yaml file" << endl;
+        exit(-1);
+    }
 
-    //Load ORB Vocabulary
+    // Load ORB Vocabulary
     cout << endl << "Loading ORB Vocabulary. This could take a while..." << endl;
 
     mpVocabulary = new ORBVocabulary();
@@ -89,9 +88,8 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     }
     cout << "Vocabulary loaded!" << endl << endl;
 
-
-    //Create KeyFrame Database
-    //Create the Map
+    // Create KeyFrame Database
+    // Create the Map
     if (!mapfile.empty() && LoadMap(mapfile))
     {
         bReuseMap = true;
@@ -225,12 +223,12 @@ cv::Mat System::TrackRGBD(const cv::Mat &im, const cv::Mat &depthmap, const doub
 
     // Check reset
     {
-    unique_lock<mutex> lock(mMutexReset);
-    if(mbReset)
-    {
-        mpTracker->Reset();
-        mbReset = false;
-    }
+        unique_lock<mutex> lock(mMutexReset);
+        if(mbReset)
+        {
+            mpTracker->Reset();
+            mbReset = false;
+        }
     }
 
     cv::Mat Tcw = mpTracker->GrabImageRGBD(im,depthmap,timestamp);
@@ -276,12 +274,12 @@ cv::Mat System::TrackMonocular(const cv::Mat &im, const double &timestamp)
 
     // Check reset
     {
-    unique_lock<mutex> lock(mMutexReset);
-    if(mbReset)
-    {
-        mpTracker->Reset();
-        mbReset = false;
-    }
+        unique_lock<mutex> lock(mMutexReset);
+        if(mbReset)
+        {
+            mpTracker->Reset();
+            mbReset = false;
+        }
     }
 
     cv::Mat Tcw = mpTracker->GrabImageMonocular(im,timestamp);
@@ -351,9 +349,6 @@ void System::Shutdown()
         std::cout << "waiting for everything to finish" << std::endl;
     }
 
-    if(mpViewer)
-        //pangolin::BindToContext("ORB-SLAM2: Map Viewer");
-
     if (is_save_map)
     {
         std::cout << "Saving map..." << std::endl;
@@ -364,7 +359,7 @@ void System::Shutdown()
 void System::SaveTrajectoryTUM(const string &filename)
 {
     cout << endl << "Saving camera trajectory to " << filename << " ..." << endl;
-    if(mSensor==MONOCULAR)
+    if(mSensor == MONOCULAR)
     {
         cerr << "ERROR: SaveTrajectoryTUM cannot be used for monocular." << endl;
         return;
@@ -636,12 +631,13 @@ void System::SaveMap(const string &filename)
     cout << " ...done" << std::endl;
     out.close();
 }
+
 bool System::LoadMap(const string &filename)
 {
     std::ifstream in(filename, std::ios_base::binary);
     if (!in)
     {
-        cerr << "Cannot Open Mapfile: " << mapfile << " , Create a new one" << std::endl;
+        cerr << "Cannot Open Mapfile: " << mapfile << ", Create a new one" << std::endl;
         return false;
     }
     cout << "Loading Mapfile: " << mapfile << std::flush;
