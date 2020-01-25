@@ -3,6 +3,14 @@
 #        build_type   : could be one of the following: Release or Debug
 #        ros          : could be ROS or left blank for standard compilation
 
+if ["$1" == ""]; then
+  echo "No argument set for parallel jobs! Set -jx where x is the number of threads!"
+  exit
+elif ["$2" == ""]; then
+  echo "No argument set for build type! Set Release or Debug"
+  exit
+fi
+
 echo "Configuring and building Thirdparty/DBoW2 ..."
 
 cd Thirdparty/DBoW2
