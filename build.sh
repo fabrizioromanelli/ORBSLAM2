@@ -3,6 +3,16 @@
 #        build_type   : could be one of the following: Release or Debug
 #        ros          : could be ROS or left blank for standard compilation
 
+BUILD_TYPE=$2
+
+if [ "$1" == "" ]; then
+  echo "No argument set for parallel jobs! Set -jx where x is the number of threads!"
+  exit
+elif [ "$BUILD_TYPE" == "" ]; then
+  echo "No argument set for build type! Set Release or Debug. Now compiling in Release mode"
+  BUILD_TYPE="Release"
+fi
+
 echo "Configuring and building Thirdparty/DBoW2 ..."
 
 cd Thirdparty/DBoW2
@@ -22,18 +32,22 @@ make $1
 
 cd ../../../
 
-echo "Uncompress vocabulary ..."
-
 cd Vocabulary
-tar -xf ORBvoc.txt.tar.gz
+VOCABULARYFILE=`pwd`"/ORBvoc.txt"
+if test -f "$VOCABULARYFILE"; then
+  echo "Vocabulary file already extracted."
+else
+  echo "Uncompress vocabulary ..."
+  tar -xf ORBvoc.txt.tar.gz
+fi
 cd ..
 
 echo "Configuring and building ORB_SLAM2 ..."
 
 mkdir -p build
 cd build
-if [ "$2" == "Release" ] || [ "$2" == "Debug" ]; then
-  cmake .. -DCMAKE_BUILD_TYPE=$2
+if [ "$BUILD_TYPE" == "Release" ] || [ "$BUILD_TYPE" == "Debug" ]; then
+  cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 else
   echo "[ERROR] Invalid build type. Should be one of the following: Release/Debug."
   exit 1
@@ -43,8 +57,13 @@ make $1
 cd ..
 
 cd Vocabulary
-echo "Converting vocabulary to binary version"
-./bin_vocabulary
+VOCABULARYBINFILE=`pwd`"/ORBvoc.bin"
+if test -f "$VOCABULARYBINFILE"; then
+  echo "Vocabulary binary file already extracted."
+else
+  echo "Converting vocabulary to binary version"
+  ./bin_vocabulary
+fi
 cd ..
 
 if [ "$3" == "ROS" ]; then
