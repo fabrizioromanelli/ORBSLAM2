@@ -33,9 +33,6 @@ using namespace std;
 void LoadImages(const string &strAssociationFilename, vector<string> &vstrImageFilenamesRGB,
                 vector<string> &vstrImageFilenamesD, vector<double> &vTimestamps);
 
-///home/felix/Desktop/ORB_SLAM2/Vocabulary/ORBvoc.bin /home/felix/Desktop/ORB_SLAM2/Examples/Monocular/KITTI00-02.yaml /home/felix/Desktop/kitti/dataset/sequences/00
-// args: /home/felix/Desktop/ORB_SLAM2/Vocabulary/ORBvoc.bin /home/felix/Desktop/ORB_SLAM2/Examples/RGB-D/TUM1.yaml /home/felix/Desktop/tum-rgbd/rgbd_dataset_freiburg1_desk2 /home/felix/Desktop/ORB_SLAM2/Examples/RGB-D/associations/fr1_desk2.txt
-
 int main(int argc, char **argv)
 {
     if(argc != 5)
@@ -65,7 +62,7 @@ int main(int argc, char **argv)
     }
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
-    ORB_SLAM2::System SLAM(argv[1],argv[2],ORB_SLAM2::System::RGBD,true);
+    ORB_SLAM2::System SLAM(argv[1], argv[2], ORB_SLAM2::System::RGBD, true, true);
 
     // Vector for tracking time statistics
     vector<float> vTimesTrack;
