@@ -3,6 +3,7 @@ Examples/Monocular/mono_euroc
 Examples/Monocular/mono_kitti
 Examples/Monocular/mono_tum
 Examples/RGB-D/rgbd_tum
+Examples/RGB-D/RGBD-tum
 Examples/ROS/ORB_SLAM2/CMakeLists.txt.user
 Examples/ROS/ORB_SLAM2/Mono
 Examples/ROS/ORB_SLAM2/MonoAR
@@ -18,6 +19,9 @@ Thirdparty/g2o/build/
 Thirdparty/g2o/config.h
 Thirdparty/g2o/lib/
 Vocabulary/ORBvoc.txt
+Vocabulary/ORBvoc.bin
+Vocabulary/bin_vocabulary
+camera_calibration/Camera_Calibration_Tool
 
 cmake-build-debug/
 cmake-build-release/
@@ -27,8 +31,5 @@ build/
 lib/
 .idea/
 
-
 *.mapfile
-Vocabulary/ORBvoc.bin
-Vocabulary/bin_vocabulary
 Drone/drone_vslam
