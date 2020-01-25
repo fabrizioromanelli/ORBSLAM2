@@ -1,6 +1,8 @@
 # ORB-SLAM2
 **Authors:** [Raul Mur-Artal](http://webdiis.unizar.es/~raulmur/), [Juan D. Tardos](http://webdiis.unizar.es/~jdtardos/), [J. M. M. Montiel](http://webdiis.unizar.es/~josemari/) and [Dorian Galvez-Lopez](http://doriangalvez.com/) ([DBoW2](https://github.com/dorian3d/DBoW2))
 
+**25 Jan 2020**: Added installDependencies.sh.
+
 **22 Jan 2020**: OpenCV 4.2.0 is now supported.
 
 **14 Jul 2017**: Binary format ORB vocabulary and Map save/load are now supported (See section 10 and 11).
@@ -57,6 +59,8 @@ if you use ORB-SLAM2 (Stereo or RGB-D) in an academic work, please cite:
 
 # 2. Prerequisites
 We have tested the library in **Ubuntu 12.04**, **14.04** and **16.04**, but it should be easy to compile in other platforms. A powerful computer (e.g. i7) will ensure real-time performance and provide more stable and accurate results.
+The library has been also tested on **Ubuntu 18.04** and **Ubuntu 19.10**.
+You can run `installDependencies.sh` from your Linux PC to install all the following dependencies.
 
 ## C++11 or C++0x Compiler
 We use the new thread and chrono functionalities of C++11.
@@ -76,7 +80,7 @@ We use modified versions of the [DBoW2](https://github.com/dorian3d/DBoW2) libra
 ## ROS (optional)
 We provide some examples to process the live input of a monocular, stereo or RGB-D camera using [ROS](ros.org). Building these examples is optional. In case you want to use ROS, a version Hydro or newer is needed.
 
-## Boost(optional)
+## Boost (optional)
 
 Map save/load feature needs boost library and more specifically the`libboost_serialization` library.
 
