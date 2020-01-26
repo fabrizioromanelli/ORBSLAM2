@@ -125,6 +125,11 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Vocabulary)
 add_executable(bin_vocabulary Vocabulary/bin_vocabulary.cpp)
 target_link_libraries(bin_vocabulary ${PROJECT_NAME})
 
+# Build test
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test)
+add_executable(Test Test/Test.cc)
+target_link_libraries(Test ${PROJECT_NAME})
+
 # Build V-SLAM application
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Drone)
 add_executable(DroneVslam Drone/DroneVslam.cc)
