@@ -1,12 +1,3 @@
-/***************************************************
-Problem : Advanced Lane Finding 
-****************************************************
-A C++ translation of Project 4 - Advanced Lane Finding
-
-Course: Udacity Self-Driving Car Nanodegree
-Author : Dat Nguyen
-Date   : Feb 24, 2016
-*/
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <iostream>
@@ -19,20 +10,18 @@ Date   : Feb 24, 2016
 #include <opencv2/core/types_c.h>
 #include <opencv2/opencv.hpp>
 
-
 typedef std::vector<cv::Point3f>  obj_points; // object points (3D) for one image
 typedef std::vector<cv::Point2f>  img_points; // image point (2D) for one image
-
 
 #define CHESS_ROWS 7
 #define CHESS_COLS 7
 #define BACKSPACE ' '
 
-void			find_corners(std::vector<obj_points>&, std::vector<img_points>&, cv::Size &img_size);
-void			get_corners(std::string img_name, std::vector<obj_points> &arr_obj_points, std::vector<img_points>&, cv::Size &img_size);
-std::string		get_path(std::string message);
-void			calibrate_camera(cv::Mat &, cv::Mat &, std::vector<obj_points>&, std::vector<img_points>&, cv::Size &);
-void 			get_chess_size();
+void			  find_corners(std::vector<obj_points>&, std::vector<img_points>&, cv::Size &img_size);
+void			  get_corners(std::string img_name, std::vector<obj_points> &arr_obj_points, std::vector<img_points>&, cv::Size &img_size);
+std::string	get_path(std::string message);
+void			  calibrate_camera(cv::Mat &, cv::Mat &, std::vector<obj_points>&, std::vector<img_points>&, cv::Size &);
+void 			  get_chess_size();
 
 int main()
 {
@@ -43,8 +32,8 @@ int main()
 	cv::Size img_size;
 
 	// Get chess board size
-	//get_chess_size();
-	//Go to image folder to get images for calibration
+	get_chess_size();
+	// Go to image folder to get images for calibration
 	find_corners(arr_obj_points, arr_img_points, img_size);
 
 	// Start calibration
@@ -85,7 +74,7 @@ void find_corners(std::vector<obj_points> &arr_obj_points, std::vector<img_point
 	}
 }
 
-void    get_corners(std::string img_name, std::vector<obj_points> &arr_obj_points, std::vector<img_points>& arr_img_points, cv::Size &img_size) {
+void get_corners(std::string img_name, std::vector<obj_points> &arr_obj_points, std::vector<img_points>& arr_img_points, cv::Size &img_size) {
 	// Convert WINDOW PATH to UNIX PATH : C\\image.jpg  to ./image.jpg
 	cv::Mat image = cv::imread(img_name, 1);
 	if (!image.empty()) {
@@ -109,14 +98,14 @@ void    get_corners(std::string img_name, std::vector<obj_points> &arr_obj_point
 			cv::Mat gray;
 			cv::cvtColor(image, gray, cv::COLOR_BGR2GRAY);
 			cv::cornerSubPix(gray, corners, cv::Size(11, 11), cv::Size(-1, -1), cv::TermCriteria(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, 30, 0.1));
-			std::cout<<"Added image points for image "<< img_name<<" size "<<image.size() << std::endl;
+			std::cout << "Added image points for image " << img_name << " size " << image.size() << std::endl;
 			arr_img_points.push_back(corners);
 			arr_obj_points.push_back(corners_3d);
 			// For Debug:
-			//cv::imshow("image", gray); // display on image window	
-			//cv::drawChessboardCorners(image, board_sz, corners, found);   // Draw corners on original image
-			//cv::imshow("calibrated", image);
-			//int key = cv::waitKey(500);	// wait 2 secs
+			cv::imshow("image", gray); // display on image window	
+			cv::drawChessboardCorners(image, board_sz, corners, found);   // Draw corners on original image
+			cv::imshow("calibrated", image);
+			cv::waitKey(500);	// wait 2 secs
 		}
 		img_size = image.size();
 	}
@@ -135,17 +124,15 @@ void calibrate_camera(cv::Mat &cam_matrix, cv::Mat &dist_coeffs, std::vector<obj
 std::string get_path(std::string message) {
 	std::string path;
 	std::cout << message;
-	//std::getline(std::cin, path);
-	path = "/home/felix/Desktop/calib_images/webcam_rauter1/";
+	path = "/home/tantrizio/workspace/calibImgs/";
 	if (path.empty()) {
-		std::cout << " Exitting program...\n" << std::endl;
+		std::cout << " Exiting program...\n" << std::endl;
 		exit(101);
 	}
-	//TOKENIZE HEREEEEEE
 	return path;
 }
 
-void 	get_chess_size() {
+void	get_chess_size() {
 	int rows, cols;
 	bool good = false;
 	do {
@@ -162,7 +149,7 @@ void 	get_chess_size() {
 #define CHESS_COLS cols
 		}
 		else {
-			printf("Please only enter possitive numbers.\n");
+			printf("Please only enter positive numbers.\n");
 		}
 	} while (good == false);
 }

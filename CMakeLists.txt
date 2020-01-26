@@ -7,8 +7,8 @@ ENDIF()
 
 MESSAGE("Build type: " ${CMAKE_BUILD_TYPE})
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -Wall  -O3 -march=native -D EIGEN_NO_DEPRECATED_WARNING")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall   -O3 -march=native -D EIGEN_NO_DEPRECATED_WARNING")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O3 -march=native -D EIGEN_NO_DEPRECATED_WARNING")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3 -march=native -D EIGEN_NO_DEPRECATED_WARNING")
 
 # Check C++11 or C++0x support
 include(CheckCXXCompilerFlag)
@@ -76,8 +76,6 @@ target_link_libraries(${PROJECT_NAME}
         ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
         )
 
-
-        
 message(STATUS "Compile With map save/load function")
 find_library(BOOST_SERIALIZATION boost_serialization)
 if (NOT BOOST_SERIALIZATION)
@@ -87,59 +85,47 @@ target_link_libraries(${PROJECT_NAME} ${BOOST_SERIALIZATION})
 
 
 # Build examples
-
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Stereo)
 
-add_executable(stereo_kitti
-        Examples/Stereo/stereo_kitti.cc)
+add_executable(stereo_kitti Examples/Stereo/stereo_kitti.cc)
 target_link_libraries(stereo_kitti ${PROJECT_NAME})
 
-add_executable(stereo_euroc
-        Examples/Stereo/stereo_euroc.cc)
+add_executable(stereo_euroc Examples/Stereo/stereo_euroc.cc)
 target_link_libraries(stereo_euroc ${PROJECT_NAME})
 
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Monocular)
 
-add_executable(mono_tum
-        Examples/Monocular/mono_tum.cc)
+add_executable(mono_tum Examples/Monocular/mono_tum.cc)
 target_link_libraries(mono_tum ${PROJECT_NAME})
 
-add_executable(mono_euroc
-        Examples/Monocular/mono_euroc.cc)
+add_executable(mono_euroc Examples/Monocular/mono_euroc.cc)
 target_link_libraries(mono_euroc ${PROJECT_NAME})
 
 # KITTI Mono Example
-
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Monocular)
-
-add_executable(mono_kitti
-        Examples/Monocular/mono_kitti.cc)
+add_executable(mono_kitti Examples/Monocular/mono_kitti.cc)
 target_link_libraries(mono_kitti ${PROJECT_NAME})
 
 # TUM RGB-D Example
-
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/RGB-D)
-
-add_executable(RGBD-tum
-        Examples/RGB-D/rgbd_tum.cc)
+add_executable(RGBD-tum Examples/RGB-D/rgbd_tum.cc)
 target_link_libraries(RGBD-tum ${PROJECT_NAME})
 
-# Camera Calibration Tool
-
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/camera_calibration)
-
-add_executable(Camera_Calibration_Tool camera_calibration/camera_calibration_tool.cpp)
-target_link_libraries(Camera_Calibration_Tool ${PROJECT_NAME})
+# Camera Calibration Tools
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/camera_calibration_3D)
+add_executable(Camera_Calibration_3D camera_calibration_3D/camera_calibration_tool.cpp)
+target_link_libraries(Camera_Calibration_3D ${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/camera_calibration_monocular)
+add_executable(Camera_Calibration_Mono camera_calibration_monocular/camera_calibration.cpp)
+target_link_libraries(Camera_Calibration_Mono ${PROJECT_NAME})
 
 # Build tools
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Vocabulary)
-add_executable(bin_vocabulary
-        Vocabulary/bin_vocabulary.cpp)
+add_executable(bin_vocabulary Vocabulary/bin_vocabulary.cpp)
 target_link_libraries(bin_vocabulary ${PROJECT_NAME})
 
 # Build V-SLAM application
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Drone)
-add_executable(DroneVslam
-Drone/DroneVslam.cc)
+add_executable(DroneVslam Drone/DroneVslam.cc)
 target_link_libraries(DroneVslam ${PROJECT_NAME})
