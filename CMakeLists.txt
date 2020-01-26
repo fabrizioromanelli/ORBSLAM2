@@ -120,6 +120,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/tools/camera_calibratio
 add_executable(Camera_Calibration_Mono tools/camera_calibration_monocular/camera_calibration.cpp)
 target_link_libraries(Camera_Calibration_Mono ${PROJECT_NAME})
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/tools/grab_image)
+add_executable(Grab_Image tools/grab_image/grabImage.cc)
+target_link_libraries(Grab_Image ${PROJECT_NAME})
+
 # Build tools
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Vocabulary)
 add_executable(bin_vocabulary Vocabulary/bin_vocabulary.cpp)
