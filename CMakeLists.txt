@@ -83,7 +83,6 @@ if (NOT BOOST_SERIALIZATION)
 endif()
 target_link_libraries(${PROJECT_NAME} ${BOOST_SERIALIZATION})
 
-
 # Build examples
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Stereo)
 
@@ -92,7 +91,6 @@ target_link_libraries(stereo_kitti ${PROJECT_NAME})
 
 add_executable(stereo_euroc Examples/Stereo/stereo_euroc.cc)
 target_link_libraries(stereo_euroc ${PROJECT_NAME})
-
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Monocular)
 
@@ -120,10 +118,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/tools/camera_calibratio
 add_executable(Camera_Calibration_Mono tools/camera_calibration_monocular/camera_calibration.cpp)
 target_link_libraries(Camera_Calibration_Mono ${PROJECT_NAME})
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/tools/grab_image)
-add_executable(Grab_Image tools/grab_image/grabImage.cc)
-target_link_libraries(Grab_Image ${PROJECT_NAME})
-
 # Build tools
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Vocabulary)
 add_executable(bin_vocabulary Vocabulary/bin_vocabulary.cpp)
@@ -138,3 +132,9 @@ target_link_libraries(Test ${PROJECT_NAME})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Drone)
 add_executable(DroneVslam Drone/DroneVslam.cc)
 target_link_libraries(DroneVslam ${PROJECT_NAME})
+
+# Here we unset the CMAKE_BUILD_TYPE because -O3 option causes a crash
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/tools/grab_image)
+add_executable(Grab_Image tools/grab_image/grabImage.cc)
+target_compile_options(Grab_Image PRIVATE -O0)
+target_link_libraries(Grab_Image ${PROJECT_NAME})

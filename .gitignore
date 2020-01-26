@@ -25,6 +25,7 @@ camera_calibration_3D/Camera_Calibration_3D
 camera_calibration_monocular/Camera_Calibration_Mono
 camera_calibration_monocular/out_creative.xml
 Test/Test
+tools/grab_image/Grab_Image
 
 cmake-build-debug/
 cmake-build-release/
