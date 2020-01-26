@@ -47,7 +47,7 @@ echo "Configuring and building ORB_SLAM2 ..."
 mkdir -p build
 cd build
 if [ "$BUILD_TYPE" == "Release" ] || [ "$BUILD_TYPE" == "Debug" ]; then
-  cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_VERBOSE_MAKEFILE:BOOL=ON
+  cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 else
   echo "[ERROR] Invalid build type. Should be one of the following: Release/Debug."
   exit 1
