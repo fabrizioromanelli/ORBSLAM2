@@ -113,11 +113,11 @@ add_executable(RGBD-tum Examples/RGB-D/rgbd_tum.cc)
 target_link_libraries(RGBD-tum ${PROJECT_NAME})
 
 # Camera Calibration Tools
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/camera_calibration_3D)
-add_executable(Camera_Calibration_3D camera_calibration_3D/camera_calibration_tool.cpp)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/tools/camera_calibration_3D)
+add_executable(Camera_Calibration_3D tools/camera_calibration_3D/camera_calibration_tool.cpp)
 target_link_libraries(Camera_Calibration_3D ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/camera_calibration_monocular)
-add_executable(Camera_Calibration_Mono camera_calibration_monocular/camera_calibration.cpp)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/tools/camera_calibration_monocular)
+add_executable(Camera_Calibration_Mono tools/camera_calibration_monocular/camera_calibration.cpp)
 target_link_libraries(Camera_Calibration_Mono ${PROJECT_NAME})
 
 # Build tools
