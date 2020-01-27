@@ -22,10 +22,14 @@ Vocabulary/ORBvoc.txt
 Vocabulary/ORBvoc.bin
 Vocabulary/bin_vocabulary
 camera_calibration_3D/Camera_Calibration_3D
-camera_calibration_monocular/Camera_Calibration_Mono
-camera_calibration_monocular/out_creative.xml
 Test/Test
 tools/grab_image/Grab_Image
+tools/camera_calibration_3D/Camera_Calibration_3D
+tools/camera_calibration_monocular/Camera_Calibration_Mono
+Benchmarks/fromMonocularFile/benchmark
+Benchmarks/fromMonocularCamera/benchmark
+Benchmarks/fromRGBDFile/benchmark
+Benchmarks/fromStereoFile/benchmark
 
 cmake-build-debug/
 cmake-build-release/

@@ -100,6 +100,11 @@ target_link_libraries(mono_tum ${PROJECT_NAME})
 add_executable(mono_euroc Examples/Monocular/mono_euroc.cc)
 target_link_libraries(mono_euroc ${PROJECT_NAME})
 
+# Build benchmarks
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Benchmarks/fromMonocularFile)
+add_executable(benchmark Benchmarks/fromMonocularFile/benchmark.cc)
+target_link_libraries(benchmark ${PROJECT_NAME})
+
 # KITTI Mono Example
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Monocular)
 add_executable(mono_kitti Examples/Monocular/mono_kitti.cc)
