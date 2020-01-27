@@ -1,9 +1,11 @@
 # ORB-SLAM2
 **Authors:** [Raul Mur-Artal](http://webdiis.unizar.es/~raulmur/), [Juan D. Tardos](http://webdiis.unizar.es/~jdtardos/), [J. M. M. Montiel](http://webdiis.unizar.es/~josemari/) and [Dorian Galvez-Lopez](http://doriangalvez.com/) ([DBoW2](https://github.com/dorian3d/DBoW2))
 
+**27 Jan 2020**: Re-organized tools directory. Added camera calibration (monocular and 3D). Added tool to grab images in jpeg for calibration. Added test for Creative WebCam and SonyVaio integrated WebCam.
+
 **25 Jan 2020**: Added installDependencies.sh.
 
-**22 Jan 2020**: OpenCV 4.2.0 is now supported.
+**22 Jan 2020**: OpenCV 4.2.0 and Eigen 3.3.7 are now supported.
 
 **14 Jul 2017**: Binary format ORB vocabulary and Map save/load are now supported (See section 10 and 11).
 
