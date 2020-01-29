@@ -38,7 +38,7 @@ int main(int argc, char** argv)
       strcat(filename, ".jpg");
 
       int key = waitKey(10);
-      // Save image to jpeg if Spacebar has been pressend
+      // Save image to jpeg if Spacebar has been pressed
       if( key == 32 ) {
         imwrite(filename, resized);
       } else if (key == 27) { // stop capturing by pressing ESC
