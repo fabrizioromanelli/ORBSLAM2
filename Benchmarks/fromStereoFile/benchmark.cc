@@ -14,38 +14,27 @@
 
 using namespace std;
 
-void LoadImages(const string &strAssociationFilename, vector<string> &vstrImageFilenamesRGB, vector<string> &vstrImageFilenamesD, vector<double> &vTimestamps);
+void printCPUinfo();
+void LoadStereoImages(const string &strPathToSequence, vector<string> &vstrImageLeft, vector<string> &vstrImageRight, vector<double> &vTimestamps);
 
 int main(int argc, char **argv)
 {
-    if(argc != 5)
+    if(argc != 4)
     {
-        cerr << endl << "Usage: ./benchmark path_to_vocabulary path_to_settings path_to_sequence path_to_association" << endl;
+        cerr << endl << "Usage: ./benchmark_stereo_file path_to_vocabulary path_to_settings path_to_sequence" << endl;
         return 1;
     }
 
     // Retrieve paths to images
-    vector<string> vstrImageFilenamesRGB;
-    vector<string> vstrImageFilenamesD;
+    vector<string> vstrImageLeft;
+    vector<string> vstrImageRight;
     vector<double> vTimestamps;
-    string strAssociationFilename = string(argv[4]);
-    LoadImages(strAssociationFilename, vstrImageFilenamesRGB, vstrImageFilenamesD, vTimestamps);
+    LoadStereoImages(string(argv[3]), vstrImageLeft, vstrImageRight, vTimestamps);
 
-    // Check consistency in the number of images and depthmaps
-    int nImages = vstrImageFilenamesRGB.size();
-    if(vstrImageFilenamesRGB.empty())
-    {
-        cerr << endl << "No images found in provided path." << endl;
-        return 1;
-    }
-    else if(vstrImageFilenamesD.size() != vstrImageFilenamesRGB.size())
-    {
-        cerr << endl << "Different number of images for rgb and depth." << endl;
-        return 1;
-    }
+    const int nImages = vstrImageLeft.size();
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
-    ORB_SLAM2::System SLAM(argv[1], argv[2], ORB_SLAM2::System::RGBD, true, true);
+    ORB_SLAM2::System SLAM(argv[1], argv[2], ORB_SLAM2::System::STEREO, false, true);
 
     // Vector for tracking time statistics
     vector<float> vTimesTrack;
@@ -53,21 +42,21 @@ int main(int argc, char **argv)
 
     cout << endl << "-------" << endl;
     cout << "Start processing sequence ..." << endl;
-    cout << "Images in the sequence: " << nImages << endl << endl;
+    cout << "Images in the sequence: " << nImages << endl << endl;   
 
     // Main loop
-    cv::Mat imRGB, imD;
+    cv::Mat imLeft, imRight;
     for(int ni=0; ni<nImages; ni++)
     {
-        // Read image and depthmap from file
-        imRGB = cv::imread(string(argv[3])+"/"+vstrImageFilenamesRGB[ni], cv::IMREAD_UNCHANGED);
-        imD = cv::imread(string(argv[3])+"/"+vstrImageFilenamesD[ni], cv::IMREAD_UNCHANGED);
+        // Read left and right images from file
+        imLeft = cv::imread(vstrImageLeft[ni], cv::IMREAD_UNCHANGED);
+        imRight = cv::imread(vstrImageRight[ni], cv::IMREAD_UNCHANGED);
         double tframe = vTimestamps[ni];
 
-        if(imRGB.empty())
+        if(imLeft.empty())
         {
             cerr << endl << "Failed to load image at: "
-                 << string(argv[3]) << "/" << vstrImageFilenamesRGB[ni] << endl;
+                 << string(vstrImageLeft[ni]) << endl;
             return 1;
         }
 
@@ -77,8 +66,8 @@ int main(int argc, char **argv)
         std::chrono::monotonic_clock::time_point t1 = std::chrono::monotonic_clock::now();
 #endif
 
-        // Pass the image to the SLAM system
-        SLAM.TrackRGBD(imRGB, imD, tframe);
+        // Pass the images to the SLAM system
+        SLAM.TrackStereo(imLeft,imRight,tframe);
 
 #ifdef COMPILEDWITHC11
         std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
@@ -87,8 +76,12 @@ int main(int argc, char **argv)
 #endif
 
         double ttrack = std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1).count();
+        // integral duration: requires duration_cast
+        auto int_ms = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
 
-        vTimesTrack[ni]=ttrack;
+        cout << "Image #" << ni << " SLAM.TrackStereo duration: " << int_ms.count() << "ms" << endl;
+
+        vTimesTrack[ni] = ttrack;
 
         // Wait to load the next frame
         double T = 0;
@@ -112,38 +105,60 @@ int main(int argc, char **argv)
         totaltime += vTimesTrack[ni];
     }
     cout << "-------" << endl << endl;
-    cout << "median tracking time: " << vTimesTrack[nImages/2] << endl;
-    cout << "mean tracking time: " << totaltime/nImages << endl;
+    cout << "median tracking time: " << vTimesTrack[nImages/2] * 1000 << "ms" << endl;
+    cout << "mean tracking time: " << totaltime/nImages * 1000 << "ms\n" << endl;
 
-    // Save camera trajectory
-    SLAM.SaveTrajectory("CameraTrajectory.dat");
-    SLAM.SaveKeyFrameTrajectory("KeyFrameTrajectory.dat");
+    // Get CPU information and prints them out
+    printCPUinfo();
 
     return 0;
 }
 
-void LoadImages(const string &strAssociationFilename, vector<string> &vstrImageFilenamesRGB,
-                vector<string> &vstrImageFilenamesD, vector<double> &vTimestamps)
+void printCPUinfo()
 {
-    ifstream fAssociation;
-    fAssociation.open(strAssociationFilename.c_str());
-    while(!fAssociation.eof())
+    FILE *cpuinfo = fopen("/proc/cpuinfo", "rb");
+    char *arg = 0;
+    size_t size = 0;
+    while(getdelim(&arg, &size, 0, cpuinfo) != -1)
+    {
+       puts(arg);
+    }
+    free(arg);
+    fclose(cpuinfo);
+}
+
+
+void LoadStereoImages(const string &strPathToSequence, vector<string> &vstrImageLeft, vector<string> &vstrImageRight, vector<double> &vTimestamps)
+{
+    ifstream fTimes;
+    string strPathTimeFile = strPathToSequence + "/times.txt";
+    fTimes.open(strPathTimeFile.c_str());
+    while(!fTimes.eof())
     {
         string s;
-        getline(fAssociation,s);
+        getline(fTimes,s);
         if(!s.empty())
         {
             stringstream ss;
             ss << s;
             double t;
-            string sRGB, sD;
             ss >> t;
             vTimestamps.push_back(t);
-            ss >> sRGB;
-            vstrImageFilenamesRGB.push_back(sRGB);
-            ss >> t;
-            ss >> sD;
-            vstrImageFilenamesD.push_back(sD);
         }
+    }
+
+    string strPrefixLeft = strPathToSequence + "/image_0/";
+    string strPrefixRight = strPathToSequence + "/image_1/";
+
+    const int nTimes = vTimestamps.size();
+    vstrImageLeft.resize(nTimes);
+    vstrImageRight.resize(nTimes);
+
+    for(int i=0; i<nTimes; i++)
+    {
+        stringstream ss;
+        ss << setfill('0') << setw(6) << i;
+        vstrImageLeft[i] = strPrefixLeft + ss.str() + ".png";
+        vstrImageRight[i] = strPrefixRight + ss.str() + ".png";
     }
 }

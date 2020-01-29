@@ -1,3 +1,4 @@
+#!/bin/bash
 # Usage: ./build.sh <parallel_jobs> <build_type> <ros>
 #        parallel_jobs: -jx where x is the number of threads
 #        build_type   : could be one of the following: Release or Debug

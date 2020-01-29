@@ -14,7 +14,8 @@
 
 using namespace std;
 
-void LoadImages(const string &strAssociationFilename, vector<string> &vstrImageFilenamesRGB, vector<string> &vstrImageFilenamesD, vector<double> &vTimestamps);
+void printCPUinfo();
+void LoadRGBDImages(const string &strAssociationFilename, vector<string> &vstrImageFilenamesRGB, vector<string> &vstrImageFilenamesD, vector<double> &vTimestamps);
 
 int main(int argc, char **argv)
 {
@@ -29,7 +30,7 @@ int main(int argc, char **argv)
     vector<string> vstrImageFilenamesD;
     vector<double> vTimestamps;
     string strAssociationFilename = string(argv[4]);
-    LoadImages(strAssociationFilename, vstrImageFilenamesRGB, vstrImageFilenamesD, vTimestamps);
+    LoadRGBDImages(strAssociationFilename, vstrImageFilenamesRGB, vstrImageFilenamesD, vTimestamps);
 
     // Check consistency in the number of images and depthmaps
     int nImages = vstrImageFilenamesRGB.size();
@@ -45,7 +46,7 @@ int main(int argc, char **argv)
     }
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
-    ORB_SLAM2::System SLAM(argv[1], argv[2], ORB_SLAM2::System::RGBD, true, true);
+    ORB_SLAM2::System SLAM(argv[1], argv[2], ORB_SLAM2::System::RGBD, false, true);
 
     // Vector for tracking time statistics
     vector<float> vTimesTrack;
@@ -87,6 +88,10 @@ int main(int argc, char **argv)
 #endif
 
         double ttrack = std::chrono::duration_cast<std::chrono::duration<double> >(t2 - t1).count();
+        // integral duration: requires duration_cast
+        auto int_ms = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+
+        cout << "Image #" << ni << " SLAM.TrackRGBD duration: " << int_ms.count() << "ms" << endl;
 
         vTimesTrack[ni]=ttrack;
 
@@ -112,18 +117,29 @@ int main(int argc, char **argv)
         totaltime += vTimesTrack[ni];
     }
     cout << "-------" << endl << endl;
-    cout << "median tracking time: " << vTimesTrack[nImages/2] << endl;
-    cout << "mean tracking time: " << totaltime/nImages << endl;
+    cout << "median tracking time: " << vTimesTrack[nImages/2] * 1000 << "ms" << endl;
+    cout << "mean tracking time: " << totaltime/nImages * 1000 << "ms\n" << endl;
 
-    // Save camera trajectory
-    SLAM.SaveTrajectory("CameraTrajectory.dat");
-    SLAM.SaveKeyFrameTrajectory("KeyFrameTrajectory.dat");
+    // Get CPU information and prints them out
+    printCPUinfo();
 
     return 0;
 }
 
-void LoadImages(const string &strAssociationFilename, vector<string> &vstrImageFilenamesRGB,
-                vector<string> &vstrImageFilenamesD, vector<double> &vTimestamps)
+void printCPUinfo()
+{
+    FILE *cpuinfo = fopen("/proc/cpuinfo", "rb");
+    char *arg = 0;
+    size_t size = 0;
+    while(getdelim(&arg, &size, 0, cpuinfo) != -1)
+    {
+       puts(arg);
+    }
+    free(arg);
+    fclose(cpuinfo);
+}
+
+void LoadRGBDImages(const string &strAssociationFilename, vector<string> &vstrImageFilenamesRGB, vector<string> &vstrImageFilenamesD, vector<double> &vTimestamps)
 {
     ifstream fAssociation;
     fAssociation.open(strAssociationFilename.c_str());

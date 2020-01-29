@@ -102,8 +102,14 @@ target_link_libraries(mono_euroc ${PROJECT_NAME})
 
 # Build benchmarks
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Benchmarks/fromMonocularFile)
-add_executable(benchmark Benchmarks/fromMonocularFile/benchmark.cc)
-target_link_libraries(benchmark ${PROJECT_NAME})
+add_executable(benchmark_mono_file Benchmarks/fromMonocularFile/benchmark.cc)
+target_link_libraries(benchmark_mono_file ${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Benchmarks/fromRGBDFile)
+add_executable(benchmark_rgbd_file Benchmarks/fromRGBDFile/benchmark.cc)
+target_link_libraries(benchmark_rgbd_file ${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Benchmarks/fromStereoFile)
+add_executable(benchmark_stereo_file Benchmarks/fromStereoFile/benchmark.cc)
+target_link_libraries(benchmark_stereo_file ${PROJECT_NAME})
 
 # KITTI Mono Example
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Monocular)
