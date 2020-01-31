@@ -41,6 +41,8 @@
 // for map file io
 #include <fstream>
 
+#include "Thirdparty/fbow/include/fbow/fbow.h"
+
 namespace ORB_SLAM2
 {
 
@@ -143,6 +145,9 @@ private:
 
     // ORB vocabulary used for place recognition and feature matching.
     ORBVocabulary* mpVocabulary;
+
+    // FBOW vocabulary used for place recognition and feature matching.
+    fbow::Vocabulary* mpFBOWVocabulary;
 
     // KeyFrame database for place recognition (relocalization and loop detection).
     KeyFrameDatabase* mpKeyFrameDatabase;
