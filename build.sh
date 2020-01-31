@@ -14,12 +14,12 @@ elif [ "$BUILD_TYPE" == "" ]; then
   BUILD_TYPE="Release"
 fi
 
-echo "Configuring and building Thirdparty/DBoW2 ..."
+echo "Configuring and building Thirdparty/fbow ..."
 cd Thirdparty/fbow
 mkdir -p build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
-make $1
+cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../
+make install $1
 
 echo "Configuring and building Thirdparty/DBoW2 ..."
 cd ../../DBoW2
