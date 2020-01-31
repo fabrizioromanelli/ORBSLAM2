@@ -68,6 +68,9 @@ public:
     // Compute Bag of Words representation.
     void ComputeBoW();
 
+    // Compute FBag of Words representation.
+    void ComputeFboW();
+
     // Set the camera pose.
     void SetPose(cv::Mat Tcw);
 

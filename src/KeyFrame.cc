@@ -40,7 +40,7 @@ KeyFrame::KeyFrame(Frame &F, Map *pMap, KeyFrameDatabase *pKFDB):
     mfLogScaleFactor(F.mfLogScaleFactor), mvScaleFactors(F.mvScaleFactors), mvLevelSigma2(F.mvLevelSigma2),
     mvInvLevelSigma2(F.mvInvLevelSigma2), mnMinX(F.mnMinX), mnMinY(F.mnMinY), mnMaxX(F.mnMaxX),
     mnMaxY(F.mnMaxY), mK(F.mK), mvpMapPoints(F.mvpMapPoints), mpKeyFrameDB(pKFDB),
-    mpORBvocabulary(F.mpORBvocabulary), mbFirstConnection(true), mpParent(NULL), mbNotErase(false),
+    mpORBvocabulary(F.mpORBvocabulary), mpFBOWvocabulary(F.mpFBOWvocabulary), mbFirstConnection(true), mpParent(NULL), mbNotErase(false),
     mbToBeErased(false), mbBad(false), mHalfBaseline(F.mb/2), mpMap(pMap)
 {
     mnId=nNextId++;
@@ -65,6 +65,12 @@ void KeyFrame::ComputeBoW()
         // We assume the vocabulary tree has 6 levels, change the 4 otherwise
         mpORBvocabulary->transform(vCurrentDesc,mBowVec,mFeatVec,4);
     }
+}
+
+void KeyFrame::ComputeFboW()
+{
+    if(mFbowVec.empty() || mFbowFeatVec.empty())
+        mpFBOWvocabulary->transform(mDescriptors, 4, mFbowVec, mFbowFeatVec);
 }
 
 void KeyFrame::SetPose(const cv::Mat &Tcw_)

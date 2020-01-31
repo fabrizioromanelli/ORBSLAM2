@@ -43,6 +43,20 @@ namespace boost{
         ar & boost::serialization::base_object<DBoW2::FeatureVector::super>(FeatVec);
     }
 
+    // // The following should replace the previous two definitions
+    // /* serialization for FBOW */
+    // template<class Archive>
+    // void serialize(Archive &ar, fbow::fBow &fbowVec, const unsigned int file_version)
+    // {
+    //     ar & boost::serialization::base_object<fbow::fBow::super>(fbowVec);
+    // }
+    // /* serialization for FBOW FeatureVector */
+    // template<class Archive>
+    // void serialize(Archive &ar, fbow::fBow2 &fbowFeatVec, const unsigned int file_version)
+    // {
+    //     ar & boost::serialization::base_object<fbow::fBow2::super>(fbowFeatVec);
+    // }
+
     /* serialization for CV KeyPoint */
     template<class Archive>
     void serialize(Archive &ar, ::cv::KeyPoint &kf, const unsigned int file_version)
