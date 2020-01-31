@@ -91,6 +91,8 @@ protected:
 
     bool DetectLoop();
 
+    bool DetectLoopFbow();
+
     bool ComputeSim3();
 
     void SearchAndFuse(const KeyFrameAndPose &CorrectedPosesMap);

@@ -43,6 +43,14 @@ LoopClosing::LoopClosing(Map *pMap, KeyFrameDatabase *pDB, ORBVocabulary *pVoc, 
     mnCovisibilityConsistencyTh = 3;
 }
 
+LoopClosing::LoopClosing(Map *pMap, KeyFrameDatabase *pDB, fbow::Vocabulary *pFbowVoc, const bool bFixScale):
+    mbResetRequested(false), mbFinishRequested(false), mbFinished(true), mpMap(pMap),
+    mpKeyFrameDB(pDB), mpFBOWVocabulary(pFbowVoc), mpMatchedKF(NULL), mLastLoopKFid(0), mbRunningGBA(false), mbFinishedGBA(true),
+    mbStopGBA(false), mpThreadGBA(NULL), mbFixScale(bFixScale), mnFullBAIdx(0)
+{
+    mnCovisibilityConsistencyTh = 3;
+}
+
 void LoopClosing::SetTracker(Tracking *pTracker)
 {
     mpTracker=pTracker;
@@ -210,6 +218,133 @@ bool LoopClosing::DetectLoop()
     // Update Covisibility Consistent Groups
     mvConsistentGroups = vCurrentConsistentGroups;
 
+
+    // Add Current Keyframe to database
+    mpKeyFrameDB->add(mpCurrentKF);
+
+    if(mvpEnoughConsistentCandidates.empty())
+    {
+        mpCurrentKF->SetErase();
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+
+    mpCurrentKF->SetErase();
+    return false;
+}
+
+bool LoopClosing::DetectLoopFbow()
+{
+    {
+        unique_lock<mutex> lock(mMutexLoopQueue);
+        mpCurrentKF = mlpLoopKeyFrameQueue.front();
+        mlpLoopKeyFrameQueue.pop_front();
+        // Avoid that a keyframe can be erased while it is being process by this thread
+        mpCurrentKF->SetNotErase();
+    }
+
+    //If the map contains less than 10 KF or less than 10 KF have passed from last loop detection
+    if(mpCurrentKF->mnId<mLastLoopKFid+10)
+    {
+        mpKeyFrameDB->add(mpCurrentKF);
+        mpCurrentKF->SetErase();
+        return false;
+    }
+
+    // Compute reference FBoW similarity score
+    // This is the lowest score to a connected keyframe in the covisibility graph
+    // We will impose loop candidates to have a higher similarity than this
+    const vector<KeyFrame*> vpConnectedKeyFrames = mpCurrentKF->GetVectorCovisibleKeyFrames();
+    const fbow::fBow &CurrentFbowVec = mpCurrentKF->mFbowVec;
+    float minScore = 1;
+    for(size_t i=0; i<vpConnectedKeyFrames.size(); i++)
+    {
+        KeyFrame* pKF = vpConnectedKeyFrames[i];
+        if(pKF->isBad())
+            continue;
+
+        const fbow::fBow &FbowVec = pKF->mFbowVec;
+        float score = fbow::fBow::score(CurrentFbowVec, FbowVec);
+
+        if(score<minScore)
+            minScore = score;
+    }
+
+    // Query the database imposing the minimum score
+    vector<KeyFrame*> vpCandidateKFs = mpKeyFrameDB->DetectLoopCandidates(mpCurrentKF, minScore);
+
+    // If there are no loop candidates, just add new keyframe and return false
+    if(vpCandidateKFs.empty())
+    {
+        mpKeyFrameDB->add(mpCurrentKF);
+        mvConsistentGroups.clear();
+        mpCurrentKF->SetErase();
+        return false;
+    }
+
+    // For each loop candidate check consistency with previous loop candidates
+    // Each candidate expands a covisibility group (keyframes connected to the loop candidate in the covisibility graph)
+    // A group is consistent with a previous group if they share at least a keyframe
+    // We must detect a consistent loop in several consecutive keyframes to accept it
+    mvpEnoughConsistentCandidates.clear();
+
+    vector<ConsistentGroup> vCurrentConsistentGroups;
+    vector<bool> vbConsistentGroup(mvConsistentGroups.size(),false);
+    for(size_t i=0, iend=vpCandidateKFs.size(); i<iend; i++)
+    {
+        KeyFrame* pCandidateKF = vpCandidateKFs[i];
+
+        set<KeyFrame*> spCandidateGroup = pCandidateKF->GetConnectedKeyFrames();
+        spCandidateGroup.insert(pCandidateKF);
+
+        bool bEnoughConsistent = false;
+        bool bConsistentForSomeGroup = false;
+        for(size_t iG=0, iendG=mvConsistentGroups.size(); iG<iendG; iG++)
+        {
+            set<KeyFrame*> sPreviousGroup = mvConsistentGroups[iG].first;
+
+            bool bConsistent = false;
+            for(set<KeyFrame*>::iterator sit=spCandidateGroup.begin(), send=spCandidateGroup.end(); sit!=send;sit++)
+            {
+                if(sPreviousGroup.count(*sit))
+                {
+                    bConsistent=true;
+                    bConsistentForSomeGroup=true;
+                    break;
+                }
+            }
+
+            if(bConsistent)
+            {
+                int nPreviousConsistency = mvConsistentGroups[iG].second;
+                int nCurrentConsistency = nPreviousConsistency + 1;
+                if(!vbConsistentGroup[iG])
+                {
+                    ConsistentGroup cg = make_pair(spCandidateGroup,nCurrentConsistency);
+                    vCurrentConsistentGroups.push_back(cg);
+                    vbConsistentGroup[iG]=true; //this avoid to include the same group more than once
+                }
+                if(nCurrentConsistency>=mnCovisibilityConsistencyTh && !bEnoughConsistent)
+                {
+                    mvpEnoughConsistentCandidates.push_back(pCandidateKF);
+                    bEnoughConsistent=true; //this avoid to insert the same candidate more than once
+                }
+            }
+        }
+
+        // If the group is not consistent with any previous group insert with consistency counter set to zero
+        if(!bConsistentForSomeGroup)
+        {
+            ConsistentGroup cg = make_pair(spCandidateGroup,0);
+            vCurrentConsistentGroups.push_back(cg);
+        }
+    }
+
+    // Update Covisibility Consistent Groups
+    mvConsistentGroups = vCurrentConsistentGroups;
 
     // Add Current Keyframe to database
     mpKeyFrameDB->add(mpCurrentKF);
@@ -611,7 +746,6 @@ void LoopClosing::SearchAndFuse(const KeyFrameAndPose &CorrectedPosesMap)
         }
     }
 }
-
 
 void LoopClosing::RequestReset()
 {
