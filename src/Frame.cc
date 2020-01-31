@@ -398,6 +398,8 @@ void Frame::ComputeBoW()
     {
         vector<cv::Mat> vCurrentDesc = Converter::toDescriptorVector(mDescriptors);
         mpORBvocabulary->transform(vCurrentDesc,mBowVec,mFeatVec,4);
+        // This should translate to:
+        // mpORBvocabulary->transform(mDescriptors[0], 4, fBow &result, fBow2&result2); // As in fbow.h
     }
 }
 
