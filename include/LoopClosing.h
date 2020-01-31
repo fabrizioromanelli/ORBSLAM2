@@ -62,6 +62,7 @@ public:
 
     // Main function
     void Run();
+    void RunFbow();
 
     void InsertKeyFrame(KeyFrame *pKF);
 

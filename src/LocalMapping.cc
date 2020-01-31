@@ -111,6 +111,72 @@ void LocalMapping::Run()
     SetFinish();
 }
 
+void LocalMapping::RunFbow()
+{
+    mbFinished = false;
+
+    while(1)
+    {
+        // Tracking will see that Local Mapping is busy
+        SetAcceptKeyFrames(false);
+
+        // Check if there are keyframes in the queue
+        if(CheckNewKeyFrames())
+        {
+            // BoW conversion and insertion in Map
+            ProcessNewKeyFrame();
+
+            // Check recent MapPoints
+            MapPointCulling();
+
+            // Triangulate new MapPoints
+            CreateNewMapPoints();
+
+            if(!CheckNewKeyFrames())
+            {
+                // Find more matches in neighbor keyframes and fuse point duplications
+                SearchInNeighbors();
+            }
+
+            mbAbortBA = false;
+
+            if(!CheckNewKeyFrames() && !stopRequested())
+            {
+                // Local BA
+                if(mpMap->KeyFramesInMap()>2)
+                    Optimizer::LocalBundleAdjustment(mpCurrentKeyFrame,&mbAbortBA, mpMap);
+
+                // Check redundant local Keyframes
+                KeyFrameCulling();
+            }
+
+            mpLoopCloser->InsertKeyFrame(mpCurrentKeyFrame);
+        }
+        else if(Stop())
+        {
+            // Safe area to stop
+            while(isStopped() && !CheckFinish())
+            {
+                std::this_thread::sleep_for(std::chrono::microseconds(3000));
+            }
+            if(CheckFinish())
+                break;
+        }
+
+        ResetIfRequested();
+
+        // Tracking will see that Local Mapping is busy
+        SetAcceptKeyFrames(true);
+
+        if(CheckFinish())
+            break;
+
+        std::this_thread::sleep_for(std::chrono::microseconds(3000));
+    }
+
+    SetFinish();
+}
+
 void LocalMapping::InsertKeyFrame(KeyFrame *pKF)
 {
     unique_lock<mutex> lock(mMutexNewKFs);
@@ -135,6 +201,48 @@ void LocalMapping::ProcessNewKeyFrame()
 
     // Compute Bags of Words structures
     mpCurrentKeyFrame->ComputeBoW();
+
+    // Associate MapPoints to the new keyframe and update normal and descriptor
+    const vector<MapPoint*> vpMapPointMatches = mpCurrentKeyFrame->GetMapPointMatches();
+
+    for(size_t i=0; i<vpMapPointMatches.size(); i++)
+    {
+        MapPoint* pMP = vpMapPointMatches[i];
+        if(pMP)
+        {
+            if(!pMP->isBad())
+            {
+                if(!pMP->IsInKeyFrame(mpCurrentKeyFrame))
+                {
+                    pMP->AddObservation(mpCurrentKeyFrame, i);
+                    pMP->UpdateNormalAndDepth();
+                    pMP->ComputeDistinctiveDescriptors();
+                }
+                else // this can only happen for new stereo points inserted by the Tracking
+                {
+                    mlpRecentAddedMapPoints.push_back(pMP);
+                }
+            }
+        }
+    }    
+
+    // Update links in the Covisibility Graph
+    mpCurrentKeyFrame->UpdateConnections();
+
+    // Insert Keyframe in Map
+    mpMap->AddKeyFrame(mpCurrentKeyFrame);
+}
+
+void LocalMapping::ProcessNewKeyFrameFbow()
+{
+    {
+        unique_lock<mutex> lock(mMutexNewKFs);
+        mpCurrentKeyFrame = mlNewKeyFrames.front();
+        mlNewKeyFrames.pop_front();
+    }
+
+    // Compute Bags of Words structures
+    mpCurrentKeyFrame->ComputeFboW();
 
     // Associate MapPoints to the new keyframe and update normal and descriptor
     const vector<MapPoint*> vpMapPointMatches = mpCurrentKeyFrame->GetMapPointMatches();

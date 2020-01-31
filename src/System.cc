@@ -97,21 +97,43 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
 
     // Create KeyFrame Database
     // Create the Map
-    if (!mapfile.empty() && LoadMap(mapfile))
+    if (has_suffix(strVocFile, ".fbow"))
     {
-        bReuseMap = true;
-        std::cout << "Loaded Map" << std::endl;
+        if (!mapfile.empty() && LoadMapFbow(mapfile))
+        {
+            bReuseMap = true;
+            std::cout << "Loaded Map" << std::endl;
+        }
+        else
+        {
+            std::cout << "Map NOT loaded" << std::endl;
+
+            if (has_suffix(strVocFile, ".fbow"))
+                mpKeyFrameDatabase = new KeyFrameDatabase(mpFBOWVocabulary);
+            else
+                mpKeyFrameDatabase = new KeyFrameDatabase(mpVocabulary);
+
+            mpMap = new Map();
+        }
     }
     else
     {
-        std::cout << "Map NOT loaded" << std::endl;
-
-        if (has_suffix(strVocFile, ".fbow"))
-            mpKeyFrameDatabase = new KeyFrameDatabase(mpFBOWVocabulary);
+        if (!mapfile.empty() && LoadMap(mapfile))
+        {
+            bReuseMap = true;
+            std::cout << "Loaded Map" << std::endl;
+        }
         else
-            mpKeyFrameDatabase = new KeyFrameDatabase(mpVocabulary);
+        {
+            std::cout << "Map NOT loaded" << std::endl;
 
-        mpMap = new Map();
+            if (has_suffix(strVocFile, ".fbow"))
+                mpKeyFrameDatabase = new KeyFrameDatabase(mpFBOWVocabulary);
+            else
+                mpKeyFrameDatabase = new KeyFrameDatabase(mpVocabulary);
+
+            mpMap = new Map();
+        }
     }
 
     //Create Drawers. These are used by the Viewer
@@ -127,15 +149,20 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
 
     //Initialize the Local Mapping thread and launch
     mpLocalMapper = new LocalMapping(mpMap, mSensor == MONOCULAR);
-    mptLocalMapping = new thread(&ORB_SLAM2::LocalMapping::Run,mpLocalMapper);
 
     //Initialize the Loop Closing thread and launch
     if (has_suffix(strVocFile, ".fbow"))
+    {
+        mptLocalMapping = new thread(&ORB_SLAM2::LocalMapping::RunFbow, mpLocalMapper);
         mpLoopCloser = new LoopClosing(mpMap, mpKeyFrameDatabase, mpFBOWVocabulary, mSensor != MONOCULAR);
+        mptLoopClosing = new thread(&ORB_SLAM2::LoopClosing::RunFbow, mpLoopCloser);
+    }
     else
+    {
+        mptLocalMapping = new thread(&ORB_SLAM2::LocalMapping::Run, mpLocalMapper);
         mpLoopCloser = new LoopClosing(mpMap, mpKeyFrameDatabase, mpVocabulary, mSensor != MONOCULAR);
-    
-    mptLoopClosing = new thread(&ORB_SLAM2::LoopClosing::Run, mpLoopCloser);
+        mptLoopClosing = new thread(&ORB_SLAM2::LoopClosing::Run, mpLoopCloser);
+    }
 
     //Initialize the Viewer thread and launch
     if(bUseViewer)

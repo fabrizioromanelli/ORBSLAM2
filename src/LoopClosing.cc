@@ -95,6 +95,40 @@ void LoopClosing::Run()
     SetFinish();
 }
 
+void LoopClosing::RunFbow()
+{
+    mbFinished =false;
+
+    while(1)
+    {
+        // Check if there are keyframes in the queue
+        if(CheckNewKeyFrames())
+        {
+            // Detect loop candidates and check covisibility consistency
+            if(DetectLoopFbow())
+            {
+               // Compute similarity transformation [sR|t]
+               // In the stereo/RGBD case s=1
+               if(ComputeSim3())
+               {
+                   // Perform loop fusion and pose graph optimization
+                   CorrectLoop();
+               }
+            }
+        }
+
+        ResetIfRequested();
+
+        if(CheckFinish())
+            break;
+
+        std::this_thread::sleep_for(std::chrono::microseconds(5000));
+    }
+
+    SetFinish();
+}
+
+
 void LoopClosing::InsertKeyFrame(KeyFrame *pKF)
 {
     unique_lock<mutex> lock(mMutexLoopQueue);
@@ -274,7 +308,7 @@ bool LoopClosing::DetectLoopFbow()
     }
 
     // Query the database imposing the minimum score
-    vector<KeyFrame*> vpCandidateKFs = mpKeyFrameDB->DetectLoopCandidates(mpCurrentKF, minScore);
+    vector<KeyFrame*> vpCandidateKFs = mpKeyFrameDB->DetectLoopCandidatesFbow(mpCurrentKF, minScore);
 
     // If there are no loop candidates, just add new keyframe and return false
     if(vpCandidateKFs.empty())

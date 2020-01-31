@@ -221,6 +221,8 @@ protected:
     //Color order (true RGB, false BGR, ignored if grayscale)
     bool mbRGB;
 
+    bool isFbow;
+
     list<MapPoint*> mlpTemporalPoints;
 };
 

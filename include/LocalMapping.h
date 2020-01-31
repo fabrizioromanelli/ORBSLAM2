@@ -48,6 +48,7 @@ public:
 
     // Main function
     void Run();
+    void RunFbow();
 
     void InsertKeyFrame(KeyFrame* pKF);
 
@@ -76,6 +77,7 @@ protected:
 
     bool CheckNewKeyFrames();
     void ProcessNewKeyFrame();
+    void ProcessNewKeyFrameFbow();
     void CreateNewMapPoints();
 
     void MapPointCulling();
