@@ -32,6 +32,8 @@
 
 #include <opencv2/opencv.hpp>
 
+#include "Thirdparty/fbow/include/fbow/fbow.h"
+
 namespace ORB_SLAM2
 {
 #define FRAME_GRID_ROWS 48
@@ -56,6 +58,9 @@ public:
 
     // Constructor for Monocular cameras.
     Frame(const cv::Mat &imGray, const double &timeStamp, ORBextractor* extractor,ORBVocabulary* voc, cv::Mat &K, cv::Mat &distCoef, const float &bf, const float &thDepth);
+
+    // Constructor for Monocular cameras with FBOW vocabulary.
+    Frame(const cv::Mat &imGray, const double &timeStamp, ORBextractor* extractor, fbow::Vocabulary* voc, cv::Mat &K, cv::Mat &distCoef, const float &bf, const float &thDepth);
 
     // Extract ORB on the image. 0 for left image and 1 for right image.
     void ExtractORB(int flag, const cv::Mat &im);
@@ -102,6 +107,9 @@ public:
     // Vocabulary used for relocalization.
     ORBVocabulary* mpORBvocabulary;
 
+    // Vocabulary (FBOW) used for relocalization.
+    fbow::Vocabulary* mpFBOWvocabulary;
+
     // Feature extractor. The right is used only in the stereo case.
     ORBextractor* mpORBextractorLeft, *mpORBextractorRight;
 
@@ -145,6 +153,10 @@ public:
     // Bag of Words Vector structures.
     DBoW2::BowVector mBowVec;
     DBoW2::FeatureVector mFeatVec;
+
+    // Bag of Words Vector structures for FBOW.
+    fbow::fBow  mFbowVec;
+    fbow::fBow2 mFbowFeatVec;
 
     // ORB descriptor, each row associated to a keypoint.
     cv::Mat mDescriptors, mDescriptorsRight;

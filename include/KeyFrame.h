@@ -32,6 +32,8 @@
 #include <mutex>
 #include "BoostArchiver.h"
 
+#include "Thirdparty/fbow/include/fbow/fbow.h"
+
 namespace ORB_SLAM2
 {
 
@@ -121,6 +123,7 @@ public:
     // for serialization
     KeyFrame(); // Default constructor for serialization, need to deal with const member
     void SetORBvocabulary(ORBVocabulary *porbv) {mpORBvocabulary=porbv;}
+    void SetFBOWvocabulary(fbow::Vocabulary *pfbowv) {mpFBOWvocabulary=pfbowv;}
 private:
     // serialize is recommended to be private
     friend class boost::serialization::access;
@@ -180,6 +183,10 @@ public:
     DBoW2::BowVector mBowVec;
     DBoW2::FeatureVector mFeatVec;
 
+    // FBOW.
+    fbow::fBow  mFbowVec;
+    fbow::fBow2 mFbowFeatVec;
+
     // Pose relative to parent (this is computed when bad flag is activated)
     cv::Mat mTcp;
 
@@ -215,6 +222,7 @@ protected:
     // BoW
     KeyFrameDatabase* mpKeyFrameDB;
     ORBVocabulary* mpORBvocabulary;
+    fbow::Vocabulary* mpFBOWvocabulary;
 
     // Grid over the image to speed up feature matching
     std::vector< std::vector <std::vector<size_t> > > mGrid;
