@@ -15,17 +15,21 @@ elif [ "$BUILD_TYPE" == "" ]; then
 fi
 
 echo "Configuring and building Thirdparty/DBoW2 ..."
-
-cd Thirdparty/DBoW2
+cd Thirdparty/fbow
 mkdir -p build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 make $1
 
-cd ../../g2o
+echo "Configuring and building Thirdparty/DBoW2 ..."
+cd ../../DBoW2
+mkdir -p build
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make $1
 
 echo "Configuring and building Thirdparty/g2o ..."
-
+cd ../../g2o
 mkdir -p build
 cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
