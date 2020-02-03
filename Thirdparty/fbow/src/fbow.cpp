@@ -48,10 +48,10 @@ void Vocabulary::setParams(int aligment, int k, int desc_type, int desc_size, in
 
 }
 
-void Vocabulary::transform(const cv::Mat &features, int level,fBow &result,fBow2&result2){
-    if (features.rows==0) throw std::runtime_error("Vocabulary::transform No input data");
-    if (features.type()!=_params._desc_type) throw std::runtime_error("Vocabulary::transform features are of different type than vocabulary");
-    if (features.cols *  features.elemSize() !=size_t(_params._desc_size)) throw std::runtime_error("Vocabulary::transform features are of different size than the vocabulary ones");
+void Vocabulary::transform(const cv::Mat &features, int level, fBow &result, fBow2 &result2) {
+    if (features.rows == 0) throw std::runtime_error("Vocabulary::transform No input data");
+    if (features.type() != _params._desc_type) throw std::runtime_error("Vocabulary::transform features are of different type than vocabulary");
+    if (features.cols * features.elemSize() != size_t(_params._desc_size)) throw std::runtime_error("Vocabulary::transform features are of different size than the vocabulary ones");
 
     //get host info to decide the version to execute
     if (!cpu_info){

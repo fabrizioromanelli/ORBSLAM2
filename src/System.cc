@@ -74,7 +74,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
 
     mpVocabulary     = new ORBVocabulary();
     mpFBOWVocabulary = new fbow::Vocabulary();
-    bool bVocLoad = false; // chose loading method based on file extension
+    bool bVocLoad    = false; // chose loading method based on file extension
     if (has_suffix(strVocFile, ".txt"))
         bVocLoad = mpVocabulary->loadFromTextFile(strVocFile);
     else if(has_suffix(strVocFile, ".bin"))

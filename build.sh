@@ -18,21 +18,21 @@ echo "Configuring and building Thirdparty/fbow ..."
 cd Thirdparty/fbow
 mkdir -p build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../
+cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=../
 make install $1
 
 echo "Configuring and building Thirdparty/DBoW2 ..."
 cd ../../DBoW2
 mkdir -p build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 make $1
 
 echo "Configuring and building Thirdparty/g2o ..."
 cd ../../g2o
 mkdir -p build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 make $1
 
 cd ../../../
@@ -77,6 +77,6 @@ if [ "$3" == "ROS" ]; then
   cd Examples/ROS/ORB_SLAM2
   mkdir -p build
   cd build
-  cmake .. -DROS_BUILD_TYPE=Release
+  cmake .. -DROS_BUILD_TYPE=$BUILD_TYPE
   make $1
 fi
