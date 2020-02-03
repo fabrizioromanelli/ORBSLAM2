@@ -124,7 +124,7 @@ void LocalMapping::RunFbow()
         if(CheckNewKeyFrames())
         {
             // BoW conversion and insertion in Map
-            ProcessNewKeyFrame();
+            ProcessNewKeyFrameFbow();
 
             // Check recent MapPoints
             MapPointCulling();

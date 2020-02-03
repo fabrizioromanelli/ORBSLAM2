@@ -769,13 +769,13 @@ void Tracking::CreateInitialMapMonocular()
     mpMap->AddKeyFrame(pKFini);
     mpMap->AddKeyFrame(pKFcur);
 
-    // Create MapPoints and asscoiate to keyframes
+    // Create MapPoints and associate to keyframes
     for(size_t i=0; i<mvIniMatches.size();i++)
     {
         if(mvIniMatches[i]<0)
             continue;
 
-        //Create MapPoint.
+        // Create MapPoint.
         cv::Mat worldPos(mvIniP3D[i]);
 
         MapPoint* pMP = new MapPoint(worldPos,pKFcur,mpMap);
@@ -789,11 +789,11 @@ void Tracking::CreateInitialMapMonocular()
         pMP->ComputeDistinctiveDescriptors();
         pMP->UpdateNormalAndDepth();
 
-        //Fill Current Frame structure
+        // Fill Current Frame structure
         mCurrentFrame.mvpMapPoints[mvIniMatches[i]] = pMP;
         mCurrentFrame.mvbOutlier[mvIniMatches[i]] = false;
 
-        //Add to Map
+        // Add to Map
         mpMap->AddMapPoint(pMP);
     }
 
@@ -812,7 +812,7 @@ void Tracking::CreateInitialMapMonocular()
 
     if(medianDepth<0 || pKFcur->TrackedMapPoints(1)<100)
     {
-        cout << "Wrong initialization, reseting..." << endl;
+        cout << "Wrong initialization, resetting..." << endl;
         Reset();
         return;
     }
@@ -1678,7 +1678,11 @@ void Tracking::Reset()
 
     // Clear BoW Database
     cout << "Resetting Database...";
-    mpKeyFrameDB->clear();
+    if (isFbow)
+        mpKeyFrameDB->clearFbow();
+    else
+        mpKeyFrameDB->clear();
+
     cout << " done" << endl;
 
     // Clear Map (this erase MapPoints and KeyFrames)
