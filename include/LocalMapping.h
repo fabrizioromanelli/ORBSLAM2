@@ -84,6 +84,7 @@ protected:
     void SearchInNeighbors();
 
     void KeyFrameCulling();
+    void KeyFrameCullingFbow();
 
     cv::Mat ComputeF12(KeyFrame* &pKF1, KeyFrame* &pKF2);
 

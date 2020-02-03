@@ -456,6 +456,22 @@ void KeyFrame::SetErase()
     }
 }
 
+void KeyFrame::SetEraseFbow()
+{
+    {
+        unique_lock<mutex> lock(mMutexConnections);
+        if(mspLoopEdges.empty())
+        {
+            mbNotErase = false;
+        }
+    }
+
+    if(mbToBeErased)
+    {
+        SetBadFlagFbow();
+    }
+}
+
 void KeyFrame::SetBadFlag()
 {   
     {
@@ -545,9 +561,101 @@ void KeyFrame::SetBadFlag()
         mbBad = true;
     }
 
-
     mpMap->EraseKeyFrame(this);
     mpKeyFrameDB->erase(this);
+}
+
+void KeyFrame::SetBadFlagFbow()
+{   
+    {
+        unique_lock<mutex> lock(mMutexConnections);
+        if(mnId==0)
+            return;
+        else if(mbNotErase)
+        {
+            mbToBeErased = true;
+            return;
+        }
+    }
+
+    for(map<KeyFrame*,int>::iterator mit = mConnectedKeyFrameWeights.begin(), mend=mConnectedKeyFrameWeights.end(); mit!=mend; mit++)
+        mit->first->EraseConnection(this);
+
+    for(size_t i=0; i<mvpMapPoints.size(); i++)
+        if(mvpMapPoints[i])
+            mvpMapPoints[i]->EraseObservation(this);
+    {
+        unique_lock<mutex> lock(mMutexConnections);
+        unique_lock<mutex> lock1(mMutexFeatures);
+
+        mConnectedKeyFrameWeights.clear();
+        mvpOrderedConnectedKeyFrames.clear();
+
+        // Update Spanning Tree
+        set<KeyFrame*> sParentCandidates;
+        sParentCandidates.insert(mpParent);
+
+        // Assign at each iteration one children with a parent (the pair with highest covisibility weight)
+        // Include that children as new parent candidate for the rest
+        while(!mspChildrens.empty())
+        {
+            bool bContinue = false;
+
+            int max = -1;
+            KeyFrame* pC;
+            KeyFrame* pP;
+
+            for(set<KeyFrame*>::iterator sit=mspChildrens.begin(), send=mspChildrens.end(); sit!=send; sit++)
+            {
+                KeyFrame* pKF = *sit;
+                if(pKF->isBad())
+                    continue;
+
+                // Check if a parent candidate is connected to the keyframe
+                vector<KeyFrame*> vpConnected = pKF->GetVectorCovisibleKeyFrames();
+                for(size_t i=0, iend=vpConnected.size(); i<iend; i++)
+                {
+                    for(set<KeyFrame*>::iterator spcit=sParentCandidates.begin(), spcend=sParentCandidates.end(); spcit!=spcend; spcit++)
+                    {
+                        if(vpConnected[i]->mnId == (*spcit)->mnId)
+                        {
+                            int w = pKF->GetWeight(vpConnected[i]);
+                            if(w>max)
+                            {
+                                pC = pKF;
+                                pP = vpConnected[i];
+                                max = w;
+                                bContinue = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if(bContinue)
+            {
+                pC->ChangeParent(pP);
+                sParentCandidates.insert(pC);
+                mspChildrens.erase(pC);
+            }
+            else
+                break;
+        }
+
+        // If a children has no covisibility links with any parent candidate, assign to the original parent of this KF
+        if(!mspChildrens.empty())
+            for(set<KeyFrame*>::iterator sit=mspChildrens.begin(); sit!=mspChildrens.end(); sit++)
+            {
+                (*sit)->ChangeParent(mpParent);
+            }
+
+        mpParent->EraseChild(this);
+        mTcp = Tcw*mpParent->GetPoseInverse();
+        mbBad = true;
+    }
+
+    mpMap->EraseKeyFrame(this);
+    mpKeyFrameDB->eraseFbow(this);
 }
 
 bool KeyFrame::isBad()

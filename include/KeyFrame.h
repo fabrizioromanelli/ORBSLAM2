@@ -105,9 +105,11 @@ public:
     // Enable/Disable bad flag changes
     void SetNotErase();
     void SetErase();
+    void SetEraseFbow();
 
     // Set/check bad flag
     void SetBadFlag();
+    void SetBadFlagFbow();
     bool isBad();
 
     // Compute Scene Depth (q=2 median). Used in monocular.

@@ -96,6 +96,8 @@ protected:
 
     bool ComputeSim3();
 
+    bool ComputeSim3Fbow();
+
     void SearchAndFuse(const KeyFrameAndPose &CorrectedPosesMap);
 
     void CorrectLoop();

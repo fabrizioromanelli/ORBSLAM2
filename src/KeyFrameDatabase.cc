@@ -46,7 +46,7 @@ void KeyFrameDatabase::add(KeyFrame *pKF)
 {
     unique_lock<mutex> lock(mMutex);
 
-    for(DBoW2::BowVector::const_iterator vit= pKF->mBowVec.begin(), vend=pKF->mBowVec.end(); vit!=vend; vit++)
+    for(DBoW2::BowVector::const_iterator vit = pKF->mBowVec.begin(), vend = pKF->mBowVec.end(); vit != vend; vit++)
         mvInvertedFile[vit->first].push_back(pKF);
 }
 
@@ -54,7 +54,7 @@ void KeyFrameDatabase::addFbow(KeyFrame *pKF)
 {
     unique_lock<mutex> lock(mMutex);
 
-    for(fbow::fBow::const_iterator vit= pKF->mFbowVec.begin(), vend=pKF->mFbowVec.end(); vit!=vend; vit++)
+    for(fbow::fBow::const_iterator vit = pKF->mFbowVec.begin(), vend = pKF->mFbowVec.end(); vit != vend; vit++)
         mvInvertedFile[vit->first].push_back(pKF);
 }
 
@@ -246,14 +246,20 @@ vector<KeyFrame*> KeyFrameDatabase::DetectLoopCandidatesFbow(KeyFrame* pKF, floa
     {
         unique_lock<mutex> lock(mMutex);
 
-        for(fbow::fBow::const_iterator vit=pKF->mFbowVec.begin(), vend=pKF->mFbowVec.end(); vit != vend; vit++)
+        for(fbow::fBow::const_iterator vit = pKF->mFbowVec.begin(), vend = pKF->mFbowVec.end(); vit != vend; vit++)
         {
-            list<KeyFrame*> &lKFs =   mvInvertedFile[vit->first];
+            list<KeyFrame*> &lKFs = mvInvertedFile[vit->first];
 
-            for(list<KeyFrame*>::iterator lit=lKFs.begin(), lend= lKFs.end(); lit!=lend; lit++)
+std::cout << "DBG1.3 " << std::endl;
+std::cout << "DBG1.3 " << &lKFs << std::endl;
+
+            for(list<KeyFrame*>::iterator lit = lKFs.begin(), lend = lKFs.end(); lit != lend; lit++)
             {
-                KeyFrame* pKFi=*lit;
-                if(pKFi->mnLoopQuery!=pKF->mnId)
+                std::cout << "DBG1.4" << std::endl;
+
+                KeyFrame* pKFi = *lit;
+
+                if(pKFi->mnLoopQuery != pKF->mnId)
                 {
                     pKFi->mnLoopWords=0;
                     if(!spConnectedKeyFrames.count(pKFi))
@@ -283,7 +289,6 @@ vector<KeyFrame*> KeyFrameDatabase::DetectLoopCandidatesFbow(KeyFrame* pKF, floa
     int minCommonWords = maxCommonWords*0.8f;
 
     int nscores=0;
-
     // Compute similarity score. Retain the matches whose score is higher than minScore
     for(list<KeyFrame*>::iterator lit=lKFsSharingWords.begin(), lend= lKFsSharingWords.end(); lit!=lend; lit++)
     {
@@ -310,6 +315,7 @@ vector<KeyFrame*> KeyFrameDatabase::DetectLoopCandidatesFbow(KeyFrame* pKF, floa
     // Lets now accumulate score by covisibility
     for(list<pair<float,KeyFrame*> >::iterator it=lScoreAndMatch.begin(), itend=lScoreAndMatch.end(); it!=itend; it++)
     {
+
         KeyFrame* pKFi = it->second;
         vector<KeyFrame*> vpNeighs = pKFi->GetBestCovisibilityKeyFrames(10);
 
@@ -354,7 +360,6 @@ vector<KeyFrame*> KeyFrameDatabase::DetectLoopCandidatesFbow(KeyFrame* pKF, floa
             }
         }
     }
-
 
     return vpLoopCandidates;
 }
