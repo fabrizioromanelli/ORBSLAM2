@@ -903,7 +903,7 @@ bool Tracking::TrackReferenceKeyFrame()
         nmatches = matcher.SearchByBoW(mpReferenceKF, mCurrentFrame, vpMapPointMatches);
     }
 
-    if(nmatches<15)
+    if(nmatches < 15)
         return false;
 
     mCurrentFrame.mvpMapPoints = vpMapPointMatches;

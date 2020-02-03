@@ -90,8 +90,6 @@ void Optimizer::BundleAdjustment(const vector<KeyFrame *> &vpKFs, const vector<M
     {
         MapPoint* pMP = vpMP[i];
 
-std::cout << "vpMP[" << i << "]: " << vpMP[i]->GetWorldPos() << std::endl;
-
         if(pMP->isBad())
             continue;
         g2o::VertexSBAPointXYZ* vPoint = new g2o::VertexSBAPointXYZ();
