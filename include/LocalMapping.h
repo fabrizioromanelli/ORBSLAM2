@@ -79,6 +79,7 @@ protected:
     void ProcessNewKeyFrame();
     void ProcessNewKeyFrameFbow();
     void CreateNewMapPoints();
+    void CreateNewMapPointsFbow();
 
     void MapPointCulling();
     void SearchInNeighbors();

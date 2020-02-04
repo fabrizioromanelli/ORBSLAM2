@@ -1679,7 +1679,10 @@ void Tracking::Reset()
     // Clear BoW Database
     cout << "Resetting Database...";
     if (isFbow)
+    {
+        cout << "...fbow...";
         mpKeyFrameDB->clearFbow();
+    }
     else
         mpKeyFrameDB->clear();
 

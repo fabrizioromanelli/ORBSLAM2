@@ -43,6 +43,7 @@ KeyFrame::KeyFrame(Frame &F, Map *pMap, KeyFrameDatabase *pKFDB):
     mpORBvocabulary(F.mpORBvocabulary), mpFBOWvocabulary(F.mpFBOWvocabulary), mbFirstConnection(true), mpParent(NULL), mbNotErase(false),
     mbToBeErased(false), mbBad(false), mHalfBaseline(F.mb/2), mpMap(pMap)
 {
+    std::cout << "NO KeyFrame::KeyFrame" << std::endl;
     mnId=nNextId++;
 
     mGrid.resize(mnGridCols);

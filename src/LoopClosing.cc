@@ -53,12 +53,12 @@ LoopClosing::LoopClosing(Map *pMap, KeyFrameDatabase *pDB, fbow::Vocabulary *pFb
 
 void LoopClosing::SetTracker(Tracking *pTracker)
 {
-    mpTracker=pTracker;
+    mpTracker = pTracker;
 }
 
 void LoopClosing::SetLocalMapper(LocalMapping *pLocalMapper)
 {
-    mpLocalMapper=pLocalMapper;
+    mpLocalMapper = pLocalMapper;
 }
 
 
@@ -97,7 +97,7 @@ void LoopClosing::Run()
 
 void LoopClosing::RunFbow()
 {
-    mbFinished =false;
+    mbFinished = false;
 
     while(1)
     {
@@ -586,9 +586,9 @@ bool LoopClosing::ComputeSim3Fbow()
     vector<bool> vbDiscarded;
     vbDiscarded.resize(nInitialCandidates);
 
-    int nCandidates=0; //candidates with enough matches
+    int nCandidates = 0; //candidates with enough matches
 
-    for(int i=0; i<nInitialCandidates; i++)
+    for(int i = 0; i < nInitialCandidates; i++)
     {
         KeyFrame* pKF = mvpEnoughConsistentCandidates[i];
 
@@ -774,9 +774,8 @@ void LoopClosing::CorrectLoop()
     mvpCurrentConnectedKFs.push_back(mpCurrentKF);
 
     KeyFrameAndPose CorrectedSim3, NonCorrectedSim3;
-    CorrectedSim3[mpCurrentKF]=mg2oScw;
+    CorrectedSim3[mpCurrentKF] = mg2oScw;
     cv::Mat Twc = mpCurrentKF->GetPoseInverse();
-
 
     {
         // Get Map Mutex
@@ -879,7 +878,6 @@ void LoopClosing::CorrectLoop()
     // Fuse duplications.
     SearchAndFuse(CorrectedSim3);
 
-
     // After the MapPoint fusion, new links in the covisibility graph will appear attaching both sides of the loop
     map<KeyFrame*, set<KeyFrame*> > LoopConnections;
 
@@ -914,7 +912,7 @@ void LoopClosing::CorrectLoop()
     mbRunningGBA = true;
     mbFinishedGBA = false;
     mbStopGBA = false;
-    mpThreadGBA = new thread(&LoopClosing::RunGlobalBundleAdjustment,this,mpCurrentKF->mnId);
+    mpThreadGBA = new thread(&LoopClosing::RunGlobalBundleAdjustment, this, mpCurrentKF->mnId);
 
     // Loop closed. Release Local Mapping.
     mpLocalMapper->Release();    
@@ -984,7 +982,7 @@ void LoopClosing::RunGlobalBundleAdjustment(unsigned long nLoopKF)
     cout << "Starting Global Bundle Adjustment" << endl;
 
     int idx =  mnFullBAIdx;
-    Optimizer::GlobalBundleAdjustemnt(mpMap,10,&mbStopGBA,nLoopKF,false);
+    Optimizer::GlobalBundleAdjustemnt(mpMap, 10, &mbStopGBA, nLoopKF, false);
 
     // Update all MapPoints and KeyFrames
     // Local Mapping was active during BA, that means that there might be new keyframes
