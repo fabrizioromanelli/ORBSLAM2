@@ -130,7 +130,7 @@ void LocalMapping::RunFbow()
             MapPointCulling();
 
             // Triangulate new MapPoints
-            CreateNewMapPoints();
+            CreateNewMapPointsFbow();
 
             if(!CheckNewKeyFrames())
             {

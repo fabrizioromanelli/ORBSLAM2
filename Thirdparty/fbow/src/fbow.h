@@ -70,7 +70,7 @@ class FBOW_API Vocabulary
      *(ptr-1)=(unsigned char)off; //save in prev, the offset  to properly remove it
      return ptr;
  }
-  
+
      static inline void AlignedFree(void *ptr){
          if(ptr==nullptr)return;
          unsigned char *uptr=(unsigned char *)ptr;
@@ -78,9 +78,6 @@ class FBOW_API Vocabulary
          uptr-=off;
          std::free(uptr);
      }
-  
- // using Data_ptr = std::unique_ptr<char[], decltype(&AlignedFree)>;
-
     friend class VocabularyCreator;
 
  public:
@@ -91,7 +88,6 @@ class FBOW_API Vocabulary
     //transform the features stored as rows in the returned BagOfWords
     fBow transform(const cv::Mat &features);
     void transform(const cv::Mat &features, int level,fBow &result,fBow2&result2);
-
 
     //loads/saves from a file
     void readFromFile(const std::string &filepath);
@@ -110,10 +106,16 @@ class FBOW_API Vocabulary
     //indicates whether this object is valid
     bool isValid()const{return _data.get()!=nullptr;}
     //total number of blocks
-    size_t size()const{return _params._nblocks;}
+    size_t size()const{
+        std::cout << "_params._nblocks " << _params._nblocks << std::endl;
+        std::cout << "_params._block_size_bytes_wp " << _params._block_size_bytes_wp << std::endl;
+        std::cout << "_params._desc_size_bytes_wp " << _params._desc_size_bytes_wp << std::endl;
+        std::cout << "_params._total_size " << _params._total_size << std::endl;
+        return _params._nblocks;
+        }
     //removes all data
     void clear();
-    //returns a hash value idinfying the vocabulary
+    //returns a hash value identifying the vocabulary
     uint64_t hash()const;
 
 private:
@@ -163,7 +165,7 @@ private:
     //a block represent all the child nodes of a parent, with its features and also information about where the child of these are in the data structure
     //a block structure is as follow: N|isLeaf|BlockParentId|p|F0...FN|C0W0 ... CNWN..
     //N :16 bits : number of nodes in this block. Must be <=branching factor k. If N<k, then the block has empty spaces since block size is fixed
-    //isLeaf:16 bit inicating if all nodes in this block are leaf or not
+    //isLeaf:16 bit indicating if all nodes in this block are leaf or not
     //BlockParentId:31: id of the parent
     //p :possible offset so that Fi is aligned
     //Fi feature of the node i. it is aligned and padding added to the end so that F(i+1) is also aligned

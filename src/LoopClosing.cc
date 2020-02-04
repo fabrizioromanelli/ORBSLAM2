@@ -281,7 +281,7 @@ bool LoopClosing::DetectLoopFbow()
     }
 
     //If the map contains less than 10 KF or less than 10 KF have passed from last loop detection
-    if(mpCurrentKF->mnId<mLastLoopKFid+10)
+    if(mpCurrentKF->mnId < mLastLoopKFid+10)
     {
         mpKeyFrameDB->addFbow(mpCurrentKF);
         mpCurrentKF->SetEraseFbow();
