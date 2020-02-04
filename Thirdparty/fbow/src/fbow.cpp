@@ -146,8 +146,8 @@ fBow Vocabulary::transform(const cv::Mat &features)
 void Vocabulary::clear()
 {
     _data.reset();
-    memset(&_params,0,sizeof(_params));
-    _params._desc_name_[0]='\0';
+    memset(&_params, 0, sizeof(_params));
+    _params._desc_name_[0] = '\0';
 }
 
 // loads/saves from a file
