@@ -52,7 +52,7 @@ void LoopClosing::SetLocalMapper(LocalMapping *pLocalMapper)
     mpLocalMapper = pLocalMapper;
 }
 
-void LoopClosing::RunFbow()
+void LoopClosing::Run()
 {
     mbFinished = false;
 
@@ -62,11 +62,11 @@ void LoopClosing::RunFbow()
         if(CheckNewKeyFrames())
         {
             // Detect loop candidates and check covisibility consistency
-            if(DetectLoopFbow())
+            if(DetectLoop())
             {
                // Compute similarity transformation [sR|t]
                // In the stereo/RGBD case s=1
-               if(ComputeSim3Fbow())
+               if(ComputeSim3())
                {
                    // Perform loop fusion and pose graph optimization
                    CorrectLoop();
@@ -99,7 +99,7 @@ bool LoopClosing::CheckNewKeyFrames()
     return(!mlpLoopKeyFrameQueue.empty());
 }
 
-bool LoopClosing::DetectLoopFbow()
+bool LoopClosing::DetectLoop()
 {
     {
         unique_lock<mutex> lock(mMutexLoopQueue);
@@ -112,8 +112,8 @@ bool LoopClosing::DetectLoopFbow()
     //If the map contains less than 10 KF or less than 10 KF have passed from last loop detection
     if(mpCurrentKF->mnId < mLastLoopKFid+10)
     {
-        mpKeyFrameDB->addFbow(mpCurrentKF);
-        mpCurrentKF->SetEraseFbow();
+        mpKeyFrameDB->add(mpCurrentKF);
+        mpCurrentKF->SetErase();
         return false;
     }
 
@@ -137,14 +137,14 @@ bool LoopClosing::DetectLoopFbow()
     }
 
     // Query the database imposing the minimum score
-    vector<KeyFrame*> vpCandidateKFs = mpKeyFrameDB->DetectLoopCandidatesFbow(mpCurrentKF, minScore);
+    vector<KeyFrame*> vpCandidateKFs = mpKeyFrameDB->DetectLoopCandidates(mpCurrentKF, minScore);
 
     // If there are no loop candidates, just add new keyframe and return false
     if(vpCandidateKFs.empty())
     {
-        mpKeyFrameDB->addFbow(mpCurrentKF);
+        mpKeyFrameDB->add(mpCurrentKF);
         mvConsistentGroups.clear();
-        mpCurrentKF->SetEraseFbow();
+        mpCurrentKF->SetErase();
         return false;
     }
 
@@ -210,11 +210,11 @@ bool LoopClosing::DetectLoopFbow()
     mvConsistentGroups = vCurrentConsistentGroups;
 
     // Add Current Keyframe to database
-    mpKeyFrameDB->addFbow(mpCurrentKF);
+    mpKeyFrameDB->add(mpCurrentKF);
 
     if(mvpEnoughConsistentCandidates.empty())
     {
-        mpCurrentKF->SetEraseFbow();
+        mpCurrentKF->SetErase();
         return false;
     }
     else
@@ -222,11 +222,11 @@ bool LoopClosing::DetectLoopFbow()
         return true;
     }
 
-    mpCurrentKF->SetEraseFbow();
+    mpCurrentKF->SetErase();
     return false;
 }
 
-bool LoopClosing::ComputeSim3Fbow()
+bool LoopClosing::ComputeSim3()
 {
     // For each consistent loop candidate we try to compute a Sim3
 
@@ -342,8 +342,8 @@ bool LoopClosing::ComputeSim3Fbow()
     if(!bMatch)
     {
         for(int i=0; i<nInitialCandidates; i++)
-             mvpEnoughConsistentCandidates[i]->SetEraseFbow();
-        mpCurrentKF->SetEraseFbow();
+             mvpEnoughConsistentCandidates[i]->SetErase();
+        mpCurrentKF->SetErase();
         return false;
     }
 
@@ -384,14 +384,14 @@ bool LoopClosing::ComputeSim3Fbow()
     {
         for(int i=0; i<nInitialCandidates; i++)
             if(mvpEnoughConsistentCandidates[i]!=mpMatchedKF)
-                mvpEnoughConsistentCandidates[i]->SetEraseFbow();
+                mvpEnoughConsistentCandidates[i]->SetErase();
         return true;
     }
     else
     {
         for(int i=0; i<nInitialCandidates; i++)
-            mvpEnoughConsistentCandidates[i]->SetEraseFbow();
-        mpCurrentKF->SetEraseFbow();
+            mvpEnoughConsistentCandidates[i]->SetErase();
+        mpCurrentKF->SetErase();
         return false;
     }
 }

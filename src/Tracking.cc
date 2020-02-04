@@ -1347,8 +1347,7 @@ bool Tracking::Relocalization()
 
     // Compute FBag of Words Vector
     mCurrentFrame.ComputeFboW();
-    vpCandidateKFs = mpKeyFrameDB->DetectRelocalizationCandidatesFbow(&mCurrentFrame);
-
+    vpCandidateKFs = mpKeyFrameDB->DetectRelocalizationCandidates(&mCurrentFrame);
 
     if(vpCandidateKFs.empty())
         return false;
@@ -1532,7 +1531,7 @@ void Tracking::Reset()
 
     // Clear BoW Database
     cout << "Resetting Database...";
-    mpKeyFrameDB->clearFbow();
+    mpKeyFrameDB->clear();
 
     cout << " done" << endl;
 

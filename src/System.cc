@@ -74,7 +74,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     // Create KeyFrame Database
     // Create the Map
 
-    if (!mapfile.empty() && LoadMapFbow(mapfile))
+    if (!mapfile.empty() && LoadMap(mapfile))
     {
         bReuseMap = true;
         std::cout << "Loaded Map" << std::endl;
@@ -99,9 +99,9 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     mpLocalMapper = new LocalMapping(mpMap, mSensor == MONOCULAR);
 
     // Initialize the Loop Closing thread and launch
-    mptLocalMapping = new thread(&ORB_SLAM2::LocalMapping::RunFbow, mpLocalMapper);
+    mptLocalMapping = new thread(&ORB_SLAM2::LocalMapping::Run, mpLocalMapper);
     mpLoopCloser = new LoopClosing(mpMap, mpKeyFrameDatabase, mpFBOWVocabulary, mSensor != MONOCULAR);
-    mptLoopClosing = new thread(&ORB_SLAM2::LoopClosing::RunFbow, mpLoopCloser);
+    mptLoopClosing = new thread(&ORB_SLAM2::LoopClosing::Run, mpLoopCloser);
 
     // Initialize the Viewer thread and launch
     if(bUseViewer)
@@ -616,7 +616,7 @@ void System::SaveMap(const string &filename)
     out.close();
 }
 
-bool System::LoadMapFbow(const string &filename)
+bool System::LoadMap(const string &filename)
 {
     std::ifstream in(filename, std::ios_base::binary);
     if (!in)

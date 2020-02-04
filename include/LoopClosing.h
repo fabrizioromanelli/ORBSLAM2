@@ -60,7 +60,7 @@ public:
     void SetLocalMapper(LocalMapping* pLocalMapper);
 
     // Main function
-    void RunFbow();
+    void Run();
 
     void InsertKeyFrame(KeyFrame *pKF);
 
@@ -88,9 +88,9 @@ protected:
 
     bool CheckNewKeyFrames();
 
-    bool DetectLoopFbow();
+    bool DetectLoop();
 
-    bool ComputeSim3Fbow();
+    bool ComputeSim3();
 
     void SearchAndFuse(const KeyFrameAndPose &CorrectedPosesMap);
 

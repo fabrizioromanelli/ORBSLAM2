@@ -35,7 +35,7 @@ KeyFrameDatabase::KeyFrameDatabase (fbow::Vocabulary *voc):
     mvInvertedFile.resize(voc->getTotalWords());
 }
 
-void KeyFrameDatabase::addFbow(KeyFrame *pKF)
+void KeyFrameDatabase::add(KeyFrame *pKF)
 {
     unique_lock<mutex> lock(mMutex);
 
@@ -43,7 +43,7 @@ void KeyFrameDatabase::addFbow(KeyFrame *pKF)
         mvInvertedFile[vit->first].push_back(pKF);
 }
 
-void KeyFrameDatabase::eraseFbow(KeyFrame* pKF)
+void KeyFrameDatabase::erase(KeyFrame* pKF)
 {
     unique_lock<mutex> lock(mMutex);
 
@@ -64,13 +64,13 @@ void KeyFrameDatabase::eraseFbow(KeyFrame* pKF)
     }
 }
 
-void KeyFrameDatabase::clearFbow()
+void KeyFrameDatabase::clear()
 {
     mvInvertedFile.clear();
-    mvInvertedFile.resize(mpFBOWVoc->size());
+    mvInvertedFile.resize(mpFBOWVoc->getTotalWords());
 }
 
-vector<KeyFrame*> KeyFrameDatabase::DetectLoopCandidatesFbow(KeyFrame* pKF, float minScore)
+vector<KeyFrame*> KeyFrameDatabase::DetectLoopCandidates(KeyFrame* pKF, float minScore)
 {
     set<KeyFrame*> spConnectedKeyFrames = pKF->GetConnectedKeyFrames();
     list<KeyFrame*> lKFsSharingWords;
@@ -193,7 +193,7 @@ vector<KeyFrame*> KeyFrameDatabase::DetectLoopCandidatesFbow(KeyFrame* pKF, floa
     return vpLoopCandidates;
 }
 
-vector<KeyFrame*> KeyFrameDatabase::DetectRelocalizationCandidatesFbow(Frame *F)
+vector<KeyFrame*> KeyFrameDatabase::DetectRelocalizationCandidates(Frame *F)
 {
     list<KeyFrame*> lKFsSharingWords;
 
@@ -309,10 +309,7 @@ vector<KeyFrame*> KeyFrameDatabase::DetectRelocalizationCandidatesFbow(Frame *F)
 template<class Archive>
 void KeyFrameDatabase::serialize(Archive &ar, const unsigned int version)
 {
-    // don't save associated vocabulary, KFDB restore by created explicitly from a new ORBvocabulary instance
-    // inverted file
     ar & mvInvertedFile;
-    // don't save mutex
 }
 template void KeyFrameDatabase::serialize(boost::archive::binary_iarchive&, const unsigned int);
 template void KeyFrameDatabase::serialize(boost::archive::binary_oarchive&, const unsigned int);

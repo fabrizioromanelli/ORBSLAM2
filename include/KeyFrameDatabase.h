@@ -44,19 +44,19 @@ class KeyFrameDatabase
 {
 public:
 
-    KeyFrameDatabase(fbow::Vocabulary *voc);
+   KeyFrameDatabase(fbow::Vocabulary *voc);
 
-   void addFbow(KeyFrame *pKF);
+   void add(KeyFrame *pKF);
 
-   void eraseFbow(KeyFrame* pKF);
+   void erase(KeyFrame* pKF);
 
-   void clearFbow();
+   void clear();
 
    // Loop Detection
-   std::vector<KeyFrame *> DetectLoopCandidatesFbow(KeyFrame* pKF, float minScore);
+   std::vector<KeyFrame *> DetectLoopCandidates(KeyFrame* pKF, float minScore);
 
    // Relocalization
-   std::vector<KeyFrame*> DetectRelocalizationCandidatesFbow(Frame* F);
+   std::vector<KeyFrame*> DetectRelocalizationCandidates(Frame* F);
 
 public:
    // for serialization

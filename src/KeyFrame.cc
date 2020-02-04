@@ -429,7 +429,7 @@ void KeyFrame::SetNotErase()
     mbNotErase = true;
 }
 
-void KeyFrame::SetEraseFbow()
+void KeyFrame::SetErase()
 {
     {
         unique_lock<mutex> lock(mMutexConnections);
@@ -441,11 +441,11 @@ void KeyFrame::SetEraseFbow()
 
     if(mbToBeErased)
     {
-        SetBadFlagFbow();
+        SetBadFlag();
     }
 }
 
-void KeyFrame::SetBadFlagFbow()
+void KeyFrame::SetBadFlag()
 {   
     {
         unique_lock<mutex> lock(mMutexConnections);
@@ -535,7 +535,7 @@ void KeyFrame::SetBadFlagFbow()
     }
 
     mpMap->EraseKeyFrame(this);
-    mpKeyFrameDB->eraseFbow(this);
+    mpKeyFrameDB->erase(this);
 }
 
 bool KeyFrame::isBad()

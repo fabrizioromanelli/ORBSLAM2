@@ -44,7 +44,7 @@ void LocalMapping::SetTracker(Tracking *pTracker)
     mpTracker=pTracker;
 }
 
-void LocalMapping::RunFbow()
+void LocalMapping::Run()
 {
     mbFinished = false;
 
@@ -57,13 +57,13 @@ void LocalMapping::RunFbow()
         if(CheckNewKeyFrames())
         {
             // BoW conversion and insertion in Map
-            ProcessNewKeyFrameFbow();
+            ProcessNewKeyFrame();
 
             // Check recent MapPoints
             MapPointCulling();
 
             // Triangulate new MapPoints
-            CreateNewMapPointsFbow();
+            CreateNewMapPoints();
 
             if(!CheckNewKeyFrames())
             {
@@ -80,7 +80,7 @@ void LocalMapping::RunFbow()
                     Optimizer::LocalBundleAdjustment(mpCurrentKeyFrame,&mbAbortBA, mpMap);
 
                 // Check redundant local Keyframes
-                KeyFrameCullingFbow();
+                KeyFrameCulling();
             }
 
             mpLoopCloser->InsertKeyFrame(mpCurrentKeyFrame);
@@ -124,7 +124,7 @@ bool LocalMapping::CheckNewKeyFrames()
     return(!mlNewKeyFrames.empty());
 }
 
-void LocalMapping::ProcessNewKeyFrameFbow()
+void LocalMapping::ProcessNewKeyFrame()
 {
     {
         unique_lock<mutex> lock(mMutexNewKFs);
@@ -203,7 +203,7 @@ void LocalMapping::MapPointCulling()
     }
 }
 
-void LocalMapping::CreateNewMapPointsFbow()
+void LocalMapping::CreateNewMapPoints()
 {
     // Retrieve neighbor keyframes in covisibility graph
     int nn = 10;
@@ -264,7 +264,7 @@ void LocalMapping::CreateNewMapPointsFbow()
 
         // Search matches that fullfil epipolar constraint
         vector<pair<size_t,size_t> > vMatchedIndices;
-        matcher.SearchForTriangulationFboW(mpCurrentKeyFrame, pKF2, F12, vMatchedIndices, false);
+        matcher.SearchForTriangulation(mpCurrentKeyFrame, pKF2, F12, vMatchedIndices, false);
 
         cv::Mat Rcw2 = pKF2->GetRotation();
         cv::Mat Rwc2 = Rcw2.t();
@@ -625,7 +625,7 @@ void LocalMapping::InterruptBA()
     mbAbortBA = true;
 }
 
-void LocalMapping::KeyFrameCullingFbow()
+void LocalMapping::KeyFrameCulling()
 {
     // Check redundant keyframes (only local keyframes)
     // A keyframe is considered redundant if the 90% of the MapPoints it sees, are seen
@@ -687,7 +687,7 @@ void LocalMapping::KeyFrameCullingFbow()
         }
 
         if(nRedundantObservations>0.9*nMPs)
-            pKF->SetBadFlagFbow();
+            pKF->SetBadFlag();
     }
 }
 
