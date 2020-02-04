@@ -394,7 +394,8 @@ bool Frame::PosInGrid(const cv::KeyPoint &kp, int &posX, int &posY)
 
 void Frame::ComputeFboW()
 {
-    if(mFbowVec.empty())
+    // If no feature is there (mDescriptors), do not transform
+    if(mFbowVec.empty() && mDescriptors.rows != 0)
         mpFBOWvocabulary->transform(mDescriptors, 4, mFbowVec, mFbowFeatVec);
 }
 
