@@ -41,7 +41,7 @@ class Viewer
 {
 public:
 
-    Viewer(System* pSystem, FrameDrawer* pFrameDrawer, MapDrawer* pMapDrawer, Tracking *pTracking, const string &strSettingPath, bool mbReuseMap);
+    Viewer(System* pSystem, FrameDrawer* pFrameDrawer, MapDrawer* pMapDrawer, Tracking *pTracking, const std::string &strSettingPath, bool mbReuseMap);
 
 
     // Main thread function. Draw points, keyframes, the current camera pose and the last processed

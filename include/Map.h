@@ -29,6 +29,7 @@
 
 #include "BoostArchiver.h"
 
+using namespace std;
 
 namespace ORB_SLAM2
 {
@@ -60,7 +61,7 @@ public:
 
     void clear();
 
-    vector<KeyFrame*> mvpKeyFrameOrigins;
+    std::vector<KeyFrame*> mvpKeyFrameOrigins;
 
     std::mutex mMutexMapUpdate;
 

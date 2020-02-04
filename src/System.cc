@@ -26,12 +26,6 @@
 #include <pangolin/pangolin.h>
 #include <iomanip>
 
-static bool has_suffix(const std::string &str, const std::string &suffix)
-{
-    std::size_t index = str.find(suffix, str.size() - suffix.size());
-    return (index != std::string::npos);
-}
-
 namespace ORB_SLAM2
 {
 

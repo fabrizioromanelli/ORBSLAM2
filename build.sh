@@ -61,16 +61,6 @@ make $1
 
 cd ..
 
-cd Vocabulary
-VOCABULARYBINFILE=`pwd`"/ORBvoc.bin"
-if test -f "$VOCABULARYBINFILE"; then
-  echo "Vocabulary binary file already extracted."
-else
-  echo "Converting vocabulary to binary version"
-  ./bin_vocabulary
-fi
-cd ..
-
 if [ "$3" == "ROS" ]; then
   echo "Building ROS nodes"
 

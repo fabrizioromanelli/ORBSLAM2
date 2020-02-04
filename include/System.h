@@ -33,7 +33,6 @@
 #include "LocalMapping.h"
 #include "LoopClosing.h"
 #include "KeyFrameDatabase.h"
-#include "ORBVocabulary.h"
 #include "Viewer.h"
 #include "HPose.h"
 
@@ -42,6 +41,8 @@
 #include <fstream>
 
 #include "Thirdparty/fbow/include/fbow/fbow.h"
+
+using namespace std;
 
 namespace ORB_SLAM2
 {

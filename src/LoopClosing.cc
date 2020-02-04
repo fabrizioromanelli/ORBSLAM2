@@ -52,7 +52,7 @@ void LoopClosing::SetLocalMapper(LocalMapping *pLocalMapper)
     mpLocalMapper = pLocalMapper;
 }
 
-oid LoopClosing::RunFbow()
+void LoopClosing::RunFbow()
 {
     mbFinished = false;
 

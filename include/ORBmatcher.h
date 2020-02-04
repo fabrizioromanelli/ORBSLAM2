@@ -30,6 +30,7 @@
 #include"KeyFrame.h"
 #include"Frame.h"
 
+using namespace std;
 
 namespace ORB_SLAM2
 {
