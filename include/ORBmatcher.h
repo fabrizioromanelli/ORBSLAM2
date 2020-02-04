@@ -62,9 +62,6 @@ public:
     // Search matches between MapPoints in a KeyFrame and ORB in a Frame.
     // Brute force constrained to ORB that belong to the same vocabulary node (at a certain level)
     // Used in Relocalisation and Loop Detection
-    int SearchByBoW(KeyFrame *pKF, Frame &F, std::vector<MapPoint*> &vpMapPointMatches);
-    int SearchByBoW(KeyFrame *pKF1, KeyFrame* pKF2, std::vector<MapPoint*> &vpMatches12);
-
     int SearchByFboW(KeyFrame *pKF, Frame &F, std::vector<MapPoint*> &vpMapPointMatches);
     int SearchByFboW(KeyFrame *pKF1, KeyFrame* pKF2, std::vector<MapPoint*> &vpMatches12);
 
@@ -72,7 +69,6 @@ public:
     int SearchForInitialization(Frame &F1, Frame &F2, std::vector<cv::Point2f> &vbPrevMatched, std::vector<int> &vnMatches12, int windowSize=10);
 
     // Matching to triangulate new MapPoints. Check Epipolar Constraint.
-    int SearchForTriangulation(KeyFrame *pKF1, KeyFrame* pKF2, cv::Mat F12, std::vector<pair<size_t, size_t> > &vMatchedPairs, const bool bOnlyStereo);
     int SearchForTriangulationFboW(KeyFrame *pKF1, KeyFrame* pKF2, cv::Mat F12, std::vector<pair<size_t, size_t> > &vMatchedPairs, const bool bOnlyStereo);
 
     // Search matches between MapPoints seen in KF1 and KF2 transforming by a Sim3 [s12*R12|t12]

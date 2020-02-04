@@ -46,10 +46,7 @@ public:
     void GetCurrentOpenGLCameraMatrix(pangolin::OpenGlMatrix &M);
     void SetSystemCameraPose(void* mpSystem); //Twc matrix, system pointer
 
-
-
 private:
-
     float mKeyFrameSize;
     float mKeyFrameLineWidth;
     float mGraphLineWidth;

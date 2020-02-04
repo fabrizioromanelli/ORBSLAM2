@@ -22,9 +22,6 @@
 #define KEYFRAME_H
 
 #include "MapPoint.h"
-#include "Thirdparty/DBoW2/DBoW2/BowVector.h"
-#include "Thirdparty/DBoW2/DBoW2/FeatureVector.h"
-#include "ORBVocabulary.h"
 #include "ORBextractor.h"
 #include "Frame.h"
 #include "KeyFrameDatabase.h"
@@ -57,8 +54,6 @@ public:
     cv::Mat GetRotation();
     cv::Mat GetTranslation();
 
-    // Bag of Words Representation
-    void ComputeBoW();
     // FBag of Words Representation
     void ComputeFboW();
 
@@ -104,11 +99,9 @@ public:
 
     // Enable/Disable bad flag changes
     void SetNotErase();
-    void SetErase();
     void SetEraseFbow();
 
     // Set/check bad flag
-    void SetBadFlag();
     void SetBadFlagFbow();
     bool isBad();
 
@@ -126,7 +119,6 @@ public:
 public:
     // for serialization
     KeyFrame(); // Default constructor for serialization, need to deal with const member
-    void SetORBvocabulary(ORBVocabulary *porbv) {mpORBvocabulary=porbv;}
     void SetFBOWvocabulary(fbow::Vocabulary *pfbowv) {mpFBOWvocabulary=pfbowv;}
 private:
     // serialize is recommended to be private
@@ -183,10 +175,6 @@ public:
     const std::vector<float> mvDepth; // negative value for monocular points
     const cv::Mat mDescriptors;
 
-    //BoW
-    DBoW2::BowVector mBowVec;
-    DBoW2::FeatureVector mFeatVec;
-
     // FBOW.
     fbow::fBow  mFbowVec;
     fbow::fBow2 mFbowFeatVec;
@@ -223,9 +211,8 @@ protected:
     // MapPoints associated to keypoints
     std::vector<MapPoint*> mvpMapPoints;
 
-    // BoW
+    // FBoW
     KeyFrameDatabase* mpKeyFrameDB;
-    ORBVocabulary* mpORBvocabulary;
     fbow::Vocabulary* mpFBOWvocabulary;
 
     // Grid over the image to speed up feature matching

@@ -43,116 +43,10 @@ using namespace std;
 namespace ORB_SLAM2
 {
 
-Tracking::Tracking(System *pSys, ORBVocabulary* pVoc, FrameDrawer *pFrameDrawer, MapDrawer *pMapDrawer, Map *pMap, KeyFrameDatabase* pKFDB, const string &strSettingPath, const int sensor, bool bReuseMap):
-    mState(NO_IMAGES_YET), mSensor(sensor), mbOnlyTracking(false), mbVO(false), mpORBVocabulary(pVoc),
-    mpKeyFrameDB(pKFDB), mpInitializer(static_cast<Initializer*>(NULL)), mpSystem(pSys), mpViewer(NULL),
-    mpFrameDrawer(pFrameDrawer), mpMapDrawer(pMapDrawer), mpMap(pMap), mnLastRelocFrameId(0), isFbow(false)
-{
-    // Load camera parameters from settings file
-
-    cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
-    float fx = fSettings["Camera.fx"];
-    float fy = fSettings["Camera.fy"];
-    float cx = fSettings["Camera.cx"];
-    float cy = fSettings["Camera.cy"];
-
-    cv::Mat K = cv::Mat::eye(3,3,CV_32F);
-    K.at<float>(0,0) = fx;
-    K.at<float>(1,1) = fy;
-    K.at<float>(0,2) = cx;
-    K.at<float>(1,2) = cy;
-    K.copyTo(mK);
-
-    cv::Mat DistCoef(4,1,CV_32F);
-    DistCoef.at<float>(0) = fSettings["Camera.k1"];
-    DistCoef.at<float>(1) = fSettings["Camera.k2"];
-    DistCoef.at<float>(2) = fSettings["Camera.p1"];
-    DistCoef.at<float>(3) = fSettings["Camera.p2"];
-    const float k3 = fSettings["Camera.k3"];
-    if(k3!=0)
-    {
-        DistCoef.resize(5);
-        DistCoef.at<float>(4) = k3;
-    }
-    DistCoef.copyTo(mDistCoef);
-
-    mbf = fSettings["Camera.bf"];
-
-    float fps = fSettings["Camera.fps"];
-    if(fps==0)
-        fps=30;
-
-    // Max/Min Frames to insert keyframes and to check relocalisation
-    mMinFrames = 0;
-    mMaxFrames = fps;
-
-    cout << endl << "Camera Parameters: " << endl;
-    cout << "- fx: " << fx << endl;
-    cout << "- fy: " << fy << endl;
-    cout << "- cx: " << cx << endl;
-    cout << "- cy: " << cy << endl;
-    cout << "- k1: " << DistCoef.at<float>(0) << endl;
-    cout << "- k2: " << DistCoef.at<float>(1) << endl;
-    if(DistCoef.rows==5)
-        cout << "- k3: " << DistCoef.at<float>(4) << endl;
-    cout << "- p1: " << DistCoef.at<float>(2) << endl;
-    cout << "- p2: " << DistCoef.at<float>(3) << endl;
-    cout << "- fps: " << fps << endl;
-
-
-    int nRGB = fSettings["Camera.RGB"];
-    mbRGB = nRGB;
-
-    if(mbRGB)
-        cout << "- color order: RGB (ignored if grayscale)" << endl;
-    else
-        cout << "- color order: BGR (ignored if grayscale)" << endl;
-
-    // Load ORB parameters
-
-    int nFeatures = fSettings["ORBextractor.nFeatures"];
-    float fScaleFactor = fSettings["ORBextractor.scaleFactor"];
-    int nLevels = fSettings["ORBextractor.nLevels"];
-    int fIniThFAST = fSettings["ORBextractor.iniThFAST"];
-    int fMinThFAST = fSettings["ORBextractor.minThFAST"];
-
-    mpORBextractorLeft = new ORBextractor(nFeatures,fScaleFactor,nLevels,fIniThFAST,fMinThFAST);
-
-    if(sensor==System::STEREO)
-        mpORBextractorRight = new ORBextractor(nFeatures,fScaleFactor,nLevels,fIniThFAST,fMinThFAST);
-
-    if(sensor==System::MONOCULAR)
-        mpIniORBextractor = new ORBextractor(2*nFeatures,fScaleFactor,nLevels,fIniThFAST,fMinThFAST);
-
-    cout << endl  << "ORB Extractor Parameters: " << endl;
-    cout << "- Number of Features: " << nFeatures << endl;
-    cout << "- Scale Levels: " << nLevels << endl;
-    cout << "- Scale Factor: " << fScaleFactor << endl;
-    cout << "- Initial Fast Threshold: " << fIniThFAST << endl;
-    cout << "- Minimum Fast Threshold: " << fMinThFAST << endl;
-
-    if(sensor==System::STEREO || sensor==System::RGBD)
-    {
-        mThDepth = mbf*(float)fSettings["ThDepth"]/fx;
-        cout << endl << "Depth Threshold (Close/Far Points): " << mThDepth << endl;
-    }
-
-    if(sensor==System::RGBD)
-    {
-        mDepthMapFactor = fSettings["DepthMapFactor"];
-        if(fabs(mDepthMapFactor)<1e-5)
-            mDepthMapFactor=1;
-        else
-            mDepthMapFactor = 1.0f/mDepthMapFactor;
-    }
-    if (bReuseMap)
-        mState = LOST;
-}
-
 Tracking::Tracking(System *pSys, fbow::Vocabulary* pFbowVoc, FrameDrawer *pFrameDrawer, MapDrawer *pMapDrawer, Map *pMap, KeyFrameDatabase* pKFDB, const string &strSettingPath, const int sensor, bool bReuseMap):
     mState(NO_IMAGES_YET), mSensor(sensor), mbOnlyTracking(false), mbVO(false),
     mpKeyFrameDB(pKFDB), mpFBOWVocabulary(pFbowVoc), mpInitializer(static_cast<Initializer*>(NULL)), mpSystem(pSys), mpViewer(NULL),
-    mpFrameDrawer(pFrameDrawer), mpMapDrawer(pMapDrawer), mpMap(pMap), mnLastRelocFrameId(0), isFbow(true)
+    mpFrameDrawer(pFrameDrawer), mpMapDrawer(pMapDrawer), mpMap(pMap), mnLastRelocFrameId(0)
 {
     // Load camera parameters from settings file
 
@@ -748,16 +642,8 @@ void Tracking::CreateInitialMapMonocular()
     KeyFrame* pKFini = new KeyFrame(mInitialFrame, mpMap, mpKeyFrameDB);
     KeyFrame* pKFcur = new KeyFrame(mCurrentFrame, mpMap, mpKeyFrameDB);
 
-    if (isFbow)
-    {
-        pKFini->ComputeFboW();
-        pKFcur->ComputeFboW();
-    }
-    else
-    {
-        pKFini->ComputeBoW();
-        pKFcur->ComputeBoW();
-    }
+    pKFini->ComputeFboW();
+    pKFcur->ComputeFboW();
 
     // Insert KFs in the map
     mpMap->AddKeyFrame(pKFini);
@@ -871,15 +757,9 @@ void Tracking::CheckReplacedInLastFrame()
 
 bool Tracking::TrackReferenceKeyFrame()
 {
-    // Compute Bag of Words vector
-    if (isFbow)
-    {
-        mCurrentFrame.ComputeFboW();
-    }
-    else
-    {
-        mCurrentFrame.ComputeBoW();
-    }
+    // Compute FBag of Words vector
+    mCurrentFrame.ComputeFboW();
+
 
     // We perform first an ORB matching with the reference keyframe
     // If enough matches are found we setup a PnP solver
@@ -888,14 +768,7 @@ bool Tracking::TrackReferenceKeyFrame()
 
     int nmatches;
 
-    if (isFbow)
-    {
-        nmatches = matcher.SearchByFboW(mpReferenceKF, mCurrentFrame, vpMapPointMatches);
-    }
-    else
-    {
-        nmatches = matcher.SearchByBoW(mpReferenceKF, mCurrentFrame, vpMapPointMatches);
-    }
+    nmatches = matcher.SearchByFboW(mpReferenceKF, mCurrentFrame, vpMapPointMatches);
 
     if(nmatches < 15)
         return false;
@@ -1472,20 +1345,10 @@ bool Tracking::Relocalization()
 {
     vector<KeyFrame*> vpCandidateKFs;
 
-    // Compute Bag of Words Vector
-    if (isFbow)
-    {
-        mCurrentFrame.ComputeFboW();
-        vpCandidateKFs = mpKeyFrameDB->DetectRelocalizationCandidatesFbow(&mCurrentFrame);
-    }
-    else
-    {
-        mCurrentFrame.ComputeBoW();
+    // Compute FBag of Words Vector
+    mCurrentFrame.ComputeFboW();
+    vpCandidateKFs = mpKeyFrameDB->DetectRelocalizationCandidatesFbow(&mCurrentFrame);
 
-        // Relocalization is performed when tracking is lost
-        // Track Lost: Query KeyFrame Database for keyframe candidates for relocalisation
-        vpCandidateKFs = mpKeyFrameDB->DetectRelocalizationCandidates(&mCurrentFrame);
-    }
 
     if(vpCandidateKFs.empty())
         return false;
@@ -1515,11 +1378,8 @@ bool Tracking::Relocalization()
         else
         {
             int nmatches;
-            if (isFbow)
-                nmatches = matcher.SearchByFboW(pKF, mCurrentFrame, vvpMapPointMatches[i]);
-            else
-                nmatches = matcher.SearchByBoW(pKF, mCurrentFrame, vvpMapPointMatches[i]);
-            
+            nmatches = matcher.SearchByFboW(pKF, mCurrentFrame, vvpMapPointMatches[i]);
+
             if(nmatches<15)
             {
                 vbDiscarded[i] = true;
@@ -1672,13 +1532,7 @@ void Tracking::Reset()
 
     // Clear BoW Database
     cout << "Resetting Database...";
-    if (isFbow)
-    {
-        cout << "...fbow...";
-        mpKeyFrameDB->clearFbow();
-    }
-    else
-        mpKeyFrameDB->clear();
+    mpKeyFrameDB->clearFbow();
 
     cout << " done" << endl;
 

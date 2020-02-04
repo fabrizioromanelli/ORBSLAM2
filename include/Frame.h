@@ -24,9 +24,6 @@
 #include<vector>
 
 #include "MapPoint.h"
-#include "Thirdparty/DBoW2/DBoW2/BowVector.h"
-#include "Thirdparty/DBoW2/DBoW2/FeatureVector.h"
-#include "ORBVocabulary.h"
 #include "KeyFrame.h"
 #include "ORBextractor.h"
 
@@ -61,9 +58,6 @@ public:
 
     // Extract ORB on the image. 0 for left image and 1 for right image.
     void ExtractORB(int flag, const cv::Mat &im);
-
-    // Compute Bag of Words representation.
-    void ComputeBoW();
 
     // Compute FBag of Words representation.
     void ComputeFboW();
@@ -104,9 +98,6 @@ public:
     cv::Mat UnprojectStereo(const int &i);
 
 public:
-    // Vocabulary used for relocalization.
-    ORBVocabulary* mpORBvocabulary;
-
     // Vocabulary (FBOW) used for relocalization.
     fbow::Vocabulary* mpFBOWvocabulary;
 
@@ -149,10 +140,6 @@ public:
     // "Monocular" keypoints have a negative value.
     std::vector<float> mvuRight;
     std::vector<float> mvDepth;
-
-    // Bag of Words Vector structures.
-    DBoW2::BowVector mBowVec;
-    DBoW2::FeatureVector mFeatVec;
 
     // Bag of Words Vector structures for FBOW.
     fbow::fBow  mFbowVec;

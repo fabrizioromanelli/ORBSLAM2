@@ -28,13 +28,6 @@ cd build
 cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 make $1
 
-echo "Configuring and building Thirdparty/DBoW2 ..."
-cd ../../DBoW2
-mkdir -p build
-cd build
-cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
-make $1
-
 echo "Configuring and building Thirdparty/g2o ..."
 cd ../../g2o
 mkdir -p build

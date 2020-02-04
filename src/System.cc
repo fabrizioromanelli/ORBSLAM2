@@ -69,104 +69,47 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
         exit(-1);
     }
 
-    // Load ORB Vocabulary
-    cout << endl << "Loading ORB Vocabulary. This could take a while..." << endl;
+    // Load FBoW Vocabulary
+    cout << endl << "Loading FBoW Vocabulary... ";
 
-    mpVocabulary     = new ORBVocabulary();
     mpFBOWVocabulary = new fbow::Vocabulary();
-    bool bVocLoad    = false; // chose loading method based on file extension
-    if (has_suffix(strVocFile, ".txt"))
-        bVocLoad = mpVocabulary->loadFromTextFile(strVocFile);
-    else if(has_suffix(strVocFile, ".bin"))
-        bVocLoad = mpVocabulary->loadFromBinaryFile(strVocFile);
-    else if(has_suffix(strVocFile, ".fbow"))
-    {
-        mpFBOWVocabulary->readFromFile(strVocFile);
-        bVocLoad = true; // TODO: this must be changed in order to catch error and manage exception
-    }
-    else
-        bVocLoad = false;
+    mpFBOWVocabulary->readFromFile(strVocFile);
 
-    if(!bVocLoad)
-    {
-        cerr << "Wrong path to vocabulary. " << endl;
-        cerr << "Falied to open at: " << strVocFile << endl;
-        exit(-1);
-    }
     cout << "Vocabulary loaded!" << endl << endl;
 
     // Create KeyFrame Database
     // Create the Map
-    if (has_suffix(strVocFile, ".fbow"))
+
+    if (!mapfile.empty() && LoadMapFbow(mapfile))
     {
-        if (!mapfile.empty() && LoadMapFbow(mapfile))
-        {
-            bReuseMap = true;
-            std::cout << "Loaded Map" << std::endl;
-            is_save_map = false;
-        }
-        else
-        {
-            std::cout << "Map NOT loaded" << std::endl;
-
-            if (has_suffix(strVocFile, ".fbow"))
-                mpKeyFrameDatabase = new KeyFrameDatabase(mpFBOWVocabulary);
-            else
-                mpKeyFrameDatabase = new KeyFrameDatabase(mpVocabulary);
-
-            mpMap = new Map();
-        }
+        bReuseMap = true;
+        std::cout << "Loaded Map" << std::endl;
+        is_save_map = false;
     }
     else
     {
-        if (!mapfile.empty() && LoadMap(mapfile))
-        {
-            bReuseMap = true;
-            std::cout << "Loaded Map" << std::endl;
-            is_save_map = false;
-        }
-        else
-        {
-            std::cout << "Map NOT loaded" << std::endl;
-
-            if (has_suffix(strVocFile, ".fbow"))
-                mpKeyFrameDatabase = new KeyFrameDatabase(mpFBOWVocabulary);
-            else
-                mpKeyFrameDatabase = new KeyFrameDatabase(mpVocabulary);
-
-            mpMap = new Map();
-        }
+        std::cout << "Map NOT loaded" << std::endl;
+        mpKeyFrameDatabase = new KeyFrameDatabase(mpFBOWVocabulary);
+        mpMap = new Map();
     }
 
-    //Create Drawers. These are used by the Viewer
+    // Create Drawers. These are used by the Viewer
     mpFrameDrawer = new FrameDrawer(mpMap, bReuseMap);
     mpMapDrawer = new MapDrawer(mpMap, strSettingsFile);
 
-    //Initialize the Tracking thread
-    //(it will live in the main thread of execution, the one that called this constructor)
-    if (has_suffix(strVocFile, ".fbow"))
-        mpTracker = new Tracking(this, mpFBOWVocabulary, mpFrameDrawer, mpMapDrawer, mpMap, mpKeyFrameDatabase, strSettingsFile, mSensor, bReuseMap);
-    else
-        mpTracker = new Tracking(this, mpVocabulary, mpFrameDrawer, mpMapDrawer, mpMap, mpKeyFrameDatabase, strSettingsFile, mSensor, bReuseMap);
+    // Initialize the Tracking thread
+    // (it will live in the main thread of execution, the one that called this constructor)
+    mpTracker = new Tracking(this, mpFBOWVocabulary, mpFrameDrawer, mpMapDrawer, mpMap, mpKeyFrameDatabase, strSettingsFile, mSensor, bReuseMap);
 
-    //Initialize the Local Mapping thread and launch
+    // Initialize the Local Mapping thread and launch
     mpLocalMapper = new LocalMapping(mpMap, mSensor == MONOCULAR);
 
-    //Initialize the Loop Closing thread and launch
-    if (has_suffix(strVocFile, ".fbow"))
-    {
-        mptLocalMapping = new thread(&ORB_SLAM2::LocalMapping::RunFbow, mpLocalMapper);
-        mpLoopCloser = new LoopClosing(mpMap, mpKeyFrameDatabase, mpFBOWVocabulary, mSensor != MONOCULAR);
-        mptLoopClosing = new thread(&ORB_SLAM2::LoopClosing::RunFbow, mpLoopCloser);
-    }
-    else
-    {
-        mptLocalMapping = new thread(&ORB_SLAM2::LocalMapping::Run, mpLocalMapper);
-        mpLoopCloser = new LoopClosing(mpMap, mpKeyFrameDatabase, mpVocabulary, mSensor != MONOCULAR);
-        mptLoopClosing = new thread(&ORB_SLAM2::LoopClosing::Run, mpLoopCloser);
-    }
+    // Initialize the Loop Closing thread and launch
+    mptLocalMapping = new thread(&ORB_SLAM2::LocalMapping::RunFbow, mpLocalMapper);
+    mpLoopCloser = new LoopClosing(mpMap, mpKeyFrameDatabase, mpFBOWVocabulary, mSensor != MONOCULAR);
+    mptLoopClosing = new thread(&ORB_SLAM2::LoopClosing::RunFbow, mpLoopCloser);
 
-    //Initialize the Viewer thread and launch
+    // Initialize the Viewer thread and launch
     if(bUseViewer)
     {
         mpViewer = new Viewer(this, mpFrameDrawer, mpMapDrawer, mpTracker, strSettingsFile, bReuseMap);
@@ -677,35 +620,6 @@ void System::SaveMap(const string &filename)
     oa << mpKeyFrameDatabase;
     cout << " ...done" << std::endl;
     out.close();
-}
-
-bool System::LoadMap(const string &filename)
-{
-    std::ifstream in(filename, std::ios_base::binary);
-    if (!in)
-    {
-        cerr << "Cannot Open Mapfile: " << mapfile << ", Create a new one" << std::endl;
-        return false;
-    }
-    cout << "Loading Mapfile: " << mapfile << std::flush;
-    boost::archive::binary_iarchive ia(in, boost::archive::no_header);
-    ia >> mpMap;
-    ia >> mpKeyFrameDatabase;
-    mpKeyFrameDatabase->SetORBvocabulary(mpVocabulary);
-    cout << " ...done" << std::endl;
-    cout << "Map Reconstructing" << flush;
-    vector<ORB_SLAM2::KeyFrame*> vpKFS = mpMap->GetAllKeyFrames();
-    unsigned long mnFrameId = 0;
-    for (auto it:vpKFS) {
-        it->SetORBvocabulary(mpVocabulary);
-        it->ComputeBoW();
-        if (it->mnFrameId > mnFrameId)
-            mnFrameId = it->mnFrameId;
-    }
-    Frame::nNextId = mnFrameId;
-    cout << " ...done" << endl;
-    in.close();
-    return true;
 }
 
 bool System::LoadMapFbow(const string &filename)

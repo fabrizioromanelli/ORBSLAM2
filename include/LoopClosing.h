@@ -24,7 +24,6 @@
 #include "KeyFrame.h"
 #include "LocalMapping.h"
 #include "Map.h"
-#include "ORBVocabulary.h"
 #include "Tracking.h"
 
 #include "KeyFrameDatabase.h"
@@ -52,8 +51,6 @@ public:
 
 public:
 
-    LoopClosing(Map* pMap, KeyFrameDatabase* pDB, ORBVocabulary* pVoc,const bool bFixScale);
-
     LoopClosing(Map* pMap, KeyFrameDatabase* pDB, fbow::Vocabulary* pVoc,const bool bFixScale);
 
     void SetTracker(Tracking* pTracker);
@@ -61,7 +58,6 @@ public:
     void SetLocalMapper(LocalMapping* pLocalMapper);
 
     // Main function
-    void Run();
     void RunFbow();
 
     void InsertKeyFrame(KeyFrame *pKF);
@@ -90,11 +86,7 @@ protected:
 
     bool CheckNewKeyFrames();
 
-    bool DetectLoop();
-
     bool DetectLoopFbow();
-
-    bool ComputeSim3();
 
     bool ComputeSim3Fbow();
 
@@ -116,7 +108,6 @@ protected:
     Tracking* mpTracker;
 
     KeyFrameDatabase* mpKeyFrameDB;
-    ORBVocabulary* mpORBVocabulary;
     fbow::Vocabulary* mpFBOWVocabulary;
 
     LocalMapping *mpLocalMapper;

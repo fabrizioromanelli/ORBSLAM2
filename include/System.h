@@ -136,16 +136,12 @@ public:
 private:
     // Save/Load functions
     void SaveMap(const string &filename);
-    bool LoadMap(const string &filename);
     bool LoadMapFbow(const string &filename);
 
 private:
 
     // Input sensor
     eSensor mSensor;
-
-    // ORB vocabulary used for place recognition and feature matching.
-    ORBVocabulary* mpVocabulary;
 
     // FBOW vocabulary used for place recognition and feature matching.
     fbow::Vocabulary* mpFBOWVocabulary;

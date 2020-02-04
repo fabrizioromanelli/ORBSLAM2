@@ -47,7 +47,6 @@ public:
     void SetTracker(Tracking* pTracker);
 
     // Main function
-    void Run();
     void RunFbow();
 
     void InsertKeyFrame(KeyFrame* pKF);
@@ -76,15 +75,12 @@ public:
 protected:
 
     bool CheckNewKeyFrames();
-    void ProcessNewKeyFrame();
     void ProcessNewKeyFrameFbow();
-    void CreateNewMapPoints();
     void CreateNewMapPointsFbow();
 
     void MapPointCulling();
     void SearchInNeighbors();
 
-    void KeyFrameCulling();
     void KeyFrameCullingFbow();
 
     cv::Mat ComputeF12(KeyFrame* &pKF1, KeyFrame* &pKF2);
