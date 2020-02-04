@@ -39,7 +39,7 @@ KeyFrameDatabase::KeyFrameDatabase (ORBVocabulary *voc):
 KeyFrameDatabase::KeyFrameDatabase (fbow::Vocabulary *voc):
     mpFBOWVoc(voc)
 {
-    mvInvertedFile.resize(voc->size()*408);
+    mvInvertedFile.resize(voc->getTotalWords());
 }
 
 void KeyFrameDatabase::add(KeyFrame *pKF)
@@ -55,10 +55,7 @@ void KeyFrameDatabase::addFbow(KeyFrame *pKF)
     unique_lock<mutex> lock(mMutex);
 
     for(fbow::fBow::const_iterator vit = pKF->mFbowVec.begin(), vend = pKF->mFbowVec.end(); vit != vend; vit++)
-    {
-        cout << vit->first << " " << mpFBOWVoc->size() << endl;
         mvInvertedFile[vit->first].push_back(pKF);
-    }
 }
 
 void KeyFrameDatabase::erase(KeyFrame* pKF)

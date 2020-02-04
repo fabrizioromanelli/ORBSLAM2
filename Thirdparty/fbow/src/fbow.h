@@ -12,7 +12,7 @@
 #include "cpu.h"
 namespace fbow{
 
-//float initialized to zero.
+// float initialized to zero.
 struct FBOW_API _float{
     float var=0;
     inline float operator=(float &f){var=f;return var;}
@@ -20,36 +20,27 @@ struct FBOW_API _float{
     inline operator float() const{return var;}
 };
 
-/**Bag of words
+/** Bag of words
  */
 struct FBOW_API fBow:std::map<uint32_t,_float>{
-
     void toStream(std::ostream &str) const  ;
     void fromStream(std::istream &str)    ;
-
-    //returns a hash identifying this
+    // returns a hash identifying this
     uint64_t hash()const;
-    //returns the similitude score between to image descriptors using L2 norm
+    // returns the similitude score between to image descriptors using L2 norm
     static double score(const fBow &v1, const fBow &v2);
-
 };
 
-
-//Bag of words with augmented information. For each word, keeps information about the indices of the elements that have been classified into the word
-//it is computed at the desired level
+// Bag of words with augmented information. For each word, keeps information about the indices of the elements that have been classified into the word
+// it is computed at the desired level
 struct FBOW_API fBow2:std::map<uint32_t,std::vector<uint32_t>> {
-
     void toStream(std::ostream &str) const   ;
-
     void fromStream(std::istream &str)    ;
-
     //returns a hash identifying this
     uint64_t hash()const;
-
-
 };
 
-/**Main class to represent a vocabulary of visual words
+/** Main class to represent a vocabulary of visual words
  */
 class FBOW_API Vocabulary
 {
@@ -89,37 +80,34 @@ class FBOW_API Vocabulary
     fBow transform(const cv::Mat &features);
     void transform(const cv::Mat &features, int level,fBow &result,fBow2&result2);
 
-    //loads/saves from a file
+    // loads/saves from a file
     void readFromFile(const std::string &filepath);
     void saveToFile(const std::string &filepath);
-    ///save/load to binary streams
+    // save/load to binary streams
     void toStream(std::ostream &str) const;
     void fromStream(std::istream &str);
-    //returns the descriptor type (CV_8UC1, CV_32FC1  )
+    // returns the descriptor type (CV_8UC1, CV_32FC1  )
     uint32_t getDescType()const{return _params._desc_type;}
-    //returns desc size in bytes or 0 if not set
+    // returns desc size in bytes or 0 if not set
     uint32_t getDescSize()const{return _params._desc_size;}
-    //returns the descriptor name
+    // returns the descriptor name
     std::string getDescName() const{ return _params._desc_name_;}
-    //returns the branching factor (number of children per node)
+    // returns the branching factor (number of children per node)
     uint32_t getK()const{return _params._m_k;}
-    //indicates whether this object is valid
+    // indicates whether this object is valid
     bool isValid()const{return _data.get()!=nullptr;}
-    //total number of blocks
-    size_t size()const{
-        std::cout << "_params._nblocks " << _params._nblocks << std::endl;
-        std::cout << "_params._block_size_bytes_wp " << _params._block_size_bytes_wp << std::endl;
-        std::cout << "_params._desc_size_bytes_wp " << _params._desc_size_bytes_wp << std::endl;
-        std::cout << "_params._total_size " << _params._total_size << std::endl;
-        return _params._nblocks;
-        }
-    //removes all data
+    // total number of blocks
+    size_t size()const{return _params._nblocks;}
+    // get the total words included in the vocabulary
+    size_t getTotalWords();
+    // removes all data
     void clear();
-    //returns a hash value identifying the vocabulary
+    // returns a hash value identifying the vocabulary
     uint64_t hash()const;
 
 private:
-     void  setParams(  int aligment,int k,int desc_type,int desc_size, int nblocks,std::string desc_name) ;
+    void setParams(int aligment, int k, int desc_type, int desc_size, int nblocks, std::string desc_name);
+
     struct params{
         char _desc_name_[50];//descriptor name. May be empty
         uint32_t _aligment=0,_nblocks=0 ;//memory aligment and total number of blocks
@@ -134,8 +122,7 @@ private:
     params _params;
     std::unique_ptr<char[], decltype(&AlignedFree)> _data;
 
-
-    //structure represeting a information about node in a block
+    // structure represeting a information about node in a block
     struct block_node_info{
         uint32_t id_or_childblock; //if id ,msb is 1.
         float weight;

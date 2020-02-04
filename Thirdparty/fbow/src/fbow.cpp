@@ -143,8 +143,6 @@ fBow Vocabulary::transform(const cv::Mat &features)
     return result;
 }
 
-
-
 void Vocabulary::clear()
 {
     _data.reset();
@@ -152,8 +150,7 @@ void Vocabulary::clear()
     _params._desc_name_[0]='\0';
 }
 
-
-//loads/saves from a file
+// loads/saves from a file
 void Vocabulary::readFromFile(const std::string &filepath){
     std::ifstream file(filepath,std::ios::binary);
     if (!file) throw std::runtime_error("Vocabulary::readFromFile could not open:"+filepath);
@@ -167,7 +164,7 @@ void Vocabulary::saveToFile(const std::string &filepath){
 
 }
 
-///save/load to binary streams
+// save/load to binary streams
 void Vocabulary::toStream(std::ostream &str)const{
     //magic number
     uint64_t sig=55824124;
@@ -189,9 +186,20 @@ void Vocabulary::fromStream(std::istream &str)
     str.read(_data.get(), _params._total_size);
 }
 
+size_t Vocabulary::getTotalWords(){
+    size_t totalWords = 0;
+
+    for (size_t i = 0; i < _params._nblocks; i++)
+    {
+        Block b = getBlock(i);
+        if (b.isLeaf())
+            totalWords += b.getN();
+    }
+
+    return totalWords;
+}
+
 double fBow::score (const  fBow &v1,const fBow &v2){
-
-
     fBow::const_iterator v1_it, v2_it;
     const fBow::const_iterator v1_end = v1.end();
     const fBow::const_iterator v2_end = v2.end();
@@ -287,7 +295,7 @@ void fBow2::toStream(std::ostream &str) const   {
     }
 }
 
-void fBow2::fromStream(std::istream &str)    {
+void fBow2::fromStream(std::istream &str){
     uint32_t _sizeMap,_sizeVec;
     std::vector<uint32_t> vec;
     uint32_t key;
@@ -304,10 +312,7 @@ void fBow2::fromStream(std::istream &str)    {
 }
 
 uint64_t fBow2::hash()const{
-
-
     uint64_t seed = 0;
-
 
     for(const auto &e:*this){
         seed^= e.first + 0x9e3779b9 + (seed << 6) + (seed >> 2);
@@ -316,7 +321,6 @@ uint64_t fBow2::hash()const{
     }
 
     return seed;
-
 }
 
 }
