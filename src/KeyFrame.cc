@@ -822,7 +822,9 @@ void KeyFrame::serialize(Archive &ar, const unsigned int version)
     ar & const_cast<std::vector<float> &>(mvDepth);
     ar & const_cast<cv::Mat &>(mDescriptors);
     // Bow
-    ar & mBowVec & mFeatVec;
+    // ar & mBowVec & mFeatVec;
+    // FBoW
+    ar & mFbowVec & mFbowFeatVec;
     // Pose relative to parent
     ar & mTcp;
     // Scale related

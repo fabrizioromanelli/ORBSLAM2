@@ -103,6 +103,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
         {
             bReuseMap = true;
             std::cout << "Loaded Map" << std::endl;
+            is_save_map = false;
         }
         else
         {
@@ -122,6 +123,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
         {
             bReuseMap = true;
             std::cout << "Loaded Map" << std::endl;
+            is_save_map = false;
         }
         else
         {

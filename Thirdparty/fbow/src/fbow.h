@@ -14,8 +14,14 @@ namespace fbow{
 
 // float initialized to zero.
 struct FBOW_API _float{
-    float var=0;
-    inline float operator=(float &f){var=f;return var;}
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version)
+    {
+        ar & var;
+    }
+
+    float var = 0;
+    inline float operator = (float &f){var = f; return var;}
     inline operator float&() {return var;}
     inline operator float() const{return var;}
 };
@@ -23,8 +29,9 @@ struct FBOW_API _float{
 /** Bag of words
  */
 struct FBOW_API fBow:std::map<uint32_t,_float>{
-    void toStream(std::ostream &str) const  ;
-    void fromStream(std::istream &str)    ;
+    typedef std::map<uint32_t,_float> super;
+    void toStream(std::ostream &str) const;
+    void fromStream(std::istream &str);
     // returns a hash identifying this
     uint64_t hash()const;
     // returns the similitude score between to image descriptors using L2 norm
@@ -34,8 +41,9 @@ struct FBOW_API fBow:std::map<uint32_t,_float>{
 // Bag of words with augmented information. For each word, keeps information about the indices of the elements that have been classified into the word
 // it is computed at the desired level
 struct FBOW_API fBow2:std::map<uint32_t,std::vector<uint32_t>> {
-    void toStream(std::ostream &str) const   ;
-    void fromStream(std::istream &str)    ;
+    typedef std::map<uint32_t,std::vector<uint32_t>> super;
+    void toStream(std::ostream &str) const;
+    void fromStream(std::istream &str);
     //returns a hash identifying this
     uint64_t hash()const;
 };
