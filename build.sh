@@ -45,12 +45,12 @@ make $1
 cd ../../../
 
 cd Vocabulary
-VOCABULARYFILE=`pwd`"/ORBvoc.txt"
+VOCABULARYFILE=`pwd`"/orb_mur.fbow"
 if test -f "$VOCABULARYFILE"; then
   echo "Vocabulary file already extracted."
 else
   echo "Uncompress vocabulary ..."
-  tar -xf ORBvoc.txt.tar.gz
+  tar -xf orb_mur.fbow.tar.gz
 fi
 cd ..
 

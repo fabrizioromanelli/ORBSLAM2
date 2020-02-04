@@ -23,9 +23,7 @@ Thirdparty/fbow/lib/
 Thirdparty/fbow/include/
 Thirdparty/fbow/bin/
 Thirdparty/fbow/share/
-Vocabulary/ORBvoc.txt
-Vocabulary/ORBvoc.bin
-Vocabulary/bin_vocabulary
+Vocabulary/orb_mur.fbow
 camera_calibration_3D/Camera_Calibration_3D
 Test/Test
 tools/grab_image/Grab_Image
