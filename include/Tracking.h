@@ -31,7 +31,6 @@
 #include"LocalMapping.h"
 #include"LoopClosing.h"
 #include"Frame.h"
-#include "ORBVocabulary.h"
 #include"KeyFrameDatabase.h"
 #include"ORBextractor.h"
 #include "Initializer.h"
@@ -39,6 +38,8 @@
 #include "System.h"
 
 #include <mutex>
+
+#include "Thirdparty/fbow/include/fbow/fbow.h"
 
 namespace ORB_SLAM2
 {
@@ -54,9 +55,7 @@ class Tracking
 {  
 
 public:
-
-    Tracking(System* pSys, ORBVocabulary* pVoc, FrameDrawer* pFrameDrawer, MapDrawer* pMapDrawer, Map* pMap,
-             KeyFrameDatabase* pKFDB, const string &strSettingPath, const int sensor, bool bReuseMap=false);
+    Tracking(System* pSys, fbow::Vocabulary* pVoc, FrameDrawer* pFrameDrawer, MapDrawer* pMapDrawer, Map* pMap, KeyFrameDatabase* pKFDB, const string &strSettingPath, const int sensor, bool bReuseMap=false);
 
     // Preprocess the input and call Track(). Extract features and performs stereo matching.
     cv::Mat GrabImageStereo(const cv::Mat &imRectLeft,const cv::Mat &imRectRight, const double &timestamp);
@@ -159,9 +158,9 @@ protected:
     ORBextractor* mpORBextractorLeft, *mpORBextractorRight;
     ORBextractor* mpIniORBextractor;
 
-    //BoW
-    ORBVocabulary* mpORBVocabulary;
+    //FBoW
     KeyFrameDatabase* mpKeyFrameDB;
+    fbow::Vocabulary* mpFBOWVocabulary;
 
     // Initalization (only for monocular)
     Initializer* mpInitializer;

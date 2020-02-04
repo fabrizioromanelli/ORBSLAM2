@@ -36,11 +36,11 @@ KeyFrame::KeyFrame(Frame &F, Map *pMap, KeyFrameDatabase *pKFDB):
     fx(F.fx), fy(F.fy), cx(F.cx), cy(F.cy), invfx(F.invfx), invfy(F.invfy),
     mbf(F.mbf), mb(F.mb), mThDepth(F.mThDepth), N(F.N), mvKeys(F.mvKeys), mvKeysUn(F.mvKeysUn),
     mvuRight(F.mvuRight), mvDepth(F.mvDepth), mDescriptors(F.mDescriptors.clone()),
-    mBowVec(F.mBowVec), mFeatVec(F.mFeatVec), mnScaleLevels(F.mnScaleLevels), mfScaleFactor(F.mfScaleFactor),
+    mFbowVec(F.mFbowVec), mFbowFeatVec(F.mFbowFeatVec), mnScaleLevels(F.mnScaleLevels), mfScaleFactor(F.mfScaleFactor),
     mfLogScaleFactor(F.mfLogScaleFactor), mvScaleFactors(F.mvScaleFactors), mvLevelSigma2(F.mvLevelSigma2),
     mvInvLevelSigma2(F.mvInvLevelSigma2), mnMinX(F.mnMinX), mnMinY(F.mnMinY), mnMaxX(F.mnMaxX),
     mnMaxY(F.mnMaxY), mK(F.mK), mvpMapPoints(F.mvpMapPoints), mpKeyFrameDB(pKFDB),
-    mpORBvocabulary(F.mpORBvocabulary), mbFirstConnection(true), mpParent(NULL), mbNotErase(false),
+    mpFBOWvocabulary(F.mpFBOWvocabulary), mbFirstConnection(true), mpParent(NULL), mbNotErase(false),
     mbToBeErased(false), mbBad(false), mHalfBaseline(F.mb/2), mpMap(pMap)
 {
     mnId=nNextId++;
@@ -53,18 +53,13 @@ KeyFrame::KeyFrame(Frame &F, Map *pMap, KeyFrameDatabase *pKFDB):
             mGrid[i][j] = F.mGrid[i][j];
     }
 
-    SetPose(F.mTcw);    
+    SetPose(F.mTcw);
 }
 
-void KeyFrame::ComputeBoW()
+void KeyFrame::ComputeFboW()
 {
-    if(mBowVec.empty() || mFeatVec.empty())
-    {
-        vector<cv::Mat> vCurrentDesc = Converter::toDescriptorVector(mDescriptors);
-        // Feature vector associate features with nodes in the 4th level (from leaves up)
-        // We assume the vocabulary tree has 6 levels, change the 4 otherwise
-        mpORBvocabulary->transform(vCurrentDesc,mBowVec,mFeatVec,4);
-    }
+    if(mFbowVec.empty() || mFbowFeatVec.empty())
+        mpFBOWvocabulary->transform(mDescriptors, 4, mFbowVec, mFbowFeatVec);
 }
 
 void KeyFrame::SetPose(const cv::Mat &Tcw_)
@@ -539,7 +534,6 @@ void KeyFrame::SetBadFlag()
         mbBad = true;
     }
 
-
     mpMap->EraseKeyFrame(this);
     mpKeyFrameDB->erase(this);
 }
@@ -707,8 +701,8 @@ void KeyFrame::serialize(Archive &ar, const unsigned int version)
     ar & const_cast<std::vector<float> &>(mvuRight);
     ar & const_cast<std::vector<float> &>(mvDepth);
     ar & const_cast<cv::Mat &>(mDescriptors);
-    // Bow
-    ar & mBowVec & mFeatVec;
+    // FBoW
+    ar & mFbowVec & mFbowFeatVec;
     // Pose relative to parent
     ar & mTcp;
     // Scale related
@@ -727,9 +721,9 @@ void KeyFrame::serialize(Archive &ar, const unsigned int version)
         unique_lock<mutex> lock_feature(mMutexFeatures);
         ar & mvpMapPoints; // hope boost deal with the pointer graph well
     }
-    // BoW
+    // FBoW
     ar & mpKeyFrameDB;
-    // mpORBvocabulary restore elsewhere(see SetORBvocab)
+    // mpFBoWvocabulary restore elsewhere(see SetORBvocab)
     {
         // Grid related
         unique_lock<mutex> lock_connection(mMutexConnections);

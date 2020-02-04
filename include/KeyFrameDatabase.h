@@ -27,10 +27,11 @@
 
 #include "KeyFrame.h"
 #include "Frame.h"
-#include "ORBVocabulary.h"
 
 #include<mutex>
 #include "BoostArchiver.h"
+
+#include "Thirdparty/fbow/include/fbow/fbow.h"
 
 namespace ORB_SLAM2
 {
@@ -43,9 +44,9 @@ class KeyFrameDatabase
 {
 public:
 
-    KeyFrameDatabase(ORBVocabulary *voc);
+   KeyFrameDatabase(fbow::Vocabulary *voc);
 
-   void add(KeyFrame* pKF);
+   void add(KeyFrame *pKF);
 
    void erase(KeyFrame* pKF);
 
@@ -60,7 +61,7 @@ public:
 public:
    // for serialization
    KeyFrameDatabase() {}
-   void SetORBvocabulary(ORBVocabulary *porbv) {mpVoc=porbv;}
+   void SetFBOWvocabulary(fbow::Vocabulary *pfbowv) {mpFBOWVoc=pfbowv;}
 private:
    // serialize is recommended to be private
    friend class boost::serialization::access;
@@ -69,11 +70,11 @@ private:
 
 protected:
 
-  // Associated vocabulary
-  ORBVocabulary* mpVoc;
+  // Associated FBOW vocabulary
+  fbow::Vocabulary* mpFBOWVoc;
 
   // Inverted file
-  std::vector<list<KeyFrame*> > mvInvertedFile;
+  std::vector<std::list<KeyFrame*> > mvInvertedFile;
 
   // Mutex
   std::mutex mMutex;

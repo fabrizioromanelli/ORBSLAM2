@@ -33,13 +33,16 @@
 #include "LocalMapping.h"
 #include "LoopClosing.h"
 #include "KeyFrameDatabase.h"
-#include "ORBVocabulary.h"
 #include "Viewer.h"
 #include "HPose.h"
 
 #include "BoostArchiver.h"
 // for map file io
 #include <fstream>
+
+#include "Thirdparty/fbow/include/fbow/fbow.h"
+
+using namespace std;
 
 namespace ORB_SLAM2
 {
@@ -141,8 +144,8 @@ private:
     // Input sensor
     eSensor mSensor;
 
-    // ORB vocabulary used for place recognition and feature matching.
-    ORBVocabulary* mpVocabulary;
+    // FBOW vocabulary used for place recognition and feature matching.
+    fbow::Vocabulary* mpFBOWVocabulary;
 
     // KeyFrame database for place recognition (relocalization and loop detection).
     KeyFrameDatabase* mpKeyFrameDatabase;

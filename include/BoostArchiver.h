@@ -20,27 +20,25 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/serialization/split_free.hpp>
 #include <boost/serialization/base_object.hpp>
-// base object needed by DBoW2::BowVector and DBoW2::FeatureVector
 #include <opencv2/core/core.hpp>
 
-#include "Thirdparty/DBoW2/DBoW2/BowVector.h"
-#include "Thirdparty/DBoW2/DBoW2/FeatureVector.h"
+#include "Thirdparty/fbow/include/fbow/fbow.h"
 
 BOOST_SERIALIZATION_SPLIT_FREE(::cv::Mat)
 namespace boost{
     namespace serialization {
 
-    /* serialization for DBoW2 BowVector */
+    /* serialization for FBOW */
     template<class Archive>
-    void serialize(Archive &ar, DBoW2::BowVector &BowVec, const unsigned int file_version)
+    void serialize(Archive &ar, fbow::fBow &fbowVec, const unsigned int file_version)
     {
-        ar & boost::serialization::base_object<DBoW2::BowVector::super>(BowVec);
+        ar & boost::serialization::base_object<fbow::fBow::super>(fbowVec);
     }
-    /* serialization for DBoW2 FeatureVector */
+    /* serialization for FBOW FeatureVector */
     template<class Archive>
-    void serialize(Archive &ar, DBoW2::FeatureVector &FeatVec, const unsigned int file_version)
+    void serialize(Archive &ar, fbow::fBow2 &fbowFeatVec, const unsigned int file_version)
     {
-        ar & boost::serialization::base_object<DBoW2::FeatureVector::super>(FeatVec);
+        ar & boost::serialization::base_object<fbow::fBow2::super>(fbowFeatVec);
     }
 
     /* serialization for CV KeyPoint */

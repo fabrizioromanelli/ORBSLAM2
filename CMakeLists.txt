@@ -7,8 +7,8 @@ ENDIF()
 
 MESSAGE("Build type: " ${CMAKE_BUILD_TYPE})
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O3 -march=native -D EIGEN_NO_DEPRECATED_WARNING")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3 -march=native -D EIGEN_NO_DEPRECATED_WARNING")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O3 -march=native -D EIGEN_NO_DEPRECATED_WARNING -Wno-ignored-attributes -Wno-unused-result")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3 -march=native -D EIGEN_NO_DEPRECATED_WARNING -Wno-ignored-attributes -Wno-unused-result")
 
 # Check C++11 or C++0x support
 include(CheckCXXCompilerFlag)
@@ -72,7 +72,8 @@ target_link_libraries(${PROJECT_NAME}
         ${OpenCV_LIBS}
         ${EIGEN3_LIBS}
         ${Pangolin_LIBRARIES}
-        ${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib/libDBoW2.so
+        ${PROJECT_SOURCE_DIR}/Thirdparty/DLib/lib/libDLib.so
+        ${PROJECT_SOURCE_DIR}/Thirdparty/fbow/lib/libfbow.so
         ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
         )
 
@@ -100,6 +101,17 @@ target_link_libraries(mono_tum ${PROJECT_NAME})
 add_executable(mono_euroc Examples/Monocular/mono_euroc.cc)
 target_link_libraries(mono_euroc ${PROJECT_NAME})
 
+# Build benchmarks
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Benchmarks/fromMonocularFile)
+add_executable(benchmark_mono_file Benchmarks/fromMonocularFile/benchmark.cc)
+target_link_libraries(benchmark_mono_file ${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Benchmarks/fromRGBDFile)
+add_executable(benchmark_rgbd_file Benchmarks/fromRGBDFile/benchmark.cc)
+target_link_libraries(benchmark_rgbd_file ${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Benchmarks/fromStereoFile)
+add_executable(benchmark_stereo_file Benchmarks/fromStereoFile/benchmark.cc)
+target_link_libraries(benchmark_stereo_file ${PROJECT_NAME})
+
 # KITTI Mono Example
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Monocular)
 add_executable(mono_kitti Examples/Monocular/mono_kitti.cc)
@@ -117,11 +129,6 @@ target_link_libraries(Camera_Calibration_3D ${PROJECT_NAME})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/tools/camera_calibration_monocular)
 add_executable(Camera_Calibration_Mono tools/camera_calibration_monocular/camera_calibration.cpp)
 target_link_libraries(Camera_Calibration_Mono ${PROJECT_NAME})
-
-# Build tools
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Vocabulary)
-add_executable(bin_vocabulary Vocabulary/bin_vocabulary.cpp)
-target_link_libraries(bin_vocabulary ${PROJECT_NAME})
 
 # Build test
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test)

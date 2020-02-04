@@ -24,6 +24,7 @@
 #include <vector>
 #include <list>
 #include <opencv2/core/types.hpp>
+#include <opencv4/opencv2/core/mat.hpp>
 
 namespace ORB_SLAM2
 {

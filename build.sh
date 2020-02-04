@@ -1,3 +1,4 @@
+#!/bin/bash
 # Usage: ./build.sh <parallel_jobs> <build_type> <ros>
 #        parallel_jobs: -jx where x is the number of threads
 #        build_type   : could be one of the following: Release or Debug
@@ -13,32 +14,36 @@ elif [ "$BUILD_TYPE" == "" ]; then
   BUILD_TYPE="Release"
 fi
 
-echo "Configuring and building Thirdparty/DBoW2 ..."
-
-cd Thirdparty/DBoW2
+echo "Configuring and building Thirdparty/fbow ..."
+cd Thirdparty/fbow
 mkdir -p build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=../
+make install $1
+
+echo "Configuring and building Thirdparty/DLib ..."
+cd ../../DLib
+mkdir -p build
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 make $1
 
-cd ../../g2o
-
 echo "Configuring and building Thirdparty/g2o ..."
-
+cd ../../g2o
 mkdir -p build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 make $1
 
 cd ../../../
 
 cd Vocabulary
-VOCABULARYFILE=`pwd`"/ORBvoc.txt"
+VOCABULARYFILE=`pwd`"/orb_mur.fbow"
 if test -f "$VOCABULARYFILE"; then
   echo "Vocabulary file already extracted."
 else
   echo "Uncompress vocabulary ..."
-  tar -xf ORBvoc.txt.tar.gz
+  tar -xf orb_mur.fbow.tar.gz
 fi
 cd ..
 
@@ -56,22 +61,12 @@ make $1
 
 cd ..
 
-cd Vocabulary
-VOCABULARYBINFILE=`pwd`"/ORBvoc.bin"
-if test -f "$VOCABULARYBINFILE"; then
-  echo "Vocabulary binary file already extracted."
-else
-  echo "Converting vocabulary to binary version"
-  ./bin_vocabulary
-fi
-cd ..
-
 if [ "$3" == "ROS" ]; then
   echo "Building ROS nodes"
 
   cd Examples/ROS/ORB_SLAM2
   mkdir -p build
   cd build
-  cmake .. -DROS_BUILD_TYPE=Release
+  cmake .. -DROS_BUILD_TYPE=$BUILD_TYPE
   make $1
 fi

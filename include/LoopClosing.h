@@ -24,7 +24,6 @@
 #include "KeyFrame.h"
 #include "LocalMapping.h"
 #include "Map.h"
-#include "ORBVocabulary.h"
 #include "Tracking.h"
 
 #include "KeyFrameDatabase.h"
@@ -32,6 +31,10 @@
 #include <thread>
 #include <mutex>
 #include "Thirdparty/g2o/g2o/types/types_seven_dof_expmap.h"
+
+#include "Thirdparty/fbow/include/fbow/fbow.h"
+
+using namespace std;
 
 namespace ORB_SLAM2
 {
@@ -50,7 +53,7 @@ public:
 
 public:
 
-    LoopClosing(Map* pMap, KeyFrameDatabase* pDB, ORBVocabulary* pVoc,const bool bFixScale);
+    LoopClosing(Map* pMap, KeyFrameDatabase* pDB, fbow::Vocabulary* pVoc,const bool bFixScale);
 
     void SetTracker(Tracking* pTracker);
 
@@ -107,7 +110,7 @@ protected:
     Tracking* mpTracker;
 
     KeyFrameDatabase* mpKeyFrameDB;
-    ORBVocabulary* mpORBVocabulary;
+    fbow::Vocabulary* mpFBOWVocabulary;
 
     LocalMapping *mpLocalMapper;
 
