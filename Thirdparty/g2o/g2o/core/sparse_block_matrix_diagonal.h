@@ -31,7 +31,7 @@
 #include <Eigen/Core>
 #include <Eigen/StdVector>
 
-#include "../../config.h"
+#include "g2o/config.h"
 #include "matrix_operations.h"
 
 namespace g2o {
@@ -74,17 +74,17 @@ namespace g2o {
       //! indices of the row blocks
       const std::vector<int>& blockIndices() const { return _blockIndices;}
 
-      void multiply(double*& dest, const double* src) const
+      void multiply(number_t*& dest, const number_t* src) const
       {
         int destSize=cols();
         if (! dest) {
-          dest=new double[destSize];
-          memset(dest,0, destSize*sizeof(double));
+          dest=new number_t[destSize];
+          memset(dest,0, destSize*sizeof(number_t));
         }
 
         // map the memory by Eigen
-        Eigen::Map<Eigen::VectorXd> destVec(dest, destSize);
-        Eigen::Map<const Eigen::VectorXd> srcVec(src, rows());
+        Eigen::Map<VectorX> destVec(dest, destSize);
+        Eigen::Map<const VectorX> srcVec(src, rows());
 
 #      ifdef G2O_OPENMP
 #      pragma omp parallel for default (shared) schedule(dynamic, 10)
@@ -94,7 +94,7 @@ namespace g2o {
           int srcOffset = destOffset;
           const SparseMatrixBlock& A = _diagonal[i];
           // destVec += *A.transpose() * srcVec (according to the sub-vector parts)
-          internal::axpy(A, srcVec, srcOffset, destVec, destOffset);
+          internal::template axpy<SparseMatrixBlock>(A, srcVec, srcOffset, destVec, destOffset);
         }
       }
 

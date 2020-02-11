@@ -33,6 +33,8 @@
 #include <vector>
 #include <cassert>
 
+#include "g2o/config.h"
+#include "g2o_core_api.h"
 #include "hyper_graph.h"
 
 namespace g2o {
@@ -47,10 +49,10 @@ namespace g2o {
    * Before calling linearizeOplus on an edge, the workspace needs to be allocated
    * by calling allocate().
    */
-  class  JacobianWorkspace
+  class G2O_CORE_API JacobianWorkspace
   {
     public:
-      typedef std::vector<Eigen::VectorXd, Eigen::aligned_allocator<Eigen::VectorXd> >      WorkspaceVector;
+      typedef std::vector<VectorX, Eigen::aligned_allocator<VectorX> >      WorkspaceVector;
 
     public:
       JacobianWorkspace();
@@ -79,7 +81,7 @@ namespace g2o {
       /**
        * return the workspace for a vertex in an edge
        */
-      double* workspaceForVertex(int vertexIndex)
+      number_t* workspaceForVertex(int vertexIndex)
       {
         assert(vertexIndex >= 0 && (size_t)vertexIndex < _workspace.size() && "Index out of bounds");
         return _workspace[vertexIndex].data();

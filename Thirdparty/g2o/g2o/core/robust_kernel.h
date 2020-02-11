@@ -27,13 +27,9 @@
 #ifndef G2O_ROBUST_KERNEL_H
 #define G2O_ROBUST_KERNEL_H
 
-#ifdef _MSC_VER
 #include <memory>
-#else
-#include <tr1/memory>
-#endif
-#include <Eigen/Core>
 
+#include "g2o_core_api.h"
 
 namespace g2o {
 
@@ -48,11 +44,11 @@ namespace g2o {
    *
    * chi^2 = sum_{e} rho( e^T Omega e )
    */
-  class  RobustKernel
+  class G2O_CORE_API RobustKernel
   {
     public:
       RobustKernel();
-      explicit RobustKernel(double delta);
+      explicit RobustKernel(number_t delta);
       virtual ~RobustKernel() {}
       /**
        * compute the scaling factor for a error:
@@ -62,19 +58,19 @@ namespace g2o {
        * rho[1]: First derivative of the scaling function
        * rho[2]: Second derivative of the scaling function
        */
-      virtual void robustify(double squaredError, Eigen::Vector3d& rho) const = 0;
+      virtual void robustify(number_t squaredError, Vector3& rho) const = 0;
 
       /**
        * set the window size of the error. A squared error above delta^2 is considered
        * as outlier in the data.
        */
-      virtual void setDelta(double delta);
-      double delta() const { return _delta;}
+      virtual void setDelta(number_t delta);
+      number_t delta() const { return _delta;}
 
     protected:
-      double _delta;
+      number_t _delta;
   };
-  typedef std::tr1::shared_ptr<RobustKernel> RobustKernelPtr;
+  typedef std::shared_ptr<RobustKernel> RobustKernelPtr;
 
 } // end namespace g2o
 

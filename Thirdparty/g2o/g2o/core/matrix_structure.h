@@ -27,20 +27,21 @@
 #ifndef G2O_MATRIX_STRUCTURE_H
 #define G2O_MATRIX_STRUCTURE_H
 
+#include "g2o_core_api.h"
 
 namespace g2o {
 
 /**
  * \brief representing the structure of a matrix in column compressed structure (only the upper triangular part of the matrix)
  */
-class MatrixStructure
+class G2O_CORE_API MatrixStructure
 {
   public:
     MatrixStructure();
     ~MatrixStructure();
     /**
      * allocate space for the Matrix Structure. You may call this on an already allocated struct, it will
-     * then reallocate the memory + additional space (double the required space).
+     * then reallocate the memory + additional space (number_t the required space).
      */
     void alloc(int n_, int nz);
 
