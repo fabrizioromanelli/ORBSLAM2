@@ -14,19 +14,19 @@ elif [ "$BUILD_TYPE" == "" ]; then
   BUILD_TYPE="Release"
 fi
 
-# echo "Configuring and building Thirdparty/fbow ..."
-# cd Thirdparty/fbow
-# mkdir -p build
-# cd build
-# cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=../
-# make install $1
+echo "Configuring and building Thirdparty/fbow ..."
+cd Thirdparty/fbow
+mkdir -p build
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=../
+make install $1
 
-# echo "Configuring and building Thirdparty/DLib ..."
-# cd ../../DLib
-# mkdir -p build
-# cd build
-# cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
-# make $1
+echo "Configuring and building Thirdparty/DLib ..."
+cd ../../DLib
+mkdir -p build
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+make $1
 
 echo "Configuring and building Thirdparty/g2o ..."
 cd ../../g2o
@@ -35,38 +35,38 @@ cd build
 cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 make $1
 
-# cd ../../../
+cd ../../../
 
-# cd Vocabulary
-# VOCABULARYFILE=`pwd`"/orb_mur.fbow"
-# if test -f "$VOCABULARYFILE"; then
-#   echo "Vocabulary file already extracted."
-# else
-#   echo "Uncompress vocabulary ..."
-#   tar -xf orb_mur.fbow.tar.gz
-# fi
-# cd ..
+cd Vocabulary
+VOCABULARYFILE=`pwd`"/orb_mur.fbow"
+if test -f "$VOCABULARYFILE"; then
+  echo "Vocabulary file already extracted."
+else
+  echo "Uncompress vocabulary ..."
+  tar -xf orb_mur.fbow.tar.gz
+fi
+cd ..
 
-# echo "Configuring and building ORB_SLAM2 ..."
+echo "Configuring and building ORB_SLAM2 ..."
 
-# mkdir -p build
-# cd build
-# if [ "$BUILD_TYPE" == "Release" ] || [ "$BUILD_TYPE" == "Debug" ]; then
-#   cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
-# else
-#   echo "[ERROR] Invalid build type. Should be one of the following: Release/Debug."
-#   exit 1
-# fi
-# make $1
+mkdir -p build
+cd build
+if [ "$BUILD_TYPE" == "Release" ] || [ "$BUILD_TYPE" == "Debug" ]; then
+  cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+else
+  echo "[ERROR] Invalid build type. Should be one of the following: Release/Debug."
+  exit 1
+fi
+make $1
 
-# cd ..
+cd ..
 
-# if [ "$3" == "ROS" ]; then
-#   echo "Building ROS nodes"
+if [ "$3" == "ROS" ]; then
+  echo "Building ROS nodes"
 
-#   cd Examples/ROS/ORB_SLAM2
-#   mkdir -p build
-#   cd build
-#   cmake .. -DROS_BUILD_TYPE=$BUILD_TYPE
-#   make $1
-# fi
+  cd Examples/ROS/ORB_SLAM2
+  mkdir -p build
+  cd build
+  cmake .. -DROS_BUILD_TYPE=$BUILD_TYPE
+  make $1
+fi

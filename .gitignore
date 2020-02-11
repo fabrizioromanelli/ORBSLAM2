@@ -16,7 +16,7 @@ KeyFrameTrajectory.txt
 Thirdparty/DBoW2/build/
 Thirdparty/DBoW2/lib/
 Thirdparty/g2o/build/
-Thirdparty/g2o/config.h
+Thirdparty/g2o/g2o/config.h
 Thirdparty/g2o/lib/
 Thirdparty/fbow/build/
 Thirdparty/fbow/lib/
