@@ -32,7 +32,7 @@ echo "Configuring and building Thirdparty/g2o ..."
 cd ../../g2o
 mkdir -p build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+cmake .. -DBUILD_WITH_MARCH_NATIVE=ON -DBUILD_UNITTESTS=OFF -DG2O_BUILD_EXAMPLES=OFF -DG2O_BUILD_APPS=OFF -DG2O_FAST_MATH=ON -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 make $1
 
 cd ../../../

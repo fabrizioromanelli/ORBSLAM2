@@ -3,6 +3,8 @@
 
 #include <g2o/config.h>
 
+#include <iostream>
+
 namespace g2o
 {
     template<typename T>
@@ -10,7 +12,11 @@ namespace g2o
     {
         (void)obj;
 #if G2O_DELETE_IMPLICITLY_OWNED_OBJECTS
-        delete obj;
+        if (obj != nullptr)
+        {
+            delete obj;
+            obj = nullptr;
+        }
 #endif
     }
 }
