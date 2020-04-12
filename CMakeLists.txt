@@ -40,6 +40,7 @@ endif()
 
 find_package(Eigen3 3.1.0 REQUIRED)
 find_package(Pangolin REQUIRED)
+find_package(realsense2 REQUIRED)
 
 include_directories(
         ${PROJECT_SOURCE_DIR}
@@ -155,3 +156,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/tools/grab_image)
 add_executable(Grab_Image tools/grab_image/grabImage.cc)
 target_compile_options(Grab_Image PRIVATE -O0)
 target_link_libraries(Grab_Image ${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/tools/grab_image_realsense_rgb)
+add_executable(Grab_Image_RealSense tools/grab_image_realsense_rgb/grabImageRealSense.cc)
+target_compile_options(Grab_Image_RealSense PRIVATE -O0)
+target_link_libraries(Grab_Image_RealSense ${PROJECT_NAME} ${realsense2_LIBRARY})
