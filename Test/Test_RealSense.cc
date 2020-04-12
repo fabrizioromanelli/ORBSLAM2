@@ -1,16 +1,32 @@
-#include <string>
+/**
+* Test video stream with ORB-SLAM2.
+*
+*/
+
+#include <iostream>
+#include <algorithm>
+#include <fstream>
+#include <chrono>
+#include <unistd.h>
+#include <opencv2/core/core.hpp>
+#include <opencv2/opencv.hpp>
+#include <System.h>
 
 // include the librealsense C++ header file
 #include <librealsense2/rs.hpp>
 
-// include OpenCV header file
-#include <opencv2/opencv.hpp>
-
 using namespace std;
 using namespace cv;
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
+  if(argc != 3)
+  {
+    cerr << endl << "Usage: ./Test path_to_vocabulary path_to_settings" << endl;
+    return 1;
+  }
+
+  // Start the RealSense up
   rs2_error* e = 0;
 
   //Contruct a pipeline which abstracts the device
@@ -33,7 +49,14 @@ int main(int argc, char** argv)
     frames = pipe.wait_for_frames();
   }
 
-  for (;;)
+  // Create SLAM system. It initializes all system threads and gets ready to process frames.
+  ORB_SLAM2::System SLAM(argv[1], argv[2], ORB_SLAM2::System::MONOCULAR, true, true);
+
+  cout << endl << "-------" << endl;
+  cout << "Start processing video stream ..." << endl;
+
+  // Main loop
+  for(;;)
   {
     frames = pipe.wait_for_frames();
 
@@ -48,24 +71,22 @@ int main(int argc, char** argv)
     // Creating OpenCV Matrix from a color image
     Mat color(Size(640, 480), CV_8UC3, (void*)color_frame.get_data(), Mat::AUTO_STEP);
 
-    // Display in a GUI
-    namedWindow("Grab Images", WINDOW_AUTOSIZE);
-    imshow("Grab Images", color);
-
-    char filename_[] = "calib_";
-    char *filename = &filename_[0];
-
-    strcat(filename, to_string(frame_timestamp).c_str());
-    strcat(filename, ".jpg");
+    // Pass the image to the SLAM system
+    SLAM.TrackMonocular(color, frame_timestamp);
 
     int key = waitKey(10);
-    // Save image to jpeg if Spacebar has been pressed
+    // Stop SLAM when Spacebar is pressed
     if( key == 32 ) {
-      imwrite(filename, color);
-    } else if (key == 27) { // stop capturing by pressing ESC
       break;
     }
   }
+
+  // Stop all threads
+  SLAM.Shutdown();
+
+  // Save camera trajectory
+  // SLAM.SaveTrajectory("CameraTrajectory.dat");
+  // SLAM.SaveKeyFrameTrajectory("KeyFrameTrajectory.dat");
 
   return 0;
 }

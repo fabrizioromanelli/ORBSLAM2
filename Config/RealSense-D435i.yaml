@@ -1,20 +1,20 @@
 %YAML:1.0
 
 #--------------------------------------------------------------------------------------------
-# Camera Parameters (TODO - Re-calibrate)
+# Camera Parameters
 #--------------------------------------------------------------------------------------------
 
 # Camera calibration and distortion parameters (OpenCV) 
-Camera.fx: 517.306408
-Camera.fy: 516.469215
-Camera.cx: 318.643040
-Camera.cy: 255.313989
+Camera.fx: 5.9021582814928479e+02
+Camera.fy: 5.9021582814928479e+02
+Camera.cx: 3.1950000000000000e+02
+Camera.cy: 2.3950000000000000e+02
 
-Camera.k1: 0.262383
-Camera.k2: -0.953104
-Camera.p1: -0.005358
-Camera.p2: 0.002628
-Camera.k3: 1.163314
+Camera.k1: 9.8300891329190163e-02
+Camera.k2: 2.9249092034088525e-01
+Camera.k3: -1.6417657631343097e+00
+Camera.p1: 0.0
+Camera.p2: 0.0
 
 # Camera frames per second 
 Camera.fps: 30.0
@@ -41,7 +41,7 @@ sensor_processor/lateral_factor: 0.01576
 #--------------------------------------------------------------------------------------------
 
 # ORB Extractor: Number of features per image
-ORBextractor.nFeatures: 1000
+ORBextractor.nFeatures: 3000
 
 # ORB Extractor: Scale factor between levels in the scale pyramid 	
 ORBextractor.scaleFactor: 1.2

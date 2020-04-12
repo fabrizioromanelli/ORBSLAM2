@@ -26,7 +26,9 @@ Thirdparty/fbow/share/
 Vocabulary/orb_mur.fbow
 camera_calibration_3D/Camera_Calibration_3D
 Test/Test
+Test/Test_RealSense
 tools/grab_image/Grab_Image
+tools/grab_image_realsense_rgb/Grab_Image_RealSense
 tools/camera_calibration_3D/Camera_Calibration_3D
 tools/camera_calibration_monocular/Camera_Calibration_Mono
 Benchmarks/fromMonocularFile/benchmark_mono_file
