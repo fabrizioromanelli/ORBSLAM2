@@ -29,10 +29,70 @@ void RealSense::run()
   }
 }
 
+// Public function for updating
+void RealSense::updateAlign()
+{
+  update();
+}
+
+rs2_time_t RealSense::getRGBTimestamp()
+{
+  // Get each frame
+  rs2::frame cFrame  = frameset.get_color_frame();
+  rs2_frame * frameP = cFrame.get();
+
+  // Get frame timestamp
+  return(rs2_get_frame_timestamp(frameP, &e));
+}
+
+rs2_time_t RealSense::getDepthTimestamp()
+{
+  // Get each frame
+  rs2::frame dFrame  = frameset.get_depth_frame();
+  rs2_frame * frameP = dFrame.get();
+
+  // Get frame timestamp
+  return(rs2_get_frame_timestamp(frameP, &e));
+}
+
+rs2_time_t RealSense::getRGBAlignedTimestamp()
+{
+  // Get each frame
+  rs2::frame cFrame  = aligned_frameset.get_color_frame();
+  rs2_frame * frameP = cFrame.get();
+
+  // Get frame timestamp
+  return(rs2_get_frame_timestamp(frameP, &e));
+}
+
+rs2_time_t RealSense::getDepthAlignedTimestamp()
+{
+  // Get each frame
+  rs2::frame cFrame  = aligned_frameset.get_depth_frame();
+  rs2_frame * frameP = cFrame.get();
+
+  // Get frame timestamp
+  return(rs2_get_frame_timestamp(frameP, &e));
+}
+
+// Get color matrix
+cv::Mat RealSense::getColorMatrix()
+{
+  cv::Mat color(cv::Size(color_width, color_height), CV_8UC3, (void*)color_frame.get_data(), cv::Mat::AUTO_STEP);
+  return(color);
+}
+
+// Get depth matrix
+cv::Mat RealSense::getDepthMatrix()
+{
+  cv::Mat depth(cv::Size(depth_width, depth_height), CV_16SC1, (void*)depth_frame.get_data(), cv::Mat::AUTO_STEP);
+  return(depth);
+}
+
 // Initialize
 void RealSense::initialize()
 {
-  cv::setUseOptimized( true );
+  cv::setUseOptimized(true);
   initializeSensor();
 }
 
@@ -44,14 +104,20 @@ inline void RealSense::initializeSensor()
   config.enable_stream( rs2_stream::RS2_STREAM_COLOR, color_width, color_height, rs2_format::RS2_FORMAT_BGR8, color_fps );
   config.enable_stream( rs2_stream::RS2_STREAM_DEPTH, depth_width, depth_height, rs2_format::RS2_FORMAT_Z16, depth_fps );
 
-  pipeline_profile = pipeline.start( config );
+  pipeline_profile = pipeline.start(config);
+
+  // Camera warmup - dropping several first frames to let auto-exposure stabilize
+  for (uint32_t i = 0; i < warm_up_frames; i++)
+  {
+    // Wait for all configured streams to produce a frame
+    frameset = pipeline.wait_for_frames();
+  }
 }
 
 // Finalize
 void RealSense::finalize()
 {
   cv::destroyAllWindows();
-
   pipeline.stop();
 }
 
@@ -66,7 +132,7 @@ void RealSense::update()
 // Update Frame
 inline void RealSense::updateFrame()
 {
-  rs2::frameset frameset = pipeline.wait_for_frames();
+  frameset = pipeline.wait_for_frames();
 
   // Retrieve Aligned Frame
   rs2::align align( rs2_stream::RS2_STREAM_COLOR );
