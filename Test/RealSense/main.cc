@@ -25,7 +25,7 @@ int main(int argc, char **argv)
   }
 
   // Create SLAM system. It initializes all system threads and gets ready to process frames.
-  ORB_SLAM2::System SLAM(argv[1], argv[2], ORB_SLAM2::System::MONOCULAR, true, true);
+  ORB_SLAM2::System SLAM(argv[1], argv[2], ORB_SLAM2::System::RGBD, true, true);
 
   cout << endl << "-------" << endl;
   cout << "Start processing video stream ..." << endl;
@@ -37,10 +37,11 @@ int main(int argc, char **argv)
     for(;;)
     {
       realsense.updateAlign();
-      // cout << fixed << setw(11) << setprecision(6) <<  "Timestamp: " << realsense.getRGBTimestamp() << endl;
+      // cout << fixed << setw(11) << setprecision(6) <<  "getRGBAlignedTimestamp  : " << realsense.getRGBAlignedTimestamp() << endl;
+      // cout << fixed << setw(11) << setprecision(6) <<  "getDepthAlignedTimestamp: " << realsense.getDepthAlignedTimestamp() << endl;
 
       // Pass the image to the SLAM system
-      SLAM.TrackMonocular(realsense.getColorMatrix(), realsense.getRGBTimestamp());
+      SLAM.TrackRGBD(realsense.getColorMatrix(), realsense.getDepthMatrix(), realsense.getRGBAlignedTimestamp());
 
       int key = cv::waitKey(10);
       // Stop SLAM when Spacebar is pressed
