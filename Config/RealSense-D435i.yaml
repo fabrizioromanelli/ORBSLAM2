@@ -19,11 +19,22 @@ Camera.p2: 0.0
 # Camera frames per second 
 Camera.fps: 30.0
 
+# Refer to: https://github.com/IntelRealSense/librealsense/issues/2580
+
 # IR projector baseline times fx (approx.)
-Camera.bf: 40.0
+# Camera.bf: 40.0
+# Camera.bf: 9.20, since 9.20 = baseline*fx and baseline can be found in /camera/extrinsics/depth_to_color as baseline = 0.015090852975845337.
+Camera.bf: 9.20
 
 # Color order of the images (0: BGR, 1: RGB. It is ignored if images are grayscale)
 Camera.RGB: 1
+
+# Close/Far threshold. Baseline times
+ThDepth: 40.0
+
+# Depthmap values factor
+# DepthMapFactor = 1000, which is the conversion from millimeters to meters (Realsense provides depth in millimeters)
+DepthMapFactor: 1000.0
 
 # Modeling Realsense D435 Sensor Noise for Improved 3D Reconstruction and Tracking.
 sensor_processor/type: structured_light
