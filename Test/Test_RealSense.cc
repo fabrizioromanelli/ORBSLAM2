@@ -29,16 +29,16 @@ int main(int argc, char **argv)
   // Start the RealSense up
   rs2_error* e = 0;
 
-  //Contruct a pipeline which abstracts the device
+  // Contruct a pipeline which abstracts the device
   rs2::pipeline pipe;
 
-  //Create a configuration for configuring the pipeline with a non default profile
+  // Create a configuration for configuring the pipeline with a non default profile
   rs2::config cfg;
 
-  //Add desired streams to configuration
+  // Add desired streams to configuration
   cfg.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_BGR8, 30);
 
-  //Instruct pipeline to start streaming with the requested configuration
+  // Instruct pipeline to start streaming with the requested configuration
   pipe.start(cfg);
 
   // Camera warmup - dropping several first frames to let auto-exposure stabilize
