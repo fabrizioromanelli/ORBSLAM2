@@ -26,7 +26,7 @@ Thirdparty/fbow/share/
 Vocabulary/orb_mur.fbow
 camera_calibration_3D/Camera_Calibration_3D
 Test/Test
-Test/Test_RealSense
+Test/RealSense/realsense
 tools/grab_image/Grab_Image
 tools/grab_image_realsense_rgb/Grab_Image_RealSense
 tools/grab_image_realsense_depth/Grab_Image_RealSense_Depth
