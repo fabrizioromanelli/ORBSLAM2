@@ -55,7 +55,7 @@ int main(int argc, char** argv)
     namedWindow("Grab Images", WINDOW_AUTOSIZE);
     imshow("Grab Images", depth_img);
 
-    char filename_[] = "calib_";
+    char filename_[50] = "calib_";
     char *filename = &filename_[0];
 
     strcat(filename, to_string(frame_timestamp).c_str());

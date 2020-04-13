@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(ORB_SLAM2)
+set(REALSENSE RealSense)
 
 IF(NOT CMAKE_BUILD_TYPE)
     SET(CMAKE_BUILD_TYPE Release)
@@ -40,6 +41,7 @@ find_package(realsense2 REQUIRED)
 include_directories(
         ${PROJECT_SOURCE_DIR}
         ${PROJECT_SOURCE_DIR}/include
+        ${PROJECT_SOURCE_DIR}/Drivers/RealSense
         ${EIGEN3_INCLUDE_DIR}
         ${Pangolin_INCLUDE_DIRS}
 )
@@ -70,12 +72,23 @@ add_library(${PROJECT_NAME} SHARED
         )
 
 target_link_libraries(${PROJECT_NAME}
+        ${REALSENSE}
         ${OpenCV_LIBS}
         ${EIGEN3_LIBS}
         ${Pangolin_LIBRARIES}
+        ${realsense2_LIBRARY}
         ${PROJECT_SOURCE_DIR}/Thirdparty/DLib/lib/libDLib.so
         ${PROJECT_SOURCE_DIR}/Thirdparty/fbow/lib/libfbow.so
         ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
+        )
+
+# Adding RealSense driver library
+add_library(${REALSENSE} SHARED
+        Drivers/RealSense/realsense.cc
+        )
+
+target_link_libraries(${REALSENSE}
+        ${OpenCV_LIBS}
         )
 
 message(STATUS "Compile With map save/load function")
@@ -135,9 +148,9 @@ target_link_libraries(Camera_Calibration_Mono ${PROJECT_NAME})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test)
 add_executable(Test Test/Test.cc)
 target_link_libraries(Test ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test)
-add_executable(Test_RealSense Test/Test_RealSense.cc)
-target_link_libraries(Test_RealSense ${PROJECT_NAME} ${realsense2_LIBRARY})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/RealSense)
+add_executable(realsense Test/RealSense/main.cc)
+target_link_libraries(realsense ${PROJECT_NAME})
 
 # Build V-SLAM application
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Drone)
@@ -151,7 +164,7 @@ target_compile_options(Grab_Image PRIVATE -O0)
 target_link_libraries(Grab_Image ${PROJECT_NAME})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/tools/grab_image_realsense_rgb)
 add_executable(Grab_Image_RealSense tools/grab_image_realsense_rgb/grabImageRealSense.cc)
-target_link_libraries(Grab_Image_RealSense ${PROJECT_NAME} ${realsense2_LIBRARY})
+target_link_libraries(Grab_Image_RealSense ${PROJECT_NAME})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/tools/grab_image_realsense_depth)
 add_executable(Grab_Image_RealSense_Depth tools/grab_image_realsense_depth/grabImageRealSenseDepth.cc)
-target_link_libraries(Grab_Image_RealSense_Depth ${PROJECT_NAME} ${realsense2_LIBRARY})
+target_link_libraries(Grab_Image_RealSense_Depth ${PROJECT_NAME})
