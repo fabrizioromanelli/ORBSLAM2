@@ -26,6 +26,15 @@ private:
   uint32_t depth_height = 480;
   uint32_t depth_fps = 30;
 
+  // Warmup frames
+  uint32_t warm_up_frames = 30;
+
+  // Frameset
+  rs2::frameset frameset;
+
+  // Error
+  rs2_error * e = 0;
+
 public:
   // Constructor
   RealSense();
@@ -35,6 +44,19 @@ public:
 
   // Processing
   void run();
+
+  // Align
+  void updateAlign();
+
+  // Get frame timestamps
+  rs2_time_t getRGBTimestamp();
+  rs2_time_t getDepthTimestamp();
+  rs2_time_t getRGBAlignedTimestamp();
+  rs2_time_t getDepthAlignedTimestamp();
+
+  // Get frame matrices
+  cv::Mat getColorMatrix();
+  cv::Mat getDepthMatrix();
 
 private:
   // Initialize
