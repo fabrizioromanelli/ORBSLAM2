@@ -1,9 +1,21 @@
 #include "realsense.h"
 
 // Constructor
-RealSense::RealSense()
+RealSense::RealSense(const sModality modality)
 {
-  initialize();
+  initialize(modality, MIN_DELTA_TIMEFRAMES_THRESHOLD);
+}
+
+// Constructor with maximum delta timeframes as an input
+RealSense::RealSense(const sModality modality, double maximumDeltaTimeframes)
+{
+  if (maximumDeltaTimeframes > MIN_DELTA_TIMEFRAMES_THRESHOLD)
+    initialize(modality, maximumDeltaTimeframes);
+  else
+  {
+    std::cerr << "Maximum delta between timeframes is too high. Reduced to " << MIN_DELTA_TIMEFRAMES_THRESHOLD << "." << std::endl;
+    initialize(modality, MIN_DELTA_TIMEFRAMES_THRESHOLD);
+  }
 }
 
 // Destructor
@@ -12,27 +24,20 @@ RealSense::~RealSense()
   finalize();
 }
 
-// Processing
+// Public function for processing and updating sensor
 void RealSense::run()
 {
-  // Main Loop
-  while( true ) {
-    update();
-    draw();
-    show();
-
-    // Key Check
-    const int32_t key = cv::waitKey( 10 );
-    if( key == 'q' ){
+  switch (sensorModality)
+  {
+    case RGBD:
+      updateRGBD();
       break;
-    }
+    case IRD:
+      updateIRD();
+      break;
+    default:
+      break;
   }
-}
-
-// Public function for updating
-void RealSense::updateAlign()
-{
-  update();
 }
 
 rs2_time_t RealSense::getRGBTimestamp()
@@ -55,6 +60,28 @@ rs2_time_t RealSense::getDepthTimestamp()
   return(rs2_get_frame_timestamp(frameP, &e));
 }
 
+// This function gets the temporal displacement between
+// the RGB and Depth frames (their delta).
+rs2_time_t RealSense::getTemporalFrameDisplacement()
+{
+  return(fabs(getRGBTimestamp()-getDepthTimestamp()));
+}
+
+// This function gets the average timestamp between
+// the RGB and Depth frames.
+rs2_time_t RealSense::getAverageTimestamp()
+{
+  return((getRGBTimestamp()+getDepthTimestamp())/2.0);
+}
+
+bool RealSense::isValidAlignedFrame()
+{
+  if (getTemporalFrameDisplacement() >= maxDeltaTimeframes)
+    return(false);
+  else
+    return(true);
+}
+
 // Get color matrix
 cv::Mat RealSense::getColorMatrix()
 {
@@ -70,19 +97,36 @@ cv::Mat RealSense::getDepthMatrix()
 }
 
 // Initialize
-void RealSense::initialize()
+void RealSense::initialize(const sModality modality, rs2_time_t _maxDeltaTimeFrames)
 {
+  maxDeltaTimeframes = _maxDeltaTimeFrames;
   cv::setUseOptimized(true);
-  initializeSensor();
+  initializeSensor(modality);
 }
 
 // Initialize Sensor
-inline void RealSense::initializeSensor()
+inline void RealSense::initializeSensor(const sModality modality)
 {
   // Set Device Config
   rs2::config config;
-  config.enable_stream( rs2_stream::RS2_STREAM_COLOR, color_width, color_height, rs2_format::RS2_FORMAT_BGR8, color_fps );
-  config.enable_stream( rs2_stream::RS2_STREAM_DEPTH, depth_width, depth_height, rs2_format::RS2_FORMAT_Z16, depth_fps );
+
+  switch (modality)
+  {
+    case RGBD:
+      config.enable_stream( rs2_stream::RS2_STREAM_COLOR, color_width, color_height, rs2_format::RS2_FORMAT_BGR8, color_fps );
+      config.enable_stream( rs2_stream::RS2_STREAM_DEPTH, depth_width, depth_height, rs2_format::RS2_FORMAT_Z16, depth_fps );
+      break;
+    case IRD:
+      config.enable_stream( rs2_stream::RS2_STREAM_INFRARED, 1, ir_left_width, ir_left_height, rs2_format::RS2_FORMAT_Y8, ir_left_fps );
+      config.enable_stream( rs2_stream::RS2_STREAM_DEPTH, depth_width, depth_height, rs2_format::RS2_FORMAT_Z16, depth_fps );
+      break;
+    default:
+      std::cerr << "Invalid modality selected" << std::endl;
+      break;
+  }
+
+  // Set the sensor modality as from constructor
+  sensorModality = modality;
 
   pipeline_profile = pipeline.start(config);
 
@@ -102,15 +146,15 @@ void RealSense::finalize()
 }
 
 // Update Data
-void RealSense::update()
+void RealSense::updateRGBD()
 {
-  updateFrame();
-  updateColor();
-  updateDepth();
+  updateFrameAlign();
+  updateColorRGBD();
+  updateDepthRGBD();
 }
 
 // Update Frame
-inline void RealSense::updateFrame()
+inline void RealSense::updateFrameAlign()
 {
   frameset = pipeline.wait_for_frames();
 
@@ -123,7 +167,7 @@ inline void RealSense::updateFrame()
 }
 
 // Update Color
-inline void RealSense::updateColor()
+inline void RealSense::updateColorRGBD()
 {
   color_frame = aligned_frameset.get_color_frame();
 
@@ -133,9 +177,43 @@ inline void RealSense::updateColor()
 }
 
 // Update Depth
-inline void RealSense::updateDepth()
+inline void RealSense::updateDepthRGBD()
 {
   depth_frame = aligned_frameset.get_depth_frame();
+
+  // Retrive Frame Information
+  depth_width = depth_frame.as<rs2::video_frame>().get_width();
+  depth_height = depth_frame.as<rs2::video_frame>().get_height();
+}
+
+// Update Data
+void RealSense::updateIRD()
+{
+  updateFrame();
+  updateInfraredIRD();
+  updateDepthIRD();
+}
+
+// Update Frame
+inline void RealSense::updateFrame()
+{
+  frameset = pipeline.wait_for_frames();
+}
+
+// Update Infrared (Left)
+inline void RealSense::updateInfraredIRD()
+{
+  ir_left_frame  = frameset.get_infrared_frame(1);
+
+  // Retrive Frame Information
+  ir_left_width  = ir_left_frame.as<rs2::video_frame>().get_width();
+  ir_left_height = ir_left_frame.as<rs2::video_frame>().get_height();
+}
+
+// Update Depth
+inline void RealSense::updateDepthIRD()
+{
+  depth_frame = frameset.get_depth_frame();
 
   // Retrive Frame Information
   depth_width = depth_frame.as<rs2::video_frame>().get_width();
