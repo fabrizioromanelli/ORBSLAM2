@@ -51,8 +51,6 @@ public:
   // Get frame timestamps
   rs2_time_t getRGBTimestamp();
   rs2_time_t getDepthTimestamp();
-  rs2_time_t getRGBAlignedTimestamp();
-  rs2_time_t getDepthAlignedTimestamp();
 
   // Get frame matrices
   cv::Mat getColorMatrix();

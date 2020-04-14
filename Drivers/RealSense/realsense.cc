@@ -38,26 +38,6 @@ void RealSense::updateAlign()
 rs2_time_t RealSense::getRGBTimestamp()
 {
   // Get each frame
-  rs2::frame cFrame  = frameset.get_color_frame();
-  rs2_frame * frameP = cFrame.get();
-
-  // Get frame timestamp
-  return(rs2_get_frame_timestamp(frameP, &e));
-}
-
-rs2_time_t RealSense::getDepthTimestamp()
-{
-  // Get each frame
-  rs2::frame dFrame  = frameset.get_depth_frame();
-  rs2_frame * frameP = dFrame.get();
-
-  // Get frame timestamp
-  return(rs2_get_frame_timestamp(frameP, &e));
-}
-
-rs2_time_t RealSense::getRGBAlignedTimestamp()
-{
-  // Get each frame
   rs2::frame cFrame  = aligned_frameset.get_color_frame();
   rs2_frame * frameP = cFrame.get();
 
@@ -65,7 +45,7 @@ rs2_time_t RealSense::getRGBAlignedTimestamp()
   return(rs2_get_frame_timestamp(frameP, &e));
 }
 
-rs2_time_t RealSense::getDepthAlignedTimestamp()
+rs2_time_t RealSense::getDepthTimestamp()
 {
   // Get each frame
   rs2::frame cFrame  = aligned_frameset.get_depth_frame();

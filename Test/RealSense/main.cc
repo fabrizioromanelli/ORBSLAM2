@@ -37,11 +37,11 @@ int main(int argc, char **argv)
     for(;;)
     {
       realsense.updateAlign();
-      // cout << fixed << setw(11) << setprecision(6) <<  "getRGBAlignedTimestamp  : " << realsense.getRGBAlignedTimestamp() << endl;
-      // cout << fixed << setw(11) << setprecision(6) <<  "getDepthAlignedTimestamp: " << realsense.getDepthAlignedTimestamp() << endl;
+      // cout << fixed << setw(11) << setprecision(6) <<  "getRGBTimestamp  : " << realsense.getRGBTimestamp() << endl;
+      // cout << fixed << setw(11) << setprecision(6) <<  "getDepthTimestamp: " << realsense.getDepthTimestamp() << endl;
 
       // Pass the image to the SLAM system
-      SLAM.TrackRGBD(realsense.getColorMatrix(), realsense.getDepthMatrix(), realsense.getRGBAlignedTimestamp());
+      SLAM.TrackRGBD(realsense.getColorMatrix(), realsense.getDepthMatrix(), realsense.getRGBTimestamp());
 
       int key = cv::waitKey(10);
       // Stop SLAM when Spacebar is pressed
