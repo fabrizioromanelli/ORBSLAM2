@@ -15,10 +15,10 @@ public:
   enum sModality { RGBD, IRD, IRL, IRR };
 
   // Constructor
-  RealSense(const sModality modality);
+  RealSense(const sModality);
 
   // Constructor with maximum delta timeframes as an input
-  RealSense(const sModality modality, double maximumDeltaTimeframes);
+  RealSense(const sModality, double);
 
   // Destructor
   ~RealSense();
@@ -41,11 +41,16 @@ public:
   cv::Mat getIRLeftMatrix();
   cv::Mat getIRRightMatrix();
 
+  // Control laser projector
+  void enableLaser(float);
+  void disableLaser();
+
 private:
   // RealSense
   rs2::pipeline pipeline;
   rs2::pipeline_profile pipeline_profile;
   rs2::frameset aligned_frameset;
+  rs2::device realSense_device;
 
   // Color Buffer
   rs2::frame color_frame;
@@ -95,7 +100,7 @@ private:
 
 private:
   // Initialize
-  void initialize(rs2_time_t _maxDeltaTimeframes);
+  void initialize(rs2_time_t);
 
   // Initialize Sensor
   inline void initializeSensor();

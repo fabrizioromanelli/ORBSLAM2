@@ -15,6 +15,8 @@ int main(int argc, char** argv)
     RealSense realsense(RealSense::IRL);
     cout << "Intel RealSense correctly initialized!" << endl;
 
+    // realsense.enableLaser(40.0);
+
     // Main loop
     for(;;)
     {

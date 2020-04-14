@@ -213,12 +213,32 @@ inline void RealSense::initializeSensor()
 
   pipeline_profile = pipeline.start(config);
 
+  // Disabled by default the laser projector
+  realSense_device = pipeline_profile.get_device();
+  disableLaser();
+
   // Camera warmup - dropping several first frames to let auto-exposure stabilize
   for (uint32_t i = 0; i < warm_up_frames; i++)
   {
     // Wait for all configured streams to produce a frame
     frameset = pipeline.wait_for_frames();
   }
+}
+
+void RealSense::enableLaser(float power)
+{
+  auto depth_sensor = realSense_device.first<rs2::depth_sensor>();
+
+  if (depth_sensor.supports(RS2_OPTION_LASER_POWER))
+    depth_sensor.set_option(RS2_OPTION_LASER_POWER, power);
+}
+
+void RealSense::disableLaser()
+{
+  auto depth_sensor = realSense_device.first<rs2::depth_sensor>();
+
+  if (depth_sensor.supports(RS2_OPTION_LASER_POWER))
+    depth_sensor.set_option(RS2_OPTION_LASER_POWER, 0.f); // Disable laser
 }
 
 // Finalize
