@@ -4,7 +4,7 @@
 # Camera Parameters
 #--------------------------------------------------------------------------------------------
 
-# Camera calibration and distortion parameters (OpenCV) 
+# Camera calibration and distortion parameters (OpenCV)
 Camera.fx: 5.9021582814928479e+02
 Camera.fy: 5.9021582814928479e+02
 Camera.cx: 3.1950000000000000e+02
