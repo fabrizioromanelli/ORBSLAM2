@@ -10,7 +10,9 @@ public:
   // These enums are for setting the RealSense modalities.
   // RGBD - Uses RGB camera and Depth camera (not aligned, not synchronized)
   // IRD  - Uses Infrared Left camera and Depth camera (aligned, synchronized)
-  enum sModality { RGBD, IRD };
+  // IRL  - Uses Infrared Left camera
+  // IRR  - Uses Infrared Right camera
+  enum sModality { RGBD, IRD, IRL, IRR };
 
   // Constructor
   RealSense(const sModality modality);
@@ -36,6 +38,8 @@ public:
   // Get frame matrices
   cv::Mat getColorMatrix();
   cv::Mat getDepthMatrix();
+  cv::Mat getIRLeftMatrix();
+  cv::Mat getIRRightMatrix();
 
 private:
   // RealSense
@@ -103,26 +107,27 @@ private:
   // Update Data
   void updateRGBD();
 
-  // Update Frame
-  inline void updateFrameAlign();
-
-  // Update Color
-  inline void updateColorRGBD();
-
-  // Update Depth
-  inline void updateDepthRGBD();
-
   // Updates for IRD frames
   void updateIRD();
+
+  // Updates for IR Left and Right frames
+  void updateIRL();
+  void updateIRR();
 
   // Update Frame
   inline void updateFrame();
 
-  // Update IR (Left)
-  inline void updateInfraredIRD();
+  // Update Color
+  inline void updateColor();
 
   // Update Depth
-  inline void updateDepthIRD();
+  inline void updateDepth();
+
+  // Update IR (Left)
+  inline void updateInfraredIRLeft();
+
+  // Update IR (Right)
+  inline void updateInfraredIRRight();
 
   // Draw Data
   void draw();
