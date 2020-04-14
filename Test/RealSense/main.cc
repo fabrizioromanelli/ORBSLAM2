@@ -33,8 +33,6 @@ int main(int argc, char **argv)
     else if (strcmp(argv[3], "IRD") == 0)
       mode = RealSense::IRD;
 
-    cout << mode << endl;
-
     RealSense realsense(mode);
     // realsense.enableLaser(40.0);
 
