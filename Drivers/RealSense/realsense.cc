@@ -37,6 +37,12 @@ void RealSense::run()
     case IRD:
       updateIRD();
       break;
+    case IRL:
+      updateIRL();
+      break;
+    case IRR:
+      updateIRR();
+      break;
     default:
       break;
   }
@@ -68,6 +74,7 @@ rs2_time_t RealSense::getDepthTimestamp()
       cFrame  = frameset.get_depth_frame();
       break;
     default:
+      std::cerr << "NOT IMPLEMENTED" << std::endl;
       break;
   }
 
@@ -91,7 +98,6 @@ rs2_time_t RealSense::getIRLeftTimestamp()
   }
 }
 
-
 // This function gets the temporal displacement between
 // the RGB and Depth frames (their delta).
 rs2_time_t RealSense::getTemporalFrameDisplacement()
@@ -105,6 +111,7 @@ rs2_time_t RealSense::getTemporalFrameDisplacement()
       return(fabs(getIRLeftTimestamp()-getDepthTimestamp()));
       break;
     default:
+      std::cerr << "NOT IMPLEMENTED" << std::endl;
       break;
   }
   return(0);
@@ -123,6 +130,7 @@ rs2_time_t RealSense::getAverageTimestamp()
       return((getIRLeftTimestamp()+getDepthTimestamp())/2.0);
       break;
     default:
+      std::cerr << "NOT IMPLEMENTED" << std::endl;
       break;
   }
   return(0);
@@ -154,6 +162,20 @@ cv::Mat RealSense::getDepthMatrix()
   return(depth);
 }
 
+// Get IR left matrix
+cv::Mat RealSense::getIRLeftMatrix()
+{
+  cv::Mat ir_left(cv::Size(ir_left_width, ir_left_height), CV_8UC1, (void*)ir_left_frame.get_data(), cv::Mat::AUTO_STEP);
+  return(ir_left);
+}
+
+// Get IR right matrix
+cv::Mat RealSense::getIRRightMatrix()
+{
+  cv::Mat ir_right(cv::Size(ir_right_width, ir_right_height), CV_8UC1, (void*)ir_right_frame.get_data(), cv::Mat::AUTO_STEP);
+  return(ir_right);
+}
+
 // Initialize
 void RealSense::initialize(rs2_time_t _maxDeltaTimeFrames)
 {
@@ -177,6 +199,12 @@ inline void RealSense::initializeSensor()
     case IRD:
       config.enable_stream( rs2_stream::RS2_STREAM_INFRARED, IR_LEFT, ir_left_width, ir_left_height, rs2_format::RS2_FORMAT_Y8, ir_left_fps );
       config.enable_stream( rs2_stream::RS2_STREAM_DEPTH, depth_width, depth_height, rs2_format::RS2_FORMAT_Z16, depth_fps );
+      break;
+    case IRL:
+      config.enable_stream( rs2_stream::RS2_STREAM_INFRARED, IR_LEFT, ir_left_width, ir_left_height, rs2_format::RS2_FORMAT_Y8, ir_left_fps );
+      break;
+    case IRR:
+      config.enable_stream( rs2_stream::RS2_STREAM_INFRARED, IR_RIGHT, ir_right_width, ir_right_height, rs2_format::RS2_FORMAT_Y8, ir_right_fps );
       break;
     default:
       std::cerr << "Invalid modality selected" << std::endl;
@@ -203,28 +231,52 @@ void RealSense::finalize()
 // Update Data
 void RealSense::updateRGBD()
 {
-  updateFrameAlign();
-  updateColorRGBD();
-  updateDepthRGBD();
+  updateFrame();
+  updateColor();
+  updateDepth();
+}
+
+void RealSense::updateIRD()
+{
+  updateFrame();
+  updateInfraredIRLeft();
+  updateDepth();
+}
+
+void RealSense::updateIRL()
+{
+  updateFrame();
+  updateInfraredIRLeft();
+}
+
+void RealSense::updateIRR()
+{
+  updateFrame();
+  updateInfraredIRRight();
 }
 
 // Update Frame
-inline void RealSense::updateFrameAlign()
+inline void RealSense::updateFrame()
 {
   frameset = pipeline.wait_for_frames();
 
-  // Retrieve Aligned Frame
-  rs2::align align( rs2_stream::RS2_STREAM_COLOR );
-  aligned_frameset = align.process( frameset );
-  if( !aligned_frameset.size() ){
-    return;
+  if (RGBD) {
+    // Retrieve Aligned Frame
+    rs2::align align( rs2_stream::RS2_STREAM_COLOR );
+    aligned_frameset = align.process( frameset );
+    if( !aligned_frameset.size() ){
+      return;
+    }
   }
 }
 
 // Update Color
-inline void RealSense::updateColorRGBD()
+inline void RealSense::updateColor()
 {
-  color_frame = aligned_frameset.get_color_frame();
+  if (RGBD)
+    color_frame = aligned_frameset.get_color_frame();
+  else
+    color_frame = frameset.get_color_frame();
 
   // Retrive Frame Information
   color_width = color_frame.as<rs2::video_frame>().get_width();
@@ -232,31 +284,20 @@ inline void RealSense::updateColorRGBD()
 }
 
 // Update Depth
-inline void RealSense::updateDepthRGBD()
+inline void RealSense::updateDepth()
 {
-  depth_frame = aligned_frameset.get_depth_frame();
+  if (RGBD)
+    depth_frame = aligned_frameset.get_depth_frame();
+  else
+    depth_frame = frameset.get_depth_frame();
 
   // Retrive Frame Information
   depth_width = depth_frame.as<rs2::video_frame>().get_width();
   depth_height = depth_frame.as<rs2::video_frame>().get_height();
 }
 
-// Update Data
-void RealSense::updateIRD()
-{
-  updateFrame();
-  updateInfraredIRD();
-  updateDepthIRD();
-}
-
-// Update Frame
-inline void RealSense::updateFrame()
-{
-  frameset = pipeline.wait_for_frames();
-}
-
 // Update Infrared (Left)
-inline void RealSense::updateInfraredIRD()
+inline void RealSense::updateInfraredIRLeft()
 {
   ir_left_frame  = frameset.get_infrared_frame(IR_LEFT);
 
@@ -265,14 +306,14 @@ inline void RealSense::updateInfraredIRD()
   ir_left_height = ir_left_frame.as<rs2::video_frame>().get_height();
 }
 
-// Update Depth
-inline void RealSense::updateDepthIRD()
+// Update Infrared (Right)
+inline void RealSense::updateInfraredIRRight()
 {
-  depth_frame = frameset.get_depth_frame();
+  ir_right_frame  = frameset.get_infrared_frame(IR_RIGHT);
 
   // Retrive Frame Information
-  depth_width = depth_frame.as<rs2::video_frame>().get_width();
-  depth_height = depth_frame.as<rs2::video_frame>().get_height();
+  ir_right_width  = ir_right_frame.as<rs2::video_frame>().get_width();
+  ir_right_height = ir_right_frame.as<rs2::video_frame>().get_height();
 }
 
 // Draw Data
