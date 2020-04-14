@@ -27,7 +27,7 @@ int main(int argc, char **argv)
   }
 
   try {
-    RealSense realsense(RealSense::RGBD);
+    RealSense realsense(RealSense::IRD);
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
     System SLAM(argv[1], argv[2], System::RGBD, true, true);
@@ -42,7 +42,8 @@ int main(int argc, char **argv)
 
       if (realsense.isValidAlignedFrame()) {
         // cout << fixed << setw(11) << setprecision(6) << "getRGBTimestamp   : " << realsense.getRGBTimestamp() << endl;
-        // cout << fixed << setw(11) << setprecision(6) << "getDepthTimestamp : " << realsense.getDepthTimestamp() << endl;
+        cout << fixed << setw(11) << setprecision(6) << "getRGBTimestamp   : " << realsense.getIRLeftTimestamp() << endl;
+        cout << fixed << setw(11) << setprecision(6) << "getDepthTimestamp : " << realsense.getDepthTimestamp() << endl;
 
         cout << fixed << setw(11) << setprecision(6) << "Frame Displacement: " << realsense.getTemporalFrameDisplacement() << endl;
         cout << fixed << setw(11) << setprecision(6) << "Average Timestamp : " << realsense.getAverageTimestamp() << endl;

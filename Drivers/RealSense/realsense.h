@@ -27,6 +27,7 @@ public:
   // Operations with frame timestamps
   rs2_time_t getRGBTimestamp();
   rs2_time_t getDepthTimestamp();
+  rs2_time_t getIRLeftTimestamp();
   rs2_time_t getTemporalFrameDisplacement();
   rs2_time_t getAverageTimestamp();
 
@@ -86,12 +87,14 @@ private:
   // Sensor modality
   sModality sensorModality;
 
+  enum irCamera { IR_LEFT = 1, IR_RIGHT = 2};
+
 private:
   // Initialize
-  void initialize(const sModality modality, rs2_time_t _maxDeltaTimeframes);
+  void initialize(rs2_time_t _maxDeltaTimeframes);
 
   // Initialize Sensor
-  inline void initializeSensor(const sModality modality);
+  inline void initializeSensor();
 
   // Finalize
   void finalize();
