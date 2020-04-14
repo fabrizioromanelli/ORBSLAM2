@@ -29,6 +29,7 @@ Test/Test
 Test/RealSense/realsense
 tools/grab_image/Grab_Image
 tools/grab_image_realsense_rgb/Grab_Image_RealSense
+tools/grab_image_realsense_ir/Grab_Image_RealSense_IR
 tools/grab_image_realsense_depth/Grab_Image_RealSense_Depth
 tools/camera_calibration_3D/Camera_Calibration_3D
 tools/camera_calibration_monocular/Camera_Calibration_Mono

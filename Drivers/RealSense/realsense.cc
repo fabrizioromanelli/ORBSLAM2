@@ -86,7 +86,7 @@ rs2_time_t RealSense::getDepthTimestamp()
 
 rs2_time_t RealSense::getIRLeftTimestamp()
 {
-  if (sensorModality == IRD) {
+  if ((sensorModality == IRD) || (sensorModality == IRL)) {
     // Get each frame
     rs2::frame cFrame  = frameset.get_infrared_frame(IR_LEFT);
     rs2_frame * frameP = cFrame.get();
