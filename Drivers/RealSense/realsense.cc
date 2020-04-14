@@ -138,7 +138,7 @@ rs2_time_t RealSense::getAverageTimestamp()
 
 bool RealSense::isValidAlignedFrame()
 {
-  if (RGBD) {
+  if (sensorModality == RGBD) {
     if (getTemporalFrameDisplacement() >= maxDeltaTimeframes)
       return(false);
     else
@@ -280,7 +280,7 @@ inline void RealSense::updateFrame()
 {
   frameset = pipeline.wait_for_frames();
 
-  if (RGBD) {
+  if (sensorModality == RGBD) {
     // Retrieve Aligned Frame
     rs2::align align( rs2_stream::RS2_STREAM_COLOR );
     aligned_frameset = align.process( frameset );
@@ -293,7 +293,7 @@ inline void RealSense::updateFrame()
 // Update Color
 inline void RealSense::updateColor()
 {
-  if (RGBD)
+  if (sensorModality == RGBD)
     color_frame = aligned_frameset.get_color_frame();
   else
     color_frame = frameset.get_color_frame();
@@ -306,7 +306,7 @@ inline void RealSense::updateColor()
 // Update Depth
 inline void RealSense::updateDepth()
 {
-  if (RGBD)
+  if (sensorModality == RGBD)
     depth_frame = aligned_frameset.get_depth_frame();
   else
     depth_frame = frameset.get_depth_frame();
