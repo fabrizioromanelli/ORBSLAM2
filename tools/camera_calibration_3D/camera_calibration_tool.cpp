@@ -13,8 +13,8 @@
 typedef std::vector<cv::Point3f>  obj_points; // object points (3D) for one image
 typedef std::vector<cv::Point2f>  img_points; // image point (2D) for one image
 
-#define CHESS_ROWS 7
-#define CHESS_COLS 7
+#define CHESS_ROWS 6
+#define CHESS_COLS 9
 #define BACKSPACE ' '
 
 void			  find_corners(std::vector<obj_points>&, std::vector<img_points>&, cv::Size &img_size);
@@ -52,7 +52,8 @@ int main()
 
 void find_corners(std::vector<obj_points> &arr_obj_points, std::vector<img_points> &arr_img_points, cv::Size &img_size) {
 	std::string path = get_path("Please enter image folder (leave blank to quit): ");
-	DIR *folder = opendir(path.c_str());
+	// DIR *folder = opendir(path.c_str());
+  DIR *folder = opendir("/home/tantrizio/workspace/CameraCalibration/realSenseImgs/");
 	dirent *pent = NULL;
 	if (folder != NULL) {
 		// while there is still something to read in current dir
@@ -124,7 +125,7 @@ void calibrate_camera(cv::Mat &cam_matrix, cv::Mat &dist_coeffs, std::vector<obj
 std::string get_path(std::string message) {
 	std::string path;
 	std::cout << message;
-	path = "/home/tantrizio/workspace/calibImgs/";
+	path = "/home/tantrizio/workspace/CameraCalibration/realSenseImgs/";
 	if (path.empty()) {
 		std::cout << " Exiting program...\n" << std::endl;
 		exit(101);

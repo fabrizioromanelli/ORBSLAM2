@@ -5,16 +5,16 @@
 #--------------------------------------------------------------------------------------------
 
 # Camera calibration and distortion parameters (OpenCV)
-Camera.fx: 3.8424639790763615e+02
-Camera.fy: 3.8424639790763615e+02
-Camera.cx: 3.1950000000000000e+02
-Camera.cy: 2.3950000000000000e+02
+Camera.fx: 3.8239546117370509e+02
+Camera.fy: 3.8219648513972737e+02
+Camera.cx: 3.2027438449003421e+02
+Camera.cy: 2.3990883258792343e+02
 
-Camera.k1: 1.3873198428249687e-02
-Camera.k2: -8.4236591108623245e-03
-Camera.k3: 1.3189098089787809e-03
-Camera.p1: 0.0
-Camera.p2: 0.0
+Camera.k1: 1.3224423549010711e-02
+Camera.k2: -1.5857661047632438e-02
+Camera.p1: -1.3443119021054313e-03
+Camera.p2: 1.9553483509142503e-03
+Camera.k3: 2.3106074488014841e-02
 
 # Camera frames per second 
 Camera.fps: 30.0
@@ -30,7 +30,8 @@ Camera.bf: 9.20
 Camera.RGB: 1
 
 # Close/Far threshold. Baseline times
-ThDepth: 40.0
+# ThDepth: 40.0
+ThDepth: 1.0e+09
 
 # Depthmap values factor
 # DepthMapFactor = 1000, which is the conversion from millimeters to meters (Realsense provides depth in millimeters)
