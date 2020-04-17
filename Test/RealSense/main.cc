@@ -37,7 +37,7 @@ int main(int argc, char **argv)
     // realsense.enableLaser(40.0);
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
-    // System SLAM(argv[1], argv[2], System::RGBD, true, true);
+    System SLAM(argv[1], argv[2], System::RGBD, true, true);
 
     cout << endl << "-------" << endl;
     cout << "Start processing video stream ..." << endl;
@@ -47,22 +47,22 @@ int main(int argc, char **argv)
     {
       realsense.run();
 
-      // if (mode == RealSense::RGBD) {
-      //   if (realsense.isValidAlignedFrame()) {
-      //     // cout << fixed << setw(11) << setprecision(6) << "RGB Timestamp     : " << realsense.getRGBTimestamp() << endl;
-      //     // cout << fixed << setw(11) << setprecision(6) << "Depth Timestamp   : " << realsense.getDepthTimestamp() << endl;
-      //     // cout << fixed << setw(11) << setprecision(6) << "Frame Displacement: " << realsense.getTemporalFrameDisplacement() << endl;
-      //     // cout << fixed << setw(11) << setprecision(6) << "Average Timestamp : " << realsense.getAverageTimestamp() << endl;
-      //     // Pass the RGB and Depth images to the SLAM system
-      //     SLAM.TrackRGBD(realsense.getColorMatrix(), realsense.getDepthMatrix(), realsense.getAverageTimestamp());
-      //   } else {
-      //     cerr << "Frames are not time consistent" << endl;
-      //   }
-      // } else if (mode == RealSense::IRD) {
-      //   // cout << fixed << setw(11) << setprecision(6) << "Timestamp   : " << realsense.getIRLeftTimestamp() << endl;
-      //   // Pass the IR Left and Depth images to the SLAM system
-      //   SLAM.TrackRGBD(realsense.getIRLeftMatrix(), realsense.getDepthMatrix(), realsense.getIRLeftTimestamp());
-      // }
+      if (mode == RealSense::RGBD) {
+        if (realsense.isValidAlignedFrame()) {
+          // cout << fixed << setw(11) << setprecision(6) << "RGB Timestamp     : " << realsense.getRGBTimestamp() << endl;
+          // cout << fixed << setw(11) << setprecision(6) << "Depth Timestamp   : " << realsense.getDepthTimestamp() << endl;
+          // cout << fixed << setw(11) << setprecision(6) << "Frame Displacement: " << realsense.getTemporalFrameDisplacement() << endl;
+          // cout << fixed << setw(11) << setprecision(6) << "Average Timestamp : " << realsense.getAverageTimestamp() << endl;
+          // Pass the RGB and Depth images to the SLAM system
+          SLAM.TrackRGBD(realsense.getColorMatrix(), realsense.getDepthMatrix(), realsense.getAverageTimestamp());
+        } else {
+          cerr << "Frames are not time consistent" << endl;
+        }
+      } else if (mode == RealSense::IRD) {
+        // cout << fixed << setw(11) << setprecision(6) << "Timestamp   : " << realsense.getIRLeftTimestamp() << endl;
+        // Pass the IR Left and Depth images to the SLAM system
+        SLAM.TrackRGBD(realsense.getIRLeftMatrix(), realsense.getDepthMatrix(), realsense.getIRLeftTimestamp());
+      }
 
       int key = waitKey(10);
       // Stop SLAM when Spacebar is pressed
@@ -72,7 +72,7 @@ int main(int argc, char **argv)
     }
 
     // Stop all threads
-    // SLAM.Shutdown();
+    SLAM.Shutdown();
 
     // Save camera trajectory
     // SLAM.SaveTrajectory("CameraTrajectory.dat");
