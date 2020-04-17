@@ -4,17 +4,30 @@
 # Camera Parameters
 #--------------------------------------------------------------------------------------------
 
-# Camera calibration and distortion parameters (OpenCV)
-Camera.fx: 3.8239546117370509e+02
-Camera.fy: 3.8219648513972737e+02
-Camera.cx: 3.2027438449003421e+02
-Camera.cy: 2.3990883258792343e+02
+# Camera calibration and distortion parameters for Left IR Camera (OpenCV)
+# From camera intrinsics
+Camera.fx: 379.895904541016
+Camera.fy: 379.895904541016
+Camera.cx: 317.829040527344
+Camera.cy: 242.992126464844
 
-Camera.k1: 1.3224423549010711e-02
-Camera.k2: -1.5857661047632438e-02
-Camera.p1: -1.3443119021054313e-03
-Camera.p2: 1.9553483509142503e-03
-Camera.k3: 2.3106074488014841e-02
+Camera.k1: 0
+Camera.k2: 0
+Camera.p1: 0
+Camera.p1: 0
+Camera.k3: 0
+
+# Computed from chessboard
+# Camera.fx: 3.8239546117370509e+02
+# Camera.fy: 3.8219648513972737e+02
+# Camera.cx: 3.2027438449003421e+02
+# Camera.cy: 2.3990883258792343e+02
+
+# Camera.k1: 1.3224423549010711e-02
+# Camera.k2: -1.5857661047632438e-02
+# Camera.p1: -1.3443119021054313e-03
+# Camera.p2: 1.9553483509142503e-03
+# Camera.k3: 2.3106074488014841e-02
 
 # Camera frames per second 
 Camera.fps: 30.0
@@ -22,20 +35,24 @@ Camera.fps: 30.0
 # Refer to: https://github.com/IntelRealSense/librealsense/issues/2580
 
 # IR projector baseline times fx (approx.)
-# Camera.bf: 40.0
-# Camera.bf: 9.20, since 9.20 = baseline*fx and baseline can be found in /camera/extrinsics/depth_to_color as baseline = 0.015090852975845337.
-Camera.bf: 9.20
+# Fx = 379.895904541016 (from get_instrinsics)
+# b  = 50 / 1000 = 0.05 (from depth module baseline)
+# bf = 379.895904541016 * 0.05
+# Computed manually
+# Camera.bf: 18.994795227
+Camera.bf: 18.9481182098389
 
 # Color order of the images (0: BGR, 1: RGB. It is ignored if images are grayscale)
 Camera.RGB: 1
 
 # Close/Far threshold. Baseline times
-# ThDepth: 40.0
+# ThDepth: 50.0
 ThDepth: 1.0e+09
 
 # Depthmap values factor
 # DepthMapFactor = 1000, which is the conversion from millimeters to meters (Realsense provides depth in millimeters)
-DepthMapFactor: 1000.0
+# DepthMapFactor: 1000.0
+DepthMapFactor: 999.999938964844
 
 # Modeling Realsense D435 Sensor Noise for Improved 3D Reconstruction and Tracking.
 sensor_processor/type: structured_light
