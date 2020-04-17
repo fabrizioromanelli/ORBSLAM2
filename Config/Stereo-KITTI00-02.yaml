@@ -64,3 +64,4 @@ Viewer.ViewpointY: -100
 Viewer.ViewpointZ: -0.1
 Viewer.ViewpointF: 2000
 
+Map.mapfile: stereo_kitti_00-02.map
