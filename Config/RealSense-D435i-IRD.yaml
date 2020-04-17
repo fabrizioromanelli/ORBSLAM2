@@ -46,8 +46,8 @@ Camera.bf: 18.9481182098389
 Camera.RGB: 1
 
 # Close/Far threshold. Baseline times
-# ThDepth: 50.0
-ThDepth: 1.0e+09
+ThDepth: 50.0
+# ThDepth: 1.0e+09
 
 # Depthmap values factor
 # DepthMapFactor = 1000, which is the conversion from millimeters to meters (Realsense provides depth in millimeters)
