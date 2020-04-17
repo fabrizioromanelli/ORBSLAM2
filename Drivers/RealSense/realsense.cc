@@ -198,6 +198,8 @@ inline void RealSense::initializeSensor()
       break;
     case IRD:
       config.enable_stream( rs2_stream::RS2_STREAM_INFRARED, IR_LEFT, ir_left_width, ir_left_height, rs2_format::RS2_FORMAT_Y8, ir_left_fps );
+      // The following is just needed to get the correct baseline information, it will be then disabled.
+      config.enable_stream( rs2_stream::RS2_STREAM_INFRARED, IR_RIGHT, ir_right_width, ir_right_height, rs2_format::RS2_FORMAT_Y8, ir_right_fps );
       config.enable_stream( rs2_stream::RS2_STREAM_DEPTH, depth_width, depth_height, rs2_format::RS2_FORMAT_Z16, depth_fps );
       break;
     case IRL:
@@ -212,9 +214,44 @@ inline void RealSense::initializeSensor()
   }
 
   pipeline_profile = pipeline.start(config);
+  realSense_device = pipeline_profile.get_device();
+
+  // Refer to: https://github.com/raulmur/ORB_SLAM2/issues/259
+  if (sensorModality == IRD)
+  {
+    auto depth_sensor = realSense_device.first<rs2::depth_sensor>();
+    auto depth_stream = pipeline_profile.get_stream(RS2_STREAM_DEPTH);
+    auto ir_stream    = pipeline_profile.get_stream(RS2_STREAM_INFRARED, 2);
+
+    const float scale = depth_sensor.get_depth_scale();
+    rs2_intrinsics intrinsics = pipeline_profile.get_stream(RS2_STREAM_INFRARED).as<rs2::video_stream_profile>().get_intrinsics();
+    rs2_extrinsics extrinsics = depth_stream.get_extrinsics_to(ir_stream);
+
+    std::stringstream ss;
+    ss << "    " << std::left << std::setw(31) << "Width"      << ": " << intrinsics.width << std::endl <<
+          "    " << std::left << std::setw(31) << "Height"     << ": " << intrinsics.height << std::endl <<
+          "    " << std::left << std::setw(31) << "Distortion" << ": " << rs2_distortion_to_string(intrinsics.model) << std::endl <<
+          "    " << std::left << std::setw(31) << "Baseline"   << ": " << std::setprecision(15) << extrinsics.translation[0] << std::endl <<
+          "    " << std::left << std::setw(31) << "Camera.fx"  << ": " << std::setprecision(15) << intrinsics.fx << std::endl <<
+          "    " << std::left << std::setw(31) << "Camera.fy"  << ": " << std::setprecision(15) << intrinsics.fy << std::endl <<
+          "    " << std::left << std::setw(31) << "Camera.cx"  << ": " << std::setprecision(15) << intrinsics.ppx << std::endl <<
+          "    " << std::left << std::setw(31) << "Camera.cy"  << ": " << std::setprecision(15) << intrinsics.ppy << std::endl <<
+          "    " << std::left << std::setw(31) << "Camera.k1"  << ": " << std::setprecision(15) << intrinsics.coeffs[0] << std::endl <<
+          "    " << std::left << std::setw(31) << "Camera.k2"  << ": " << std::setprecision(15) << intrinsics.coeffs[1] << std::endl <<
+          "    " << std::left << std::setw(31) << "Camera.p1"  << ": " << std::setprecision(15) << intrinsics.coeffs[2] << std::endl <<
+          "    " << std::left << std::setw(31) << "Camera.p1"  << ": " << std::setprecision(15) << intrinsics.coeffs[3] << std::endl <<
+          "    " << std::left << std::setw(31) << "Camera.k3"  << ": " << std::setprecision(15) << intrinsics.coeffs[4] << std::endl <<
+          "    " << std::left << std::setw(31) << "DepthMapFactor" << ": " << 1/scale << std::endl <<
+          "    " << std::left << std::setw(31) << "Camera.bf"  << ": " << fabs(extrinsics.translation[0]*intrinsics.fx) << std::endl;
+
+    std::cout << ss.str() << std::endl;
+    pipeline.stop();
+    config.disable_stream(RS2_STREAM_INFRARED, 2);
+    pipeline_profile = pipeline.start(config);
+    realSense_device = pipeline_profile.get_device();
+  }
 
   // Disabled by default the laser projector
-  realSense_device = pipeline_profile.get_device();
   disableLaser();
 
   // Camera warmup - dropping several first frames to let auto-exposure stabilize
