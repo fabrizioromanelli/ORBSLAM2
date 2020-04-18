@@ -1,4 +1,6 @@
 #include <string>
+#include <chrono>
+#include <thread>
 
 #include "realsense.h"
 
@@ -19,11 +21,26 @@ int main(int argc, char** argv)
     {
       realsense.run();
 
+      // Showing images
+      cv::Mat irFrame    = realsense.getIRLeftMatrix();
+      cv::Mat depthFrame = realsense.getDepthMatrix();
       namedWindow("IR Left", WINDOW_AUTOSIZE);
-      imshow("IR Left", realsense.getIRLeftMatrix());
-
+      imshow("IR Left", irFrame);
       namedWindow("Depth", WINDOW_AUTOSIZE);
-      imshow("Depth", realsense.getDepthMatrix());
+      imshow("Depth", depthFrame);
+
+      // Saving files
+      char filename_ir_[50] = "./infrared/ir_";
+      char *filename_ir = &filename_ir_[0];
+      strcat(filename_ir, to_string(realsense.getIRLeftTimestamp()).c_str());
+      strcat(filename_ir, ".jpg");
+      imwrite(filename_ir, irFrame);
+      depthFrame.convertTo(depthFrame, CV_8UC1, 15 / 256.0);
+      char filename_depth_[50] = "./depth/depth_";
+      char *filename_depth = &filename_depth_[0];
+      strcat(filename_depth, to_string(realsense.getIRLeftTimestamp()).c_str());
+      strcat(filename_depth, ".jpg");
+      imwrite(filename_depth, depthFrame);
 
       int key = waitKey(10);
       // Stop acquisition process when Spacebar is pressed
@@ -59,16 +76,16 @@ int main(int argc, char** argv)
   //   namedWindow("Grab Images", WINDOW_AUTOSIZE);
   //   imshow("Grab Images", depth_img);
 
-  //   char filename_[50] = "calib_";
-  //   char *filename = &filename_[0];
+    // char filename_[50] = "calib_";
+    // char *filename = &filename_[0];
 
-  //   strcat(filename, to_string(frame_timestamp).c_str());
-  //   strcat(filename, ".jpg");
+    // strcat(filename, to_string(frame_timestamp).c_str());
+    // strcat(filename, ".jpg");
 
-  //   int key = waitKey(10);
-  //   // Save image to jpeg if Spacebar has been pressed
-  //   if( key == 32 ) {
-  //     imwrite(filename, depth_img);
+    // int key = waitKey(10);
+    // // Save image to jpeg if Spacebar has been pressed
+    // if( key == 32 ) {
+    //   imwrite(filename, depth_img);
   //   } else if (key == 27) { // stop capturing by pressing ESC
   //     break;
   //   }
