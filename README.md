@@ -1,6 +1,8 @@
 # ORB-SLAM2
 **Authors:** [Raul Mur-Artal](http://webdiis.unizar.es/~raulmur/), [Juan D. Tardos](http://webdiis.unizar.es/~jdtardos/), [J. M. M. Montiel](http://webdiis.unizar.es/~josemari/) and [Dorian Galvez-Lopez](http://doriangalvez.com/) ([DBoW2](https://github.com/dorian3d/DBoW2))
 
+**18 Apr 2020**: This version is working with the new versions of FBOW and g2o. Still g2o is failing in loop closure. TODO: fix this in Optimize.cc.
+
 **13 Apr 2020**: Adding support for RealSense alignment from [Tsukasa Sugiura](https://github.com/UnaNancyOwen/RealSense2Sample).
 
 **27 Jan 2020**: Re-organized tools directory. Added camera calibration (monocular and 3D). Added tool to grab images in jpeg for calibration. Added test for Creative WebCam and SonyVaio integrated WebCam.
