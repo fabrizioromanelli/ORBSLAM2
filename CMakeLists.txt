@@ -3,7 +3,7 @@ project(ORB_SLAM2)
 set(REALSENSE RealSense)
 
 IF(NOT CMAKE_BUILD_TYPE)
-    SET(CMAKE_BUILD_TYPE Release)
+  SET(CMAKE_BUILD_TYPE Release)
 ENDIF()
 
 MESSAGE("Build type: " ${CMAKE_BUILD_TYPE})
@@ -16,22 +16,22 @@ include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
 CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
 if(COMPILER_SUPPORTS_CXX11)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-    add_definitions(-DCOMPILEDWITHC11)
-    message(STATUS "Using flag -std=c++11.")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+  add_definitions(-DCOMPILEDWITHC11)
+  message(STATUS "Using flag -std=c++11.")
 elseif(COMPILER_SUPPORTS_CXX0X)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-    add_definitions(-DCOMPILEDWITHC0X)
-    message(STATUS "Using flag -std=c++0x.")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+  add_definitions(-DCOMPILEDWITHC0X)
+  message(STATUS "Using flag -std=c++0x.")
 else()
-    message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+  message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 
 find_package(OpenCV 4.2.0 QUIET)
 if(NOT OpenCV_FOUND)
-   message(FATAL_ERROR "OpenCV > 4.2.0 not found.")
+  message(FATAL_ERROR "OpenCV > 4.2.0 not found.")
 endif()
 
 find_package(Eigen3 3.1.0 REQUIRED)
@@ -94,83 +94,85 @@ target_link_libraries(${REALSENSE}
 message(STATUS "Compile With map save/load function")
 find_library(BOOST_SERIALIZATION boost_serialization)
 if (NOT BOOST_SERIALIZATION)
-    message(FATAL_ERROR "Can't find libboost_serialization")
+  message(FATAL_ERROR "Can't find libboost_serialization")
 endif()
 target_link_libraries(${PROJECT_NAME} ${BOOST_SERIALIZATION})
 
-# Build examples
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Stereo)
+# Build Tests for Live cameras
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/IRD)
+add_executable(realsense_live Test/Live/IRD/realsense.cc)
+target_link_libraries(realsense_live ${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/Monocular)
+add_executable(mono_camera Test/Live/Monocular/mono_camera.cc)
+target_link_libraries(mono_camera ${PROJECT_NAME})
 
-add_executable(stereo_kitti Examples/Stereo/stereo_kitti.cc)
-target_link_libraries(stereo_kitti ${PROJECT_NAME})
-
-add_executable(stereo_euroc Examples/Stereo/stereo_euroc.cc)
-target_link_libraries(stereo_euroc ${PROJECT_NAME})
-
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Monocular)
-
-add_executable(mono_tum Examples/Monocular/mono_tum.cc)
-target_link_libraries(mono_tum ${PROJECT_NAME})
-
-add_executable(mono_euroc Examples/Monocular/mono_euroc.cc)
+# Build Tests for Replay sequences
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/IRD)
+add_executable(realsense_replay Test/Replay/IRD/realsense.cc)
+target_link_libraries(realsense_replay ${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/Monocular)
+add_executable(mono_euroc Test/Replay/Monocular/mono_euroc.cc)
 target_link_libraries(mono_euroc ${PROJECT_NAME})
-
-# Build benchmarks
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Benchmarks/fromMonocularFile)
-add_executable(benchmark_mono_file Benchmarks/fromMonocularFile/benchmark.cc)
-target_link_libraries(benchmark_mono_file ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Benchmarks/fromRGBDFile)
-add_executable(benchmark_rgbd_file Benchmarks/fromRGBDFile/benchmark.cc)
-target_link_libraries(benchmark_rgbd_file ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Benchmarks/fromStereoFile)
-add_executable(benchmark_stereo_file Benchmarks/fromStereoFile/benchmark.cc)
-target_link_libraries(benchmark_stereo_file ${PROJECT_NAME})
-
-# KITTI Mono Example
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Monocular)
-add_executable(mono_kitti Examples/Monocular/mono_kitti.cc)
+add_executable(mono_kitti Test/Replay/Monocular/mono_kitti.cc)
 target_link_libraries(mono_kitti ${PROJECT_NAME})
-
-# TUM RGB-D Example
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/RGB-D)
-add_executable(RGBD-tum Examples/RGB-D/rgbd_tum.cc)
+add_executable(mono_tum Test/Replay/Monocular/mono_tum.cc)
+target_link_libraries(mono_tum ${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/RGBD)
+add_executable(RGBD-tum Test/Replay/RGBD/rgbd_tum.cc)
 target_link_libraries(RGBD-tum ${PROJECT_NAME})
-
-# Camera Calibration Tools
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/camera_calibration_3D)
-add_executable(Camera_Calibration_3D Tools/camera_calibration_3D/camera_calibration_tool.cpp)
-target_link_libraries(Camera_Calibration_3D ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/camera_calibration_monocular)
-add_executable(Camera_Calibration_Mono Tools/camera_calibration_monocular/camera_calibration.cpp)
-target_link_libraries(Camera_Calibration_Mono ${PROJECT_NAME})
-
-# Build test
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test)
-add_executable(Test Test/Test.cc)
-target_link_libraries(Test ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/RealSense)
-add_executable(realsense Test/RealSense/main.cc)
-target_link_libraries(realsense ${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/Stereo)
+add_executable(stereo_kitti Test/Replay/Stereo/stereo_kitti.cc)
+target_link_libraries(stereo_kitti ${PROJECT_NAME})
+add_executable(stereo_euroc Test/Replay/Stereo/stereo_euroc.cc)
+target_link_libraries(stereo_euroc ${PROJECT_NAME})
 
 # Build V-SLAM application
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Drone)
 add_executable(DroneVslam Drone/DroneVslam.cc)
 target_link_libraries(DroneVslam ${PROJECT_NAME})
 
+#
+# Tools
+#
+# Benchmarks
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Benchmarks/Live/Monocular)
+add_executable(benchmark_mono_live Tools/Benchmarks/Live/Monocular/benchmark.cc)
+target_link_libraries(benchmark_mono_live ${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Benchmarks/Replay/Monocular)
+add_executable(benchmark_mono_replay Tools/Benchmarks/Replay/Monocular/benchmark.cc)
+target_link_libraries(benchmark_mono_replay ${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Benchmarks/Replay/RGBD)
+add_executable(benchmark_rgbd_replay Tools/Benchmarks/Replay/RGBD/benchmark.cc)
+target_link_libraries(benchmark_rgbd_replay ${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Benchmarks/Replay/Stereo)
+add_executable(benchmark_stereo_replay Tools/Benchmarks/Replay/Stereo/benchmark.cc)
+target_link_libraries(benchmark_stereo_replay ${PROJECT_NAME})
+
+# Camera Calibration
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Calibration/Monocular)
+add_executable(camera_calibration Tools/Calibration/Monocular/camera_calibration.cc)
+target_link_libraries(camera_calibration ${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Calibration/Stereo)
+add_executable(camera_calibration_stereo Tools/Calibration/Stereo/camera_calibration_stereo.cc)
+target_link_libraries(camera_calibration_stereo ${PROJECT_NAME})
+
+# Grab single images
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Grab/Depth)
+add_executable(grab_realsense_depth Tools/Grab/Depth/grab_realsense_depth.cc)
+target_link_libraries(grab_realsense_depth ${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Grab/Infrared)
+add_executable(grab_realsense_ir Tools/Grab/Infrared/grab_realsense_ir.cc)
+target_link_libraries(grab_realsense_ir ${PROJECT_NAME})
 # Here we unset the CMAKE_BUILD_TYPE because -O3 option causes a crash
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/grab)
-add_executable(Grab Tools/grab/grab.cc)
-target_compile_options(Grab PRIVATE -O0)
-target_link_libraries(Grab ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/grab_realsense_rgb)
-add_executable(Grab_RealSense Tools/grab_realsense_rgb/grabRealSense.cc)
-target_link_libraries(Grab_RealSense ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/grab_realsense_depth)
-add_executable(Grab_RealSense_Depth Tools/grab_realsense_depth/grabRealSenseDepth.cc)
-target_link_libraries(Grab_RealSense_Depth ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/grab_realsense_ir)
-add_executable(Grab_RealSense_IR Tools/grab_realsense_ir/grabRealSenseIR.cc)
-target_link_libraries(Grab_RealSense_IR ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/grab_sequence_realsense_ird)
-add_executable(Grab_Sequence_RealSense_IRD Tools/grab_sequence_realsense_ird/grabSequenceRealSenseIrd.cc)
-target_link_libraries(Grab_Sequence_RealSense_IRD ${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Grab/Monocular)
+add_executable(grab_monocular Tools/Grab/Monocular/grab_monocular.cc)
+target_compile_options(grab_monocular PRIVATE -O0)
+target_link_libraries(grab_monocular ${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Grab/RGB)
+add_executable(grab_realsense_rgb Tools/Grab/RGB/grab_realsense_rgb.cc)
+target_link_libraries(grab_realsense_rgb ${PROJECT_NAME})
+
+# Grab sequencess
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/GrabSequence/IRD)
+add_executable(grab_sequence_realsense_ird Tools/GrabSequence/IRD/grab_sequence_realsense_ird.cc)
+target_link_libraries(grab_sequence_realsense_ird ${PROJECT_NAME})
