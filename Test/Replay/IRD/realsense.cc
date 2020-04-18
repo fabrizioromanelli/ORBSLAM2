@@ -1,8 +1,3 @@
-/**
-* Test video stream with ORB-SLAM2.
-*
-*/
-
 #include <iostream>
 #include <algorithm>
 #include <fstream>
@@ -11,64 +6,60 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/opencv.hpp>
 #include <System.h>
-
-#include "realsense.h"
+#include <sys/types.h>
+#include <dirent.h>
 
 using namespace std;
 using namespace cv;
 using namespace ORB_SLAM2;
 
+void LoadImages(const string &sequenceDir, vector<string> &imageFilenamesIR, vector<string> &imageFilenamesD, vector<double> &timestamps);
+
 int main(int argc, char **argv)
 {
   if(argc != 4)
   {
-    cerr << endl << "Usage: ./Test path_to_vocabulary path_to_settings mode" << endl;
+    cerr << endl << "Usage: ./Test path_to_vocabulary path_to_settings path_to_sequence" << endl;
+    return 1;
+  }
+
+  // Retrieve paths to images
+  vector<string> imageFilenamesIR;
+  vector<string> imageFilenamesD;
+  vector<double> timestamps;
+  string sequenceDir = string(argv[3]);
+  LoadImages(sequenceDir, imageFilenamesIR, imageFilenamesD, timestamps);
+
+  // Check consistency in the number of images and depthmaps
+  int nImages = imageFilenamesIR.size();
+  if(imageFilenamesIR.empty())
+  {
+    cerr << endl << "No images found in provided path." << endl;
+    return 1;
+  }
+  else if(imageFilenamesD.size() != imageFilenamesIR.size())
+  {
+    cerr << endl << "Different number of images for ir and depth." << endl;
     return 1;
   }
 
   try {
-    RealSense::sModality mode = RealSense::RGBD;
-    if (strcmp(argv[3], "RGBD") == 0)
-      mode = RealSense::RGBD;
-    else if (strcmp(argv[3], "IRD") == 0)
-      mode = RealSense::IRD;
-
-    RealSense realsense(mode);
-    // realsense.enableLaser(40.0);
-
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
     System SLAM(argv[1], argv[2], System::RGBD, true, true);
 
     cout << endl << "-------" << endl;
     cout << "Start processing video stream ..." << endl;
+    cout << "Images in the sequence: " << nImages << endl << endl;
 
+    cv::Mat imIR, imD;
     // Main loop
-    for(;;)
+    for(int ni = 0; ni < nImages; ni++)
     {
-      realsense.run();
-
-      if (mode == RealSense::RGBD) {
-        if (realsense.isValidAlignedFrame()) {
-          // cout << fixed << setw(11) << setprecision(6) << "RGB Timestamp     : " << realsense.getRGBTimestamp() << endl;
-          // cout << fixed << setw(11) << setprecision(6) << "Depth Timestamp   : " << realsense.getDepthTimestamp() << endl;
-          // cout << fixed << setw(11) << setprecision(6) << "Frame Displacement: " << realsense.getTemporalFrameDisplacement() << endl;
-          // cout << fixed << setw(11) << setprecision(6) << "Average Timestamp : " << realsense.getAverageTimestamp() << endl;
-          // Pass the RGB and Depth images to the SLAM system
-          SLAM.TrackRGBD(realsense.getColorMatrix(), realsense.getDepthMatrix(), realsense.getAverageTimestamp());
-        } else {
-          cerr << "Frames are not time consistent" << endl;
-        }
-      } else if (mode == RealSense::IRD) {
-        // cout << fixed << setw(11) << setprecision(6) << "Timestamp   : " << realsense.getIRLeftTimestamp() << endl;
-        // Pass the IR Left and Depth images to the SLAM system
-        SLAM.TrackRGBD(realsense.getIRLeftMatrix(), realsense.getDepthMatrix(), realsense.getIRLeftTimestamp());
-      }
-
-      int key = waitKey(10);
-      // Stop SLAM when Spacebar is pressed
-      if( key == 32 ) {
-        break;
-      }
+      // Read image and depthmap from file
+      imIR = cv::imread(string(argv[3])+"/infrared/"+imageFilenamesIR[ni], cv::IMREAD_UNCHANGED);
+      imD  = cv::imread(string(argv[3])+"/depth/"+imageFilenamesD[ni], cv::IMREAD_UNCHANGED);
+      double tframe = timestamps[ni];
+      SLAM.TrackRGBD(imIR, imD, tframe);
     }
 
     // Stop all threads
@@ -83,4 +74,36 @@ int main(int argc, char **argv)
   }
 
   return 0;
+}
+
+void ReadDirectory(const string& name, vector<string> &v)
+{
+  DIR* dirp = opendir(name.c_str());
+  struct dirent * dp;
+  while ((dp = readdir(dirp)) != NULL) {
+    v.push_back(dp->d_name);
+  }
+  closedir(dirp);
+}
+
+void LoadImages(const string &sequenceDir, vector<string> &imageFilenamesIR, vector<string> &imageFilenamesD, vector<double> &timestamps)
+{
+  ReadDirectory(sequenceDir + "/infrared", imageFilenamesIR);
+  imageFilenamesIR.erase(imageFilenamesIR.begin());
+  imageFilenamesIR.erase(imageFilenamesIR.begin());
+  sort(imageFilenamesIR.begin(), imageFilenamesIR.end());
+
+  ReadDirectory(sequenceDir + "/depth", imageFilenamesD);
+  imageFilenamesD.erase(imageFilenamesD.begin());
+  imageFilenamesD.erase(imageFilenamesD.begin());
+  sort(imageFilenamesD.begin(), imageFilenamesD.end());
+
+  for (auto x : imageFilenamesD)
+  {
+    size_t sPos = x.find("depth_");
+    x.erase(sPos, 6);
+    sPos = x.find(".jpg");
+    x.erase(sPos, 4);
+    timestamps.push_back(stod(x));
+  }
 }
