@@ -39,6 +39,8 @@ Tools/Grab/Infrared/grab_realsense_ir
 Tools/Grab/Monocular/grab_monocular
 Tools/Grab/RGB/grab_realsense_rgb
 Tools/GrabSequence/IRD/grab_sequence_realsense_ird
+depth/
+infrared/
 build/
 CameraTrajectory.txt
 *~

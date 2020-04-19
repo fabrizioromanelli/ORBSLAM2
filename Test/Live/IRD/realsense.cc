@@ -11,6 +11,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/opencv.hpp>
 #include <System.h>
+#include <sys/stat.h>
 
 #include "realsense.h"
 
@@ -41,6 +42,20 @@ int main(int argc, char **argv)
 
     cout << endl << "-------" << endl;
     cout << "Start processing video stream ..." << endl;
+
+    int dir_err = mkdir("infrared", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    if (dir_err == -1)
+    {
+      cerr << "Error creating directory infrared!" << endl;
+      exit(1);
+    }
+
+    dir_err = mkdir("depth", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    if (dir_err == -1)
+    {
+      cerr << "Error creating directory depth!" << endl;
+      exit(1);
+    }
 
     // Main loop
     for(;;)
