@@ -58,6 +58,7 @@ int main(int argc, char **argv)
       // Read image and depthmap from file
       imIR = cv::imread(string(argv[3])+"/infrared/"+imageFilenamesIR[ni], cv::IMREAD_UNCHANGED);
       imD  = cv::imread(string(argv[3])+"/depth/"+imageFilenamesD[ni], cv::IMREAD_UNCHANGED);
+      imD.convertTo(imD, CV_16SC1, 256.0 / 15.0);
       double tframe = timestamps[ni];
       SLAM.TrackRGBD(imIR, imD, tframe);
     }
@@ -66,7 +67,7 @@ int main(int argc, char **argv)
     SLAM.Shutdown();
 
     // Save camera trajectory
-    // SLAM.SaveTrajectory("CameraTrajectory.dat");
+    SLAM.SaveTrajectory("CameraTrajectory.dat");
     // SLAM.SaveKeyFrameTrajectory("KeyFrameTrajectory.dat");
   }
   catch(exception& ex) {

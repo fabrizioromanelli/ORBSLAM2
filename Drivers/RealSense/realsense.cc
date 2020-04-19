@@ -176,6 +176,30 @@ cv::Mat RealSense::getIRRightMatrix()
   return(ir_right);
 }
 
+// Get color frame
+rs2::frame RealSense::getColorFrame()
+{
+  return(color_frame);
+}
+
+// Get depth frame
+rs2::frame RealSense::getDepthFrame()
+{
+  return(depth_frame);
+}
+
+// Get IR left frame
+rs2::frame RealSense::getIRLeftFrame()
+{
+  return(ir_left_frame);
+}
+
+// Get IR right frame
+rs2::frame RealSense::getIRRightFrame()
+{
+  return(ir_right_frame);
+}
+
 // Initialize
 void RealSense::initialize(rs2_time_t _maxDeltaTimeFrames)
 {

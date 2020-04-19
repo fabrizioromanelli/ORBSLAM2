@@ -60,8 +60,25 @@ int main(int argc, char **argv)
         }
       } else if (mode == RealSense::IRD) {
         // cout << fixed << setw(11) << setprecision(6) << "Timestamp   : " << realsense.getIRLeftTimestamp() << endl;
+        cv::Mat irMatrix    = realsense.getIRLeftMatrix();
+        cv::Mat depthMatrix = realsense.getDepthMatrix();
         // Pass the IR Left and Depth images to the SLAM system
-        SLAM.TrackRGBD(realsense.getIRLeftMatrix(), realsense.getDepthMatrix(), realsense.getIRLeftTimestamp());
+        SLAM.TrackRGBD(irMatrix, depthMatrix, realsense.getIRLeftTimestamp());
+
+        // Saving files
+        char filename_ir_[50] = "./infrared/ir_";
+        char *filename_ir = &filename_ir_[0];
+        strcat(filename_ir, to_string(realsense.getIRLeftTimestamp()).c_str());
+        strcat(filename_ir, ".jpg");
+        imwrite(filename_ir, irMatrix);
+
+        depthMatrix.convertTo(depthMatrix, CV_8UC1, 15 / 256.0);
+
+        char filename_depth_[50] = "./depth/depth_";
+        char *filename_depth = &filename_depth_[0];
+        strcat(filename_depth, to_string(realsense.getIRLeftTimestamp()).c_str());
+        strcat(filename_depth, ".jpg");
+        imwrite(filename_depth, depthMatrix);
       }
 
       int key = waitKey(10);
@@ -75,7 +92,7 @@ int main(int argc, char **argv)
     SLAM.Shutdown();
 
     // Save camera trajectory
-    // SLAM.SaveTrajectory("CameraTrajectory.dat");
+    SLAM.SaveTrajectory("CameraTrajectory.dat");
     // SLAM.SaveKeyFrameTrajectory("KeyFrameTrajectory.dat");
   }
   catch(exception& ex) {

@@ -41,6 +41,12 @@ public:
   cv::Mat getIRLeftMatrix();
   cv::Mat getIRRightMatrix();
 
+  // Get raw frames
+  rs2::frame getColorFrame();
+  rs2::frame getDepthFrame();
+  rs2::frame getIRLeftFrame();
+  rs2::frame getIRRightFrame();
+
   // Control laser projector
   void enableLaser(float);
   void disableLaser();
