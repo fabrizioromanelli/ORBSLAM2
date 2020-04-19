@@ -58,7 +58,6 @@ int main(int argc, char **argv)
       // Read image and depthmap from file
       imIR = cv::imread(string(argv[3])+"/infrared/"+imageFilenamesIR[ni], cv::IMREAD_UNCHANGED);
       imD  = cv::imread(string(argv[3])+"/depth/"+imageFilenamesD[ni], cv::IMREAD_UNCHANGED);
-      imD.convertTo(imD, CV_16SC1, 256.0 / 15.0);
       double tframe = timestamps[ni];
       SLAM.TrackRGBD(imIR, imD, tframe);
     }
@@ -103,7 +102,7 @@ void LoadImages(const string &sequenceDir, vector<string> &imageFilenamesIR, vec
   {
     size_t sPos = x.find("depth_");
     x.erase(sPos, 6);
-    sPos = x.find(".jpg");
+    sPos = x.find(".png");
     x.erase(sPos, 4);
     timestamps.push_back(stod(x));
   }

@@ -87,12 +87,12 @@ int main(int argc, char **argv)
         strcat(filename_ir, ".jpg");
         imwrite(filename_ir, irMatrix);
 
-        depthMatrix.convertTo(depthMatrix, CV_8UC1, 15 / 256.0);
+        // depthMatrix.convertTo(depthMatrix, CV_8UC1, 15 / 256.0);
 
         char filename_depth_[50] = "./depth/depth_";
         char *filename_depth = &filename_depth_[0];
         strcat(filename_depth, to_string(realsense.getIRLeftTimestamp()).c_str());
-        strcat(filename_depth, ".jpg");
+        strcat(filename_depth, ".png");
         imwrite(filename_depth, depthMatrix);
       }
 

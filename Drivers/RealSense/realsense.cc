@@ -158,7 +158,7 @@ cv::Mat RealSense::getColorMatrix()
 // Get depth matrix
 cv::Mat RealSense::getDepthMatrix()
 {
-  cv::Mat depth(cv::Size(depth_width, depth_height), CV_16SC1, (void*)depth_frame.get_data(), cv::Mat::AUTO_STEP);
+  cv::Mat depth(cv::Size(depth_width, depth_height), CV_16UC1, (void*)depth_frame.get_data(), cv::Mat::AUTO_STEP);
   return(depth);
 }
 

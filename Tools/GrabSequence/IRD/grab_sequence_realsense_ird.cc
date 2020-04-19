@@ -19,19 +19,8 @@ int main(int argc, char** argv)
     cout << endl << "-------" << endl;
     cout << "Start processing video stream ..." << endl;
 
-    int dir_err = mkdir("infrared", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-    if (dir_err == -1)
-    {
-      cerr << "Error creating directory infrared!" << endl;
-      exit(1);
-    }
-
-    dir_err = mkdir("depth", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-    if (dir_err == -1)
-    {
-      cerr << "Error creating directory depth!" << endl;
-      exit(1);
-    }
+    mkdir("infrared", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    mkdir("depth", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
     // Main loop
     for(;;)
@@ -53,12 +42,12 @@ int main(int argc, char** argv)
       strcat(filename_ir, ".jpg");
       imwrite(filename_ir, irMatrix);
 
-      depthMatrix.convertTo(depthMatrix, CV_8UC1, 15 / 256.0);
+      // depthMatrix.convertTo(depthMatrix, CV_16UC1);
 
       char filename_depth_[50] = "./depth/depth_";
       char *filename_depth = &filename_depth_[0];
       strcat(filename_depth, to_string(realsense.getIRLeftTimestamp()).c_str());
-      strcat(filename_depth, ".jpg");
+      strcat(filename_depth, ".png");
       imwrite(filename_depth, depthMatrix);
 
       int key = waitKey(10);
