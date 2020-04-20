@@ -50,6 +50,7 @@ class Map;
 class LocalMapping;
 class LoopClosing;
 class System;
+class Optimizer;
 
 class Tracking
 {  
@@ -180,6 +181,8 @@ protected:
 
     //Map
     Map* mpMap;
+
+    Optimizer* mpOptimizer;
 
     //Calibration matrix
     cv::Mat mK;

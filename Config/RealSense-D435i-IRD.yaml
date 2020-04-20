@@ -119,6 +119,36 @@ LoopClosing.ransacMaxIterations: 300
 LoopClosing.detectionThreshold: 40
 
 #--------------------------------------------------------------------------------------------
+# Optimizer Parameters
+#--------------------------------------------------------------------------------------------
+# 2D Huber threshold.
+Optimizer.2DHuberThreshold: 5.99
+
+# 3D Huber threshold.
+Optimizer.3DHuberThreshold: 7.815
+
+# Initial Lambda for the Levenberg algorithm.
+Optimizer.initialLambda: 1.0e-16
+
+# Amount of covisible keyframes.
+Optimizer.covisibleKeyframes: 100
+
+# Number of optimization iterations for essential graph.
+Optimizer.essentialGraphIterations: 20
+
+# Number of optimization iterations for sim3.
+Optimizer.sim3Iterations: 5
+
+# Number of additional iterations if there are outliers.
+Optimizer.additionalIterations: 10
+
+# Number of additional iterations if there are no outliers.
+Optimizer.additionalIterationsNoOutliers: 5
+
+# Minimum number of inliers left before failing whole optimization.
+Optimizer.minimumInliersBeforeFail: 10
+
+#--------------------------------------------------------------------------------------------
 # Viewer Parameters
 #--------------------------------------------------------------------------------------------
 Viewer.KeyFrameSize: 0.05

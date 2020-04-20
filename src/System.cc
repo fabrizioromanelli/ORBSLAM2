@@ -96,7 +96,7 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     mpTracker = new Tracking(this, mpFBOWVocabulary, mpFrameDrawer, mpMapDrawer, mpMap, mpKeyFrameDatabase, strSettingsFile, mSensor, bReuseMap);
 
     // Initialize the Local Mapping thread and launch
-    mpLocalMapper = new LocalMapping(mpMap, mSensor == MONOCULAR);
+    mpLocalMapper = new LocalMapping(mpMap, mSensor == MONOCULAR, strSettingsFile);
 
     // Initialize the Loop Closing thread and launch
     mptLocalMapping = new thread(&ORB_SLAM2::LocalMapping::Run, mpLocalMapper);

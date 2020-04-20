@@ -37,6 +37,38 @@
 namespace ORB_SLAM2
 {
 
+Optimizer::Optimizer(const string &strSettingPath)
+{
+  cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
+
+  // Getting parameters from YAML settings
+  float _m2DHuberThreshold = fSettings["Optimizer.2DHuberThreshold"];
+  m2DHuberThreshold = (_m2DHuberThreshold == 0.0) ? sqrt(5.99) : sqrt(_m2DHuberThreshold);
+
+  float _m3DHuberThreshold = fSettings["Optimizer.3DHuberThreshold"];
+  m3DHuberThreshold = (_m3DHuberThreshold == 0.0) ? sqrt(7.815) : sqrt(_m3DHuberThreshold);
+
+  float _mInitialLambda = fSettings["Optimizer.initialLambda"];
+  mInitialLambda = (_mInitialLambda == 0.0) ? 1.0e-16 : _mInitialLambda;
+
+  int _mCovisibleKeyframes = fSettings["Optimizer.covisibleKeyframes"];
+  mCovisibleKeyframes = (_mCovisibleKeyframes == 0) ? 100 : _mCovisibleKeyframes;
+
+  int _mEssentialGraphIterations = fSettings["Optimizer.essentialGraphIterations"];
+  mEssentialGraphIterations = (_mEssentialGraphIterations == 0) ? 20 : _mEssentialGraphIterations;
+
+  int _mSim3Iterations = fSettings["Optimizer.sim3Iterations"];
+  mSim3Iterations = (_mSim3Iterations == 0) ? 5 : _mSim3Iterations;
+
+  int _mAdditionalIterations = fSettings["Optimizer.additionalIterations"];
+  mAdditionalIterations = (_mAdditionalIterations == 0) ? 10 : _mAdditionalIterations;
+
+  int _mAdditionalIterationsNoOutliers = fSettings["Optimizer.additionalIterationsNoOutliers"];
+  mAdditionalIterationsNoOutliers = (_mAdditionalIterationsNoOutliers == 0) ? 5 : _mAdditionalIterationsNoOutliers;
+
+  int _mMinimumInliersBeforeFail = fSettings["Optimizer.minimumInliersBeforeFail"];
+  mMinimumInliersBeforeFail = (_mMinimumInliersBeforeFail == 0) ? 10 : _mMinimumInliersBeforeFail;
+}
 
 void Optimizer::GlobalBundleAdjustemnt(Map* pMap, int nIterations, bool* pbStopFlag, const unsigned long nLoopKF, const bool bRobust)
 {

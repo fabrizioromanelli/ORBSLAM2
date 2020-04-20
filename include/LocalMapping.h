@@ -36,11 +36,12 @@ namespace ORB_SLAM2
 class Tracking;
 class LoopClosing;
 class Map;
+class Optimizer;
 
 class LocalMapping
 {
 public:
-    LocalMapping(Map* pMap, const float bMonocular);
+    LocalMapping(Map* pMap, const float bMonocular, const string &strSettingPath);
 
     void SetLoopCloser(LoopClosing* pLoopCloser);
 
@@ -103,6 +104,8 @@ protected:
 
     LoopClosing* mpLoopCloser;
     Tracking* mpTracker;
+
+    Optimizer* mpOptimizer;
 
     std::list<KeyFrame*> mlNewKeyFrames;
 
