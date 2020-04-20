@@ -66,6 +66,16 @@ LoopClosing::LoopClosing(Map *pMap, KeyFrameDatabase *pDB, fbow::Vocabulary *pFb
 
   int _mDetectionThreshold = fSettings["LoopClosing.detectionThreshold"];
   mDetectionThreshold = (_mDetectionThreshold == 0) ? 40 : _mDetectionThreshold;
+
+  cout << endl << "Loop Closing parameters:" << endl;
+  cout << "- " << "CovisibilityConsistencyTh: " << mnCovisibilityConsistencyTh << endl;
+  cout << "- " << "MinimumKeyframes: " << mMinimumKeyframes << endl;
+  cout << "- " << "Sim3nnRatioOrbMatcher: " << mSim3nnRatioOrbMatcher << endl;
+  cout << "- " << "RansacThresholdTrigger: " << mRansacThresholdTrigger << endl;
+  cout << "- " << "RansacProbability: " << mRansacProbability << endl;
+  cout << "- " << "RansacMinimalInliers: " << mRansacMinimalInliers << endl;
+  cout << "- " << "RansacMaxIterations: " << mRansacMaxIterations << endl;
+  cout << "- " << "DetectionThreshold: " << mDetectionThreshold << endl;
 }
 
 void LoopClosing::SetTracker(Tracking *pTracker)

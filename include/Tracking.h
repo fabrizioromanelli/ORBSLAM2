@@ -217,6 +217,36 @@ protected:
     bool mbRGB;
 
     list<MapPoint*> mlpTemporalPoints;
+
+    // New configuration parameters
+    float mReferenceKeyframeNnRatioOrbMatcher;
+    float mSearchLocalPointsNnRatioOrbMatcher;
+    float mCosineDelta;
+    float mP4pRelocalizationNnRatioOrbMatcher;
+    float mMotionModelNnRatioOrbMatcher;
+    float mPnpSolverRansacProbability;
+    float mPnpSolverRansacEpsilon;
+    float mPnpSolverRansacTh2;
+    float mRelocalizationNnRatioOrbMatcher;
+    int mMinimumMatchesRefKeyframe;
+    int mKeyframeTrackingThreshold;
+    int mPointsCloserThreshold;
+    int mStereoSearchingRadius;
+    int mSearchingRadius;
+    int mSpeedupMatchesThreshold;
+    int mSpeedupMatchesThreshold2;
+    int mMotionModelThreshold;
+    int mLocalMapTrackingThreshold;
+    int mLocalMapTrackingThreshold2;
+    int mNewKeyframeThreshold;
+    int mRGBDSearchingRadiusThreshold;
+    int mSearchingByProjectionThreshold;
+    int mKeyframesLimit;
+    int mKeyframeCandidateThreshold;
+    int mPnpSolverRansacMinInliers;
+    int mPnpSolverRansacMaxIterations;
+    int mPnpSolverRansacMinSet;
+    int mRansacIterationsRelocalization;
 };
 
 } //namespace ORB_SLAM

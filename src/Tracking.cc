@@ -84,7 +84,7 @@ Tracking::Tracking(System *pSys, fbow::Vocabulary* pFbowVoc, FrameDrawer *pFrame
         fps=30;
 
     // Max/Min Frames to insert keyframes and to check relocalisation
-    mMinFrames = 0;
+    mMinFrames = fSettings["Tracking.minFrames"];
     mMaxFrames = fps;
 
     cout << endl << "Camera Parameters: " << endl;
@@ -99,7 +99,6 @@ Tracking::Tracking(System *pSys, fbow::Vocabulary* pFbowVoc, FrameDrawer *pFrame
     cout << "- p1: " << DistCoef.at<float>(2) << endl;
     cout << "- p2: " << DistCoef.at<float>(3) << endl;
     cout << "- fps: " << fps << endl;
-
 
     int nRGB = fSettings["Camera.RGB"];
     mbRGB = nRGB;
@@ -134,6 +133,9 @@ Tracking::Tracking(System *pSys, fbow::Vocabulary* pFbowVoc, FrameDrawer *pFrame
     cout << "- Scale Factor: " << fScaleFactor << endl;
     cout << "- Initial Fast Threshold: " << fIniThFAST << endl;
     cout << "- Minimum Fast Threshold: " << fMinThFAST << endl;
+    cout << "- Patch size: " << nPatchSize << endl;
+    cout << "- Half patch size: " << nHalfPatchSize << endl;
+    cout << "- Edge Threshold: " << nEdgeThreshold << endl;
 
     if(sensor==System::STEREO || sensor==System::RGBD)
     {
@@ -151,6 +153,121 @@ Tracking::Tracking(System *pSys, fbow::Vocabulary* pFbowVoc, FrameDrawer *pFrame
     }
     if (bReuseMap)
         mState = LOST;
+
+    // New parameters read from file
+    float _mReferenceKeyframeNnRatioOrbMatcher = fSettings["Tracking.referenceKeyframeNnRatioOrbMatcher"];
+    mReferenceKeyframeNnRatioOrbMatcher = (_mReferenceKeyframeNnRatioOrbMatcher == 0.0) ? 0.7 : _mReferenceKeyframeNnRatioOrbMatcher;
+
+    float _mMotionModelNnRatioOrbMatcher = fSettings["Tracking.motionModelNnRatioOrbMatcher"];
+    mMotionModelNnRatioOrbMatcher = (_mMotionModelNnRatioOrbMatcher == 0.0) ? 0.9 : _mMotionModelNnRatioOrbMatcher;
+
+    float _mCosineDelta = fSettings["Tracking.cosineDelta"];
+    mCosineDelta = (_mCosineDelta == 0.0) ? 0.5 : _mCosineDelta;
+
+    float _mSearchLocalPointsNnRatioOrbMatcher = fSettings["Tracking.searchLocalPointsNnRatioOrbMatcher"];
+    mSearchLocalPointsNnRatioOrbMatcher = (_mSearchLocalPointsNnRatioOrbMatcher == 0.0) ? 0.8 : _mSearchLocalPointsNnRatioOrbMatcher;
+
+    float _mRelocalizationNnRatioOrbMatcher = fSettings["Tracking.relocalizationNnRatioOrbMatcher"];
+    mRelocalizationNnRatioOrbMatcher = (_mRelocalizationNnRatioOrbMatcher == 0.0) ? 0.75 : _mRelocalizationNnRatioOrbMatcher;
+
+    float _mPnpSolverRansacProbability = fSettings["Tracking.pnpSolverRansacProbability"];
+    mPnpSolverRansacProbability = (_mPnpSolverRansacProbability == 0.0) ? 0.99 : _mPnpSolverRansacProbability;
+
+    float _mPnpSolverRansacEpsilon = fSettings["Tracking.pnpSolverRansacEpsilon"];
+    mPnpSolverRansacEpsilon = (_mPnpSolverRansacEpsilon == 0.0) ? 0.5 : _mPnpSolverRansacEpsilon;
+
+    float _mPnpSolverRansacTh2 = fSettings["Tracking.pnpSolverRansacTh2"];
+    mPnpSolverRansacTh2 = (_mPnpSolverRansacTh2 == 0.0) ? 5.991 : _mPnpSolverRansacTh2;
+
+    float _mP4pRelocalizationNnRatioOrbMatcher = fSettings["Tracking.p4pRelocalizationNnRatioOrbMatcher"];
+    mP4pRelocalizationNnRatioOrbMatcher = (_mP4pRelocalizationNnRatioOrbMatcher == 0.0) ? 0.9 : _mP4pRelocalizationNnRatioOrbMatcher;
+
+    int _mMinimumMatchesRefKeyframe = fSettings["Tracking.minimumMatchesRefKeyframe"];
+    mMinimumMatchesRefKeyframe = (_mMinimumMatchesRefKeyframe == 0) ? 15 : _mMinimumMatchesRefKeyframe;
+
+    int _mKeyframeTrackingThreshold = fSettings["Tracking.keyframeTrackingThreshold"];
+    mKeyframeTrackingThreshold = (_mKeyframeTrackingThreshold == 0) ? 10 : _mKeyframeTrackingThreshold;
+
+    int _mPointsCloserThreshold = fSettings["Tracking.pointsCloserThreshold"];
+    mPointsCloserThreshold = (_mPointsCloserThreshold == 0) ? 100 : _mPointsCloserThreshold;
+
+    int _mStereoSearchingRadius = fSettings["Tracking.stereoSearchingRadius"];
+    mStereoSearchingRadius = (_mStereoSearchingRadius == 0) ? 15 : _mStereoSearchingRadius;
+
+    int _mSearchingRadius = fSettings["Tracking.searchingRadius"];
+    mSearchingRadius = (_mSearchingRadius == 0) ? 7 : _mSearchingRadius;
+
+    int _mSpeedupMatchesThreshold = fSettings["Tracking.speedupMatchesThreshold"];
+    mSpeedupMatchesThreshold = (_mSpeedupMatchesThreshold == 0) ? 20 : _mSpeedupMatchesThreshold;
+
+    int _mSpeedupMatchesThreshold2 = fSettings["Tracking.speedupMatchesThreshold2"];
+    mSpeedupMatchesThreshold2 = (_mSpeedupMatchesThreshold2 == 0) ? 20 : _mSpeedupMatchesThreshold2;
+
+    int _mMotionModelThreshold = fSettings["Tracking.motionModelThreshold"];
+    mMotionModelThreshold = (_mMotionModelThreshold == 0) ? 10 : _mMotionModelThreshold;
+
+    int _mLocalMapTrackingThreshold = fSettings["Tracking.localMapTrackingThreshold"];
+    mLocalMapTrackingThreshold = (_mLocalMapTrackingThreshold == 0) ? 30 : _mLocalMapTrackingThreshold;
+
+    int _mLocalMapTrackingThreshold2 = fSettings["Tracking.localMapTrackingThreshold2"];
+    mLocalMapTrackingThreshold2 = (_mLocalMapTrackingThreshold2 == 0) ? 50 : _mLocalMapTrackingThreshold2;
+
+    int _mNewKeyframeThreshold = fSettings["Tracking.newKeyframeThreshold"];
+    mNewKeyframeThreshold = (_mNewKeyframeThreshold == 0) ? 100 : _mNewKeyframeThreshold;
+
+    int _mRGBDSearchingRadiusThreshold = fSettings["Tracking.RGBDSearchingRadiusThreshold"];
+    mRGBDSearchingRadiusThreshold = (_mRGBDSearchingRadiusThreshold == 0) ? 3 : _mRGBDSearchingRadiusThreshold;
+
+    int _mSearchingByProjectionThreshold = fSettings["Tracking.searchingByProjectionThreshold"];
+    mSearchingByProjectionThreshold = (_mSearchingByProjectionThreshold == 0) ? 5 : _mSearchingByProjectionThreshold;
+
+    int _mKeyframesLimit = fSettings["Tracking.keyframesLimit"];
+    mKeyframesLimit = (_mKeyframesLimit == 0) ? 80 : _mKeyframesLimit;
+
+    int _mKeyframeCandidateThreshold = fSettings["Tracking.keyframeCandidateThreshold"];
+    mKeyframeCandidateThreshold = (_mKeyframeCandidateThreshold == 0) ? 15 : _mKeyframeCandidateThreshold;
+
+    int _mPnpSolverRansacMinInliers = fSettings["Tracking.pnpSolverRansacMinInliers"];
+    mPnpSolverRansacMinInliers = (_mPnpSolverRansacMinInliers == 0) ? 10 : _mPnpSolverRansacMinInliers;
+
+    int _mPnpSolverRansacMaxIterations = fSettings["Tracking.pnpSolverRansacMaxIterations"];
+    mPnpSolverRansacMaxIterations = (_mPnpSolverRansacMaxIterations == 0) ? 300 : _mPnpSolverRansacMaxIterations;
+
+    int _mPnpSolverRansacMinSet = fSettings["Tracking.pnpSolverRansacMinSet"];
+    mPnpSolverRansacMinSet = (_mPnpSolverRansacMinSet == 0) ? 4 : _mPnpSolverRansacMinSet;
+
+    int _mRansacIterationsRelocalization = fSettings["Tracking.ransacIterationsRelocalization"];
+    mRansacIterationsRelocalization = (_mRansacIterationsRelocalization == 0) ? 5 : _mRansacIterationsRelocalization;
+
+    cout << endl << "Tracking parameters:" << endl;
+    cout << "- " << "ReferenceKeyframeNnRatioOrbMatcher: " << mReferenceKeyframeNnRatioOrbMatcher << endl;
+    cout << "- " << "MotionModelNnRatioOrbMatcher: " << mMotionModelNnRatioOrbMatcher << endl;
+    cout << "- " << "CosineDelta: " << mCosineDelta << endl;
+    cout << "- " << "SearchLocalPointsNnRatioOrbMatcher: " << mSearchLocalPointsNnRatioOrbMatcher << endl;
+    cout << "- " << "RelocalizationNnRatioOrbMatcher: " << mRelocalizationNnRatioOrbMatcher << endl;
+    cout << "- " << "PnpSolverRansacProbability: " << mPnpSolverRansacProbability << endl;
+    cout << "- " << "PnpSolverRansacEpsilon: " << mPnpSolverRansacEpsilon << endl;
+    cout << "- " << "PnpSolverRansacTh2: " << mPnpSolverRansacTh2 << endl;
+    cout << "- " << "P4pRelocalizationNnRatioOrbMatcher: " << mP4pRelocalizationNnRatioOrbMatcher << endl;
+    cout << "- " << "MinimumMatchesRefKeyframe: " << mMinimumMatchesRefKeyframe << endl;
+    cout << "- " << "KeyframeTrackingThreshold: " << mKeyframeTrackingThreshold << endl;
+    cout << "- " << "PointsCloserThreshold: " << mPointsCloserThreshold << endl;
+    cout << "- " << "StereoSearchingRadius: " << mStereoSearchingRadius << endl;
+    cout << "- " << "SearchingRadius: " << mSearchingRadius << endl;
+    cout << "- " << "SpeedupMatchesThreshold: " << mSpeedupMatchesThreshold << endl;
+    cout << "- " << "SpeedupMatchesThreshold2: " << mSpeedupMatchesThreshold2 << endl;
+    cout << "- " << "MotionModelThreshold: " << mMotionModelThreshold << endl;
+    cout << "- " << "LocalMapTrackingThreshold: " << mLocalMapTrackingThreshold << endl;
+    cout << "- " << "LocalMapTrackingThreshold2: " << mLocalMapTrackingThreshold2 << endl;
+    cout << "- " << "NewKeyframeThreshold: " << mNewKeyframeThreshold << endl;
+    cout << "- " << "RGBDSearchingRadiusThreshold: " << mRGBDSearchingRadiusThreshold << endl;
+    cout << "- " << "SearchingByProjectionThreshold: " << mSearchingByProjectionThreshold << endl;
+    cout << "- " << "KeyframesLimit: " << mKeyframesLimit << endl;
+    cout << "- " << "KeyframeCandidateThreshold: " << mKeyframeCandidateThreshold << endl;
+    cout << "- " << "PnpSolverRansacMinInliers: " << mPnpSolverRansacMinInliers << endl;
+    cout << "- " << "PnpSolverRansacMaxIterations: " << mPnpSolverRansacMaxIterations << endl;
+    cout << "- " << "PnpSolverRansacMinSet: " << mPnpSolverRansacMinSet << endl;
+    cout << "- " << "RansacIterationsRelocalization: " << mRansacIterationsRelocalization << endl;
 }
 
 void Tracking::SetLocalMapper(LocalMapping *pLocalMapper)

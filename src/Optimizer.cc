@@ -68,6 +68,17 @@ Optimizer::Optimizer(const string &strSettingPath)
 
   int _mMinimumInliersBeforeFail = fSettings["Optimizer.minimumInliersBeforeFail"];
   mMinimumInliersBeforeFail = (_mMinimumInliersBeforeFail == 0) ? 10 : _mMinimumInliersBeforeFail;
+
+  cout << endl << "Optimizer parameters:" << endl;
+  cout << "- " << "2DHuberThreshold: " << m2DHuberThreshold << endl;
+  cout << "- " << "3DHuberThreshold: " << m3DHuberThreshold << endl;
+  cout << "- " << "InitialLambda: " << mInitialLambda << endl;
+  cout << "- " << "CovisibleKeyframes: " << mCovisibleKeyframes << endl;
+  cout << "- " << "EssentialGraphIterations: " << mEssentialGraphIterations << endl;
+  cout << "- " << "Sim3Iterations: " << mSim3Iterations << endl;
+  cout << "- " << "AdditionalIterations: " << mAdditionalIterations << endl;
+  cout << "- " << "AdditionalIterationsNoOutliers: " << mAdditionalIterationsNoOutliers << endl;
+  cout << "- " << "MinimumInliersBeforeFail: " << mMinimumInliersBeforeFail << endl;
 }
 
 void Optimizer::GlobalBundleAdjustemnt(Map* pMap, int nIterations, bool* pbStopFlag, const unsigned long nLoopKF, const bool bRobust)
