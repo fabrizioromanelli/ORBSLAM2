@@ -88,6 +88,12 @@ ORBextractor.nLevels: 8
 ORBextractor.iniThFAST: 20
 ORBextractor.minThFAST: 7
 
+ORBextractor.patchSize: 31
+
+ORBextractor.halfPatchSize: 15
+
+ORBextractor.edgeThreshold: 19
+
 #--------------------------------------------------------------------------------------------
 # Loop Closing Parameters
 #--------------------------------------------------------------------------------------------
@@ -163,6 +169,6 @@ Viewer.ViewpointZ: -1.8
 Viewer.ViewpointF: 500
 
 #--------------------------------------------------------------------------------------------
-# Map Parapeters
+# Map Parameters
 #--------------------------------------------------------------------------------------------
 Map.mapfile: map.bin
