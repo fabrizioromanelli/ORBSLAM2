@@ -1,0 +1,175 @@
+/**
+ *  LOOP CLOSING PARAMETERS
+ */
+mnCovisibilityConsistencyTh = 3 (LoopClosing.cc - Line 42)
+Covisibility Consistency Threshold.
+For each loop candidate check consistency with previous loop candidates.
+Each candidate expands a covisibility group (keyframes connected to the loop 
+candidate in the covisibility graph). A group is consistent with a previous
+group if they share at least a keyframe. We must detect a consistent loop in
+several consecutive keyframes to accept it (the consecutive keyframes are given
+by the mnCovisibilityConsistencyTh).
+
+(LoopClosing.cc - Line 112)
+If the map contains less than x (10) keyframes or less than x (10) keyframes
+have passed from last loop detection, return false as no loop detected.
+
+(LoopClosing.cc - Line 237)
+An ORB matcher is used with a nn ratio of 0.75.
+
+(LoopClosing.cc - Line 265)
+If there are more than 20 matches between a the keyframe and the candidate, 
+
+(LoopClosing.cc - Line 273)
+a Sim3solver is used with the RANSAC parameters of a probability of 0.99,
+20 minimal inliers and 300 as max iterations.
+
+(LoopClosing.cc - Line 383)
+A loop is defined as a loop when more than 40 matches have been found.
+
+/**
+ * OPTIMIZER PARAMETERS
+ */
+thHuber2D = sqrt(5.99) (Optimizer.cc - Line 85)
+2D Huber threshold
+
+thHuber3D = sqrt(7.815) (Optimizer.cc - Line 86)
+3D Huber threshold
+
+(Optimizer.cc - Line 795)
+Initial Lambda for the Levenberg algorithm (1e-16)
+
+minFeat = 100 (Optimizer.cc - Line 807)
+Amount of covisible keyframes.
+
+(Optimizer.cc - Line 988)
+Number of optimization iterations for essential graph (20).
+
+(Optimizer.cc - Line 1183)
+Number of optimization iterations for sim3 (5).
+
+(Optimizer.cc - Line 1208)
+Number of additional iterations if there are outliers (10).
+
+(Optimizer.cc - Line 1210)
+Number of additional iterations if there are no outliers (5).
+
+(Optimizer.cc - Line 1212)
+Minimum number of inliers left before failing whole optimization (10).
+
+/**
+ * ORB EXTRACTOR PARAMETERS
+ */
+PATCH_SIZE = 31 (ORBextractor.cc - Line 72)
+
+HALF_PATCH_SIZE = 15 (ORBextractor.cc - Line 73)
+
+EDGE_THRESHOLD = 19 (ORBextractor.cc - Line 74)
+
+/**
+ * ORB MATCHER PARAMETERS
+ */
+TH_HIGH = 100 (ORBmatcher.cc - Line 35)
+
+TH_LOW = 50 (ORBmatcher.cc - Line 36)
+
+HISTO_LENGTH = 30 (ORBmatcher.cc - Line 37)
+
+/**
+ * TRACKING PARAMETERS
+ */
+mMinFrames = 0 (Tracking.cc - Line 86)
+Minimum number of frames to insert keyframes and to check relocalisation.
+
+mMaxFrames = Camera.fps (Tracking.cc - Line 87)
+Maximum number of frames to insert keyframes and to check relocalisation.
+
+(Tracking.cc - Line 766)
+An ORB matcher is used with a nn ratio of 0.7 for tracking the reference
+key frame.
+
+(Tracking.cc - Line 773)
+If the number of matches is less than 15, returns false.
+
+(Tracking.cc - Line 802)
+If the number of matches, discarding outliers, is more or equal to 10,
+returns true.
+
+(Tracking.cc - Line 866)
+All the points closer than ThDepth are inserted unless these are less than 100,
+then the 100 closest are used.
+
+(Tracking.cc - Line 873)
+An ORB matcher is used with a nn ratio of 0.9 for the tracking with
+motion model.
+
+th = 15 (Tracking.cc - Line 886)
+In Stereo tracking mode, used to determine the searching radius after being
+scaled.
+
+th = 7 (Tracking.cc - Line 888)
+In all the tracking modes, used to determine the searching radius after being
+scaled.
+
+(Tracking.cc - Line 892)
+If matches from ORBmatcher are less than 20, use twice the th value.
+
+(Tracking.cc - Line 898)
+If matches from ORBmatcher are less than 20 after widening window search,
+use twice the th value.
+
+(Tracking.cc - Line 931)
+After removing ouliers, if the number of matches is greater than 10,
+returns true.
+
+(Tracking.cc - Line 974)
+Minimum number of matches inliers to decide if tracking is successful (30).
+
+(Tracking.cc - Line 971)
+Minimum number of matches inliers to decide if tracking is successful,
+when a relocalization has been made recently (50).
+
+(Tracking.cc - Line 1132)
+All the points closer than ThDepth are inserted unless these are less than 100,
+then the 100 closest are used.
+
+(Tracking.cc - Line 1178)
+The map points are projected into the frame and if the cosine    
+between the last en current viewing angle is smaller then 0.5 
+then it is used.
+
+(Tracking.cc - Line 1187)
+An ORB matcher is used with a nn ratio of 0.8 for the search
+of local points.
+
+th = 3 (Tracking.cc - Line 1190)
+In RGBD tracking mode, used to determine the searching radius after being
+scaled for the matcher SearchByProjection.
+
+th = 5 (Tracking.cc - Line 1193)
+If the camera has been relocalised recently, perform a coarser search for the
+matcher of SearchByProjection.
+
+(Tracking.cc - Line 1288)
+If less than 80 keyframes that observe a map point are included 
+in the local map, then it is filled up to 80 using keyframes 
+that are neighbors to already-included keyframes.
+
+(Tracking.cc - Line 1359)
+An ORB matcher is used with a nn ratio of 0.75 for the relocalization.
+
+(Tracking.cc - Line 1382)
+If more than 15 matches are found between the local frame and one
+of the keyframes, this keyframe is considered a candidate.
+
+(Tracking.cc - Line 1390)
+A PNP solver is run using the ransac parameters: probability of 0.99, 
+minInliers of 10, maxIterations of 300, minSEt of 4, epsilon of 0.5, th2
+of 5.991.
+
+(Tracking.cc - Line 1400)
+An ORB matcher is used with a nn ratio of 0.9 for the relocalization, for the
+P4P RANSAC to catch enough inliers.
+
+(Tracking.cc - Line 1415)
+Number of RANSAC iterations for relocalization (5).

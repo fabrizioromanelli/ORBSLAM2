@@ -6,11 +6,13 @@
 
 # Camera calibration and distortion parameters for Left IR Camera (OpenCV)
 # From camera intrinsics
+# K matrix
 Camera.fx: 379.895904541016
 Camera.fy: 379.895904541016
 Camera.cx: 317.829040527344
 Camera.cy: 242.992126464844
 
+# D matrix
 Camera.k1: 0
 Camera.k2: 0
 Camera.p1: 0
@@ -46,12 +48,13 @@ Camera.bf: 18.9481182098389
 Camera.RGB: 1
 
 # Close/Far threshold. Baseline times
+# Points seen as close by the stereo/RGBD sensor are considered reliable and 
+# inserted from just one frame. Far points require a match in two keyframes.
 ThDepth: 5000.0
 # ThDepth: 1.0e+09
 
-# Depthmap values factor
+# Depthmap values factor for rescaling
 # DepthMapFactor = 1000, which is the conversion from millimeters to meters (Realsense provides depth in millimeters)
-# DepthMapFactor: 1000.0
 DepthMapFactor: 999.999938964844
 
 # Modeling Realsense D435 Sensor Noise for Improved 3D Reconstruction and Tracking.
