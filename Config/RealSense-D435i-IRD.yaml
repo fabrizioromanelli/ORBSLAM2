@@ -89,6 +89,19 @@ ORBextractor.iniThFAST: 20
 ORBextractor.minThFAST: 7
 
 #--------------------------------------------------------------------------------------------
+# Loop Closing Parameters
+#--------------------------------------------------------------------------------------------
+# For each loop candidate check consistency with previous loop candidates.
+# Each candidate expands a covisibility group (keyframes connected to the loop 
+# candidate in the covisibility graph). A group is consistent with a previous
+# group if they share at least a keyframe. We must detect a consistent loop in
+# several consecutive keyframes to accept it (the consecutive keyframes are given
+# by the mnCovisibilityConsistencyTh).
+LoopClosing.covisibilityConsistencyThreshold: 3
+
+
+
+#--------------------------------------------------------------------------------------------
 # Viewer Parameters
 #--------------------------------------------------------------------------------------------
 Viewer.KeyFrameSize: 0.05

@@ -53,7 +53,7 @@ public:
 
 public:
 
-    LoopClosing(Map* pMap, KeyFrameDatabase* pDB, fbow::Vocabulary* pVoc,const bool bFixScale);
+    LoopClosing(Map* pMap, KeyFrameDatabase* pDB, fbow::Vocabulary* pVoc,const bool bFixScale, const string &strSettingPath);
 
     void SetTracker(Tracking* pTracker);
 

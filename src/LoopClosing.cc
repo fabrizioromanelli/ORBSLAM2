@@ -34,12 +34,18 @@
 
 namespace ORB_SLAM2
 {
-LoopClosing::LoopClosing(Map *pMap, KeyFrameDatabase *pDB, fbow::Vocabulary *pFbowVoc, const bool bFixScale):
+LoopClosing::LoopClosing(Map *pMap, KeyFrameDatabase *pDB, fbow::Vocabulary *pFbowVoc, const bool bFixScale, const string &strSettingPath):
     mbResetRequested(false), mbFinishRequested(false), mbFinished(true), mpMap(pMap),
     mpKeyFrameDB(pDB), mpFBOWVocabulary(pFbowVoc), mpMatchedKF(NULL), mLastLoopKFid(0), mbRunningGBA(false), mbFinishedGBA(true),
     mbStopGBA(false), mpThreadGBA(NULL), mbFixScale(bFixScale), mnFullBAIdx(0)
 {
+  cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
+  float _mnCovisibilityConsistencyTh = fSettings["LoopClosing.covisibilityConsistencyThreshold"];
+
+  if (_mnCovisibilityConsistencyTh == 0)
     mnCovisibilityConsistencyTh = 3;
+  else
+    mnCovisibilityConsistencyTh = _mnCovisibilityConsistencyTh;
 }
 
 void LoopClosing::SetTracker(Tracking *pTracker)
