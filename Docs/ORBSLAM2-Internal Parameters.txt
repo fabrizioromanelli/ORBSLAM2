@@ -173,3 +173,5 @@ P4P RANSAC to catch enough inliers.
 
 (Tracking.cc - Line 1415)
 Number of RANSAC iterations for relocalization (5).
+
+Reference: https://medium.com/@j.zijlmans/lsd-slam-vs-orb-slam2-a-literature-based-comparison-20732df431d
