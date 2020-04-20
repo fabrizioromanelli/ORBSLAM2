@@ -120,6 +120,13 @@ protected:
 
     // Loop detector parameters
     float mnCovisibilityConsistencyTh;
+    long unsigned int mMinimumKeyframes;
+    float mSim3nnRatioOrbMatcher;
+    int mRansacThresholdTrigger;
+    float mRansacProbability;
+    int mRansacMinimalInliers;
+    int mRansacMaxIterations;
+    int mDetectionThreshold;
 
     // Loop detector variables
     KeyFrame* mpCurrentKF;

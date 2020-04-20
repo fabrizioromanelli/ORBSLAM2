@@ -40,12 +40,31 @@ LoopClosing::LoopClosing(Map *pMap, KeyFrameDatabase *pDB, fbow::Vocabulary *pFb
     mbStopGBA(false), mpThreadGBA(NULL), mbFixScale(bFixScale), mnFullBAIdx(0)
 {
   cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
-  float _mnCovisibilityConsistencyTh = fSettings["LoopClosing.covisibilityConsistencyThreshold"];
 
-  if (_mnCovisibilityConsistencyTh == 0)
-    mnCovisibilityConsistencyTh = 3;
-  else
-    mnCovisibilityConsistencyTh = _mnCovisibilityConsistencyTh;
+  // Getting parameters from YAML settings
+  float _mnCovisibilityConsistencyTh = fSettings["LoopClosing.covisibilityConsistencyThreshold"];
+  mnCovisibilityConsistencyTh = (_mnCovisibilityConsistencyTh == 0) ? 3 : _mnCovisibilityConsistencyTh;
+
+  int _mMinimumKeyframes = fSettings["LoopClosing.minimumKeyFrames"];
+  mMinimumKeyframes = (_mMinimumKeyframes == 0) ? 10 : _mMinimumKeyframes;
+
+  float _mSim3nnRatioOrbMatcher = fSettings["LoopClosing.sim3nnRatioOrbMatcher"];
+  mSim3nnRatioOrbMatcher = (_mSim3nnRatioOrbMatcher == 0.0) ? 0.75 : _mSim3nnRatioOrbMatcher;
+
+  int _mRansacThresholdTrigger = fSettings["LoopClosing.ransacThresholdTrigger"];
+  mRansacThresholdTrigger = (_mRansacThresholdTrigger == 0) ? 20 : _mRansacThresholdTrigger;
+
+  float _mRansacProbability = fSettings["LoopClosing.ransacProbability"];
+  mRansacProbability = (_mRansacProbability == 0.0) ? 0.99 : _mRansacProbability;
+
+  int _mRansacMinimalInliers = fSettings["LoopClosing.ransacMinimalInliers"];
+  mRansacMinimalInliers = (_mRansacMinimalInliers == 0) ? 20 : _mRansacMinimalInliers;
+
+  int _mRansacMaxIterations = fSettings["LoopClosing.ransacMaxIterations"];
+  mRansacMaxIterations = (_mRansacMaxIterations == 0) ? 300 : _mRansacMaxIterations;
+
+  int _mDetectionThreshold = fSettings["LoopClosing.detectionThreshold"];
+  mDetectionThreshold = (_mDetectionThreshold == 0) ? 40 : _mDetectionThreshold;
 }
 
 void LoopClosing::SetTracker(Tracking *pTracker)
@@ -115,8 +134,8 @@ bool LoopClosing::DetectLoop()
         mpCurrentKF->SetNotErase();
     }
 
-    //If the map contains less than 10 KF or less than 10 KF have passed from last loop detection
-    if(mpCurrentKF->mnId < mLastLoopKFid+10)
+    // If the map contains less than mMinimumKeyframes KF or less than mMinimumKeyframes KF have passed from last loop detection
+    if(mpCurrentKF->mnId < mLastLoopKFid + mMinimumKeyframes)
     {
         mpKeyFrameDB->add(mpCurrentKF);
         mpCurrentKF->SetErase();
@@ -240,7 +259,7 @@ bool LoopClosing::ComputeSim3()
 
     // We compute first ORB matches for each candidate
     // If enough matches are found, we setup a Sim3Solver
-    ORBmatcher matcher(0.75, true);
+    ORBmatcher matcher(mSim3nnRatioOrbMatcher, true);
 
     vector<Sim3Solver*> vpSim3Solvers;
     vpSim3Solvers.resize(nInitialCandidates);
@@ -268,7 +287,7 @@ bool LoopClosing::ComputeSim3()
 
         int nmatches = matcher.SearchByFboW(mpCurrentKF, pKF, vvpMapPointMatches[i]);
 
-        if(nmatches<20)
+        if(nmatches < mRansacThresholdTrigger)
         {
             vbDiscarded[i] = true;
             continue;
@@ -276,7 +295,7 @@ bool LoopClosing::ComputeSim3()
         else
         {
             Sim3Solver* pSolver = new Sim3Solver(mpCurrentKF,pKF,vvpMapPointMatches[i],mbFixScale);
-            pSolver->SetRansacParameters(0.99, 20, 300);
+            pSolver->SetRansacParameters(mRansacProbability, mRansacMinimalInliers, mRansacMaxIterations);
             vpSim3Solvers[i] = pSolver;
         }
 
@@ -376,7 +395,7 @@ bool LoopClosing::ComputeSim3()
     }
 
     // Find more matches projecting with the computed Sim3
-    matcher.SearchByProjection(mpCurrentKF, mScw, mvpLoopMapPoints, mvpCurrentMatchedPoints,10);
+    matcher.SearchByProjection(mpCurrentKF, mScw, mvpLoopMapPoints, mvpCurrentMatchedPoints, 10);
 
     // If enough matches accept Loop
     int nTotalMatches = 0;
@@ -386,7 +405,7 @@ bool LoopClosing::ComputeSim3()
             nTotalMatches++;
     }
 
-    if(nTotalMatches>=40)
+    if(nTotalMatches >= mDetectionThreshold)
     {
         for(int i=0; i<nInitialCandidates; i++)
             if(mvpEnoughConsistentCandidates[i]!=mpMatchedKF)
