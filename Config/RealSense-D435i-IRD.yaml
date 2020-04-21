@@ -50,7 +50,7 @@ Camera.RGB: 1
 # Close/Far threshold. Baseline times
 # Points seen as close by the stereo/RGBD sensor are considered reliable and 
 # inserted from just one frame. Far points require a match in two keyframes.
-ThDepth: 500.0
+ThDepth: 800.0
 # ThDepth: 1.0e+09
 
 # Depthmap values factor for rescaling
@@ -117,7 +117,7 @@ LoopClosing.ransacThresholdTrigger: 15 # 20
 
 # Loop Closing RANSAC parameters
 LoopClosing.ransacProbability: 0.95 # 0.99
-LoopClosing.ransacMinimalInliers: 10 # 20
+LoopClosing.ransacMinimalInliers: 8 # 20
 LoopClosing.ransacMaxIterations: 300
 
 # Loop detection threshold (the loop is considered as detected if the matches are greater or
@@ -261,10 +261,10 @@ Viewer.KeyFrameSize: 0.05
 Viewer.KeyFrameLineWidth: 1
 Viewer.GraphLineWidth: 0.9
 Viewer.PointSize: 2
-Viewer.CameraSize: 0.08
+Viewer.CameraSize: 0.1
 Viewer.CameraLineWidth: 3
-Viewer.ViewpointX: 0.01
-Viewer.ViewpointY: -10
+Viewer.ViewpointX: 10
+Viewer.ViewpointY: -0.5
 Viewer.ViewpointZ: 0
 Viewer.ViewpointF: 500
 
