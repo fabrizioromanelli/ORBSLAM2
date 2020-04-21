@@ -115,9 +115,12 @@ Tracking::Tracking(System *pSys, fbow::Vocabulary* pFbowVoc, FrameDrawer *pFrame
     int nLevels = fSettings["ORBextractor.nLevels"];
     int fIniThFAST = fSettings["ORBextractor.iniThFAST"];
     int fMinThFAST = fSettings["ORBextractor.minThFAST"];
-    int nPatchSize = fSettings["ORBextractor.patchSize"];
-    int nHalfPatchSize = fSettings["ORBextractor.halfPatchSize"];
-    int nEdgeThreshold = fSettings["ORBextractor.edgeThreshold"];
+    int _nPatchSize = fSettings["ORBextractor.patchSize"];
+    nPatchSize = (_nPatchSize == 0) ? 31 : _nPatchSize;
+    int _nHalfPatchSize = fSettings["ORBextractor.halfPatchSize"];
+    nHalfPatchSize = (_nHalfPatchSize == 0) ? 15 : _nHalfPatchSize;
+    int _nEdgeThreshold = fSettings["ORBextractor.edgeThreshold"];
+    nEdgeThreshold = (_nEdgeThreshold == 0) ? 19 : _nEdgeThreshold;
 
     mpORBextractorLeft = new ORBextractor(nFeatures, fScaleFactor, nLevels, fIniThFAST, fMinThFAST, nPatchSize, nHalfPatchSize, nEdgeThreshold);
 

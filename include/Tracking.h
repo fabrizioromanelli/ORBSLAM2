@@ -228,6 +228,9 @@ protected:
     float mPnpSolverRansacEpsilon;
     float mPnpSolverRansacTh2;
     float mRelocalizationNnRatioOrbMatcher;
+    int nPatchSize;
+    int nHalfPatchSize;
+    int nEdgeThreshold;
     int mMinimumMatchesRefKeyframe;
     int mKeyframeTrackingThreshold;
     int mPointsCloserThreshold;
