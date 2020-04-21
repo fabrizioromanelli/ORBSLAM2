@@ -22,7 +22,6 @@
 
 #include "Thirdparty/DLib/include/Random.h"
 
-#include "Optimizer.h"
 #include "ORBmatcher.h"
 
 #include<thread>

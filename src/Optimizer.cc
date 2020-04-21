@@ -37,6 +37,49 @@
 namespace ORB_SLAM2
 {
 
+Optimizer::Optimizer(const string &strSettingPath)
+{
+  cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
+
+  // Getting parameters from YAML settings
+  float _m2DHuberThreshold = fSettings["Optimizer.2DHuberThreshold"];
+  m2DHuberThreshold = (_m2DHuberThreshold == 0.0) ? sqrt(5.99) : sqrt(_m2DHuberThreshold);
+
+  float _m3DHuberThreshold = fSettings["Optimizer.3DHuberThreshold"];
+  m3DHuberThreshold = (_m3DHuberThreshold == 0.0) ? sqrt(7.815) : sqrt(_m3DHuberThreshold);
+
+  float _mInitialLambda = fSettings["Optimizer.initialLambda"];
+  mInitialLambda = (_mInitialLambda == 0.0) ? 1.0e-16 : _mInitialLambda;
+
+  int _mCovisibleKeyframes = fSettings["Optimizer.covisibleKeyframes"];
+  mCovisibleKeyframes = (_mCovisibleKeyframes == 0) ? 100 : _mCovisibleKeyframes;
+
+  int _mEssentialGraphIterations = fSettings["Optimizer.essentialGraphIterations"];
+  mEssentialGraphIterations = (_mEssentialGraphIterations == 0) ? 20 : _mEssentialGraphIterations;
+
+  int _mSim3Iterations = fSettings["Optimizer.sim3Iterations"];
+  mSim3Iterations = (_mSim3Iterations == 0) ? 5 : _mSim3Iterations;
+
+  int _mAdditionalIterations = fSettings["Optimizer.additionalIterations"];
+  mAdditionalIterations = (_mAdditionalIterations == 0) ? 10 : _mAdditionalIterations;
+
+  int _mAdditionalIterationsNoOutliers = fSettings["Optimizer.additionalIterationsNoOutliers"];
+  mAdditionalIterationsNoOutliers = (_mAdditionalIterationsNoOutliers == 0) ? 5 : _mAdditionalIterationsNoOutliers;
+
+  int _mMinimumInliersBeforeFail = fSettings["Optimizer.minimumInliersBeforeFail"];
+  mMinimumInliersBeforeFail = (_mMinimumInliersBeforeFail == 0) ? 10 : _mMinimumInliersBeforeFail;
+
+  cout << endl << "Optimizer parameters:" << endl;
+  cout << "- " << "2DHuberThreshold: " << m2DHuberThreshold << endl;
+  cout << "- " << "3DHuberThreshold: " << m3DHuberThreshold << endl;
+  cout << "- " << "InitialLambda: " << mInitialLambda << endl;
+  cout << "- " << "CovisibleKeyframes: " << mCovisibleKeyframes << endl;
+  cout << "- " << "EssentialGraphIterations: " << mEssentialGraphIterations << endl;
+  cout << "- " << "Sim3Iterations: " << mSim3Iterations << endl;
+  cout << "- " << "AdditionalIterations: " << mAdditionalIterations << endl;
+  cout << "- " << "AdditionalIterationsNoOutliers: " << mAdditionalIterationsNoOutliers << endl;
+  cout << "- " << "MinimumInliersBeforeFail: " << mMinimumInliersBeforeFail << endl;
+}
 
 void Optimizer::GlobalBundleAdjustemnt(Map* pMap, int nIterations, bool* pbStopFlag, const unsigned long nLoopKF, const bool bRobust)
 {
@@ -82,8 +125,8 @@ void Optimizer::BundleAdjustment(const vector<KeyFrame *> &vpKFs, const vector<M
             maxKFid=pKF->mnId;
     }
 
-    const float thHuber2D = sqrt(5.99);
-    const float thHuber3D = sqrt(7.815);
+    const float thHuber2D = m2DHuberThreshold;
+    const float thHuber3D = m3DHuberThreshold;
 
     // Set MapPoint vertices
     for(size_t i=0; i<vpMP.size(); i++)
@@ -792,7 +835,7 @@ void Optimizer::OptimizeEssentialGraph(Map* pMap, KeyFrame* pLoopKF, KeyFrame* p
     g2o::BlockSolver_7_3 * solver_ptr= new g2o::BlockSolver_7_3(linearSolver);
     g2o::OptimizationAlgorithmLevenberg* solver = new g2o::OptimizationAlgorithmLevenberg(solver_ptr);
 
-    solver->setUserLambdaInit(1e-16);
+    solver->setUserLambdaInit(mInitialLambda);
     optimizer.setAlgorithm(solver);
 
     const vector<KeyFrame*> vpKFs = pMap->GetAllKeyFrames();
@@ -804,7 +847,7 @@ void Optimizer::OptimizeEssentialGraph(Map* pMap, KeyFrame* pLoopKF, KeyFrame* p
     vector<g2o::Sim3,Eigen::aligned_allocator<g2o::Sim3> > vCorrectedSwc(nMaxKFid+1);
     vector<g2o::VertexSim3Expmap*> vpVertices(nMaxKFid+1);
 
-    const int minFeat = 100;
+    const int minFeat = mCovisibleKeyframes;
 
     // Set KeyFrame vertices
     for(size_t i=0, iend=vpKFs.size(); i<iend;i++)
@@ -985,7 +1028,7 @@ void Optimizer::OptimizeEssentialGraph(Map* pMap, KeyFrame* pLoopKF, KeyFrame* p
 
     // Optimize!
     optimizer.initializeOptimization();
-    optimizer.optimize(20);
+    optimizer.optimize(mEssentialGraphIterations);
 
     unique_lock<mutex> lock(pMap->mMutexMapUpdate);
 
@@ -1180,7 +1223,7 @@ int Optimizer::OptimizeSim3(KeyFrame *pKF1, KeyFrame *pKF2, vector<MapPoint *> &
 
     // Optimize!
     optimizer.initializeOptimization();
-    optimizer.optimize(5);
+    optimizer.optimize(mSim3Iterations);
 
     // Check inliers
     int nBad=0;
@@ -1205,11 +1248,11 @@ int Optimizer::OptimizeSim3(KeyFrame *pKF1, KeyFrame *pKF2, vector<MapPoint *> &
 
     int nMoreIterations;
     if(nBad>0)
-        nMoreIterations=10;
+        nMoreIterations = mAdditionalIterations;
     else
-        nMoreIterations=5;
+        nMoreIterations = mAdditionalIterationsNoOutliers;
 
-    if(nCorrespondences-nBad<10)
+    if(nCorrespondences - nBad < mMinimumInliersBeforeFail)
         return 0;
 
     // Optimize again only with inliers

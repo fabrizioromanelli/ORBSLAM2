@@ -48,6 +48,7 @@ Tracking::Tracking(System *pSys, fbow::Vocabulary* pFbowVoc, FrameDrawer *pFrame
     mpKeyFrameDB(pKFDB), mpFBOWVocabulary(pFbowVoc), mpInitializer(static_cast<Initializer*>(NULL)), mpSystem(pSys), mpViewer(NULL),
     mpFrameDrawer(pFrameDrawer), mpMapDrawer(pMapDrawer), mpMap(pMap), mnLastRelocFrameId(0)
 {
+    mpOptimizer = new Optimizer(strSettingPath);
     // Load camera parameters from settings file
 
     cv::FileStorage fSettings(strSettingPath, cv::FileStorage::READ);
@@ -83,7 +84,7 @@ Tracking::Tracking(System *pSys, fbow::Vocabulary* pFbowVoc, FrameDrawer *pFrame
         fps=30;
 
     // Max/Min Frames to insert keyframes and to check relocalisation
-    mMinFrames = 0;
+    mMinFrames = fSettings["Tracking.minFrames"];
     mMaxFrames = fps;
 
     cout << endl << "Camera Parameters: " << endl;
@@ -98,7 +99,6 @@ Tracking::Tracking(System *pSys, fbow::Vocabulary* pFbowVoc, FrameDrawer *pFrame
     cout << "- p1: " << DistCoef.at<float>(2) << endl;
     cout << "- p2: " << DistCoef.at<float>(3) << endl;
     cout << "- fps: " << fps << endl;
-
 
     int nRGB = fSettings["Camera.RGB"];
     mbRGB = nRGB;
@@ -115,14 +115,20 @@ Tracking::Tracking(System *pSys, fbow::Vocabulary* pFbowVoc, FrameDrawer *pFrame
     int nLevels = fSettings["ORBextractor.nLevels"];
     int fIniThFAST = fSettings["ORBextractor.iniThFAST"];
     int fMinThFAST = fSettings["ORBextractor.minThFAST"];
+    int _nPatchSize = fSettings["ORBextractor.patchSize"];
+    nPatchSize = (_nPatchSize == 0) ? 31 : _nPatchSize;
+    int _nHalfPatchSize = fSettings["ORBextractor.halfPatchSize"];
+    nHalfPatchSize = (_nHalfPatchSize == 0) ? 15 : _nHalfPatchSize;
+    int _nEdgeThreshold = fSettings["ORBextractor.edgeThreshold"];
+    nEdgeThreshold = (_nEdgeThreshold == 0) ? 19 : _nEdgeThreshold;
 
-    mpORBextractorLeft = new ORBextractor(nFeatures,fScaleFactor,nLevels,fIniThFAST,fMinThFAST);
+    mpORBextractorLeft = new ORBextractor(nFeatures, fScaleFactor, nLevels, fIniThFAST, fMinThFAST, nPatchSize, nHalfPatchSize, nEdgeThreshold);
 
     if(sensor==System::STEREO)
-        mpORBextractorRight = new ORBextractor(nFeatures,fScaleFactor,nLevels,fIniThFAST,fMinThFAST);
+        mpORBextractorRight = new ORBextractor(nFeatures, fScaleFactor, nLevels, fIniThFAST, fMinThFAST, nPatchSize, nHalfPatchSize, nEdgeThreshold);
 
     if(sensor==System::MONOCULAR)
-        mpIniORBextractor = new ORBextractor(2*nFeatures,fScaleFactor,nLevels,fIniThFAST,fMinThFAST);
+        mpIniORBextractor = new ORBextractor(2*nFeatures, fScaleFactor, nLevels, fIniThFAST, fMinThFAST, nPatchSize, nHalfPatchSize, nEdgeThreshold);
 
     cout << endl  << "ORB Extractor Parameters: " << endl;
     cout << "- Number of Features: " << nFeatures << endl;
@@ -130,6 +136,9 @@ Tracking::Tracking(System *pSys, fbow::Vocabulary* pFbowVoc, FrameDrawer *pFrame
     cout << "- Scale Factor: " << fScaleFactor << endl;
     cout << "- Initial Fast Threshold: " << fIniThFAST << endl;
     cout << "- Minimum Fast Threshold: " << fMinThFAST << endl;
+    cout << "- Patch size: " << nPatchSize << endl;
+    cout << "- Half patch size: " << nHalfPatchSize << endl;
+    cout << "- Edge Threshold: " << nEdgeThreshold << endl;
 
     if(sensor==System::STEREO || sensor==System::RGBD)
     {
@@ -141,12 +150,100 @@ Tracking::Tracking(System *pSys, fbow::Vocabulary* pFbowVoc, FrameDrawer *pFrame
     {
         mDepthMapFactor = fSettings["DepthMapFactor"];
         if(fabs(mDepthMapFactor)<1e-5)
-            mDepthMapFactor=1;
+            mDepthMapFactor = 1;
         else
-            mDepthMapFactor = 1.0f/mDepthMapFactor;
+            mDepthMapFactor = 1.0f / mDepthMapFactor;
     }
     if (bReuseMap)
         mState = LOST;
+
+    // New parameters read from file
+    float _mReferenceKeyframeNnRatioOrbMatcher = fSettings["Tracking.referenceKeyframeNnRatioOrbMatcher"];
+    mReferenceKeyframeNnRatioOrbMatcher = (_mReferenceKeyframeNnRatioOrbMatcher == 0.0) ? 0.7 : _mReferenceKeyframeNnRatioOrbMatcher;
+    float _mMotionModelNnRatioOrbMatcher = fSettings["Tracking.motionModelNnRatioOrbMatcher"];
+    mMotionModelNnRatioOrbMatcher = (_mMotionModelNnRatioOrbMatcher == 0.0) ? 0.9 : _mMotionModelNnRatioOrbMatcher;
+    float _mCosineDelta = fSettings["Tracking.cosineDelta"];
+    mCosineDelta = (_mCosineDelta == 0.0) ? 0.5 : _mCosineDelta;
+    float _mSearchLocalPointsNnRatioOrbMatcher = fSettings["Tracking.searchLocalPointsNnRatioOrbMatcher"];
+    mSearchLocalPointsNnRatioOrbMatcher = (_mSearchLocalPointsNnRatioOrbMatcher == 0.0) ? 0.8 : _mSearchLocalPointsNnRatioOrbMatcher;
+    float _mRelocalizationNnRatioOrbMatcher = fSettings["Tracking.relocalizationNnRatioOrbMatcher"];
+    mRelocalizationNnRatioOrbMatcher = (_mRelocalizationNnRatioOrbMatcher == 0.0) ? 0.75 : _mRelocalizationNnRatioOrbMatcher;
+    float _mPnpSolverRansacProbability = fSettings["Tracking.pnpSolverRansacProbability"];
+    mPnpSolverRansacProbability = (_mPnpSolverRansacProbability == 0.0) ? 0.99 : _mPnpSolverRansacProbability;
+    float _mPnpSolverRansacEpsilon = fSettings["Tracking.pnpSolverRansacEpsilon"];
+    mPnpSolverRansacEpsilon = (_mPnpSolverRansacEpsilon == 0.0) ? 0.5 : _mPnpSolverRansacEpsilon;
+    float _mPnpSolverRansacTh2 = fSettings["Tracking.pnpSolverRansacTh2"];
+    mPnpSolverRansacTh2 = (_mPnpSolverRansacTh2 == 0.0) ? 5.991 : _mPnpSolverRansacTh2;
+    float _mP4pRelocalizationNnRatioOrbMatcher = fSettings["Tracking.p4pRelocalizationNnRatioOrbMatcher"];
+    mP4pRelocalizationNnRatioOrbMatcher = (_mP4pRelocalizationNnRatioOrbMatcher == 0.0) ? 0.9 : _mP4pRelocalizationNnRatioOrbMatcher;
+    int _mMinimumMatchesRefKeyframe = fSettings["Tracking.minimumMatchesRefKeyframe"];
+    mMinimumMatchesRefKeyframe = (_mMinimumMatchesRefKeyframe == 0) ? 15 : _mMinimumMatchesRefKeyframe;
+    int _mKeyframeTrackingThreshold = fSettings["Tracking.keyframeTrackingThreshold"];
+    mKeyframeTrackingThreshold = (_mKeyframeTrackingThreshold == 0) ? 10 : _mKeyframeTrackingThreshold;
+    int _mPointsCloserThreshold = fSettings["Tracking.pointsCloserThreshold"];
+    mPointsCloserThreshold = (_mPointsCloserThreshold == 0) ? 100 : _mPointsCloserThreshold;
+    int _mStereoSearchingRadius = fSettings["Tracking.stereoSearchingRadius"];
+    mStereoSearchingRadius = (_mStereoSearchingRadius == 0) ? 15 : _mStereoSearchingRadius;
+    int _mSearchingRadius = fSettings["Tracking.searchingRadius"];
+    mSearchingRadius = (_mSearchingRadius == 0) ? 7 : _mSearchingRadius;
+    int _mSpeedupMatchesThreshold = fSettings["Tracking.speedupMatchesThreshold"];
+    mSpeedupMatchesThreshold = (_mSpeedupMatchesThreshold == 0) ? 20 : _mSpeedupMatchesThreshold;
+    int _mSpeedupMatchesThreshold2 = fSettings["Tracking.speedupMatchesThreshold2"];
+    mSpeedupMatchesThreshold2 = (_mSpeedupMatchesThreshold2 == 0) ? 20 : _mSpeedupMatchesThreshold2;
+    int _mMotionModelThreshold = fSettings["Tracking.motionModelThreshold"];
+    mMotionModelThreshold = (_mMotionModelThreshold == 0) ? 10 : _mMotionModelThreshold;
+    int _mLocalMapTrackingThreshold = fSettings["Tracking.localMapTrackingThreshold"];
+    mLocalMapTrackingThreshold = (_mLocalMapTrackingThreshold == 0) ? 30 : _mLocalMapTrackingThreshold;
+    int _mLocalMapTrackingThreshold2 = fSettings["Tracking.localMapTrackingThreshold2"];
+    mLocalMapTrackingThreshold2 = (_mLocalMapTrackingThreshold2 == 0) ? 50 : _mLocalMapTrackingThreshold2;
+    int _mNewKeyframeThreshold = fSettings["Tracking.newKeyframeThreshold"];
+    mNewKeyframeThreshold = (_mNewKeyframeThreshold == 0) ? 100 : _mNewKeyframeThreshold;
+    int _mRGBDSearchingRadiusThreshold = fSettings["Tracking.RGBDSearchingRadiusThreshold"];
+    mRGBDSearchingRadiusThreshold = (_mRGBDSearchingRadiusThreshold == 0) ? 3 : _mRGBDSearchingRadiusThreshold;
+    int _mSearchingByProjectionThreshold = fSettings["Tracking.searchingByProjectionThreshold"];
+    mSearchingByProjectionThreshold = (_mSearchingByProjectionThreshold == 0) ? 5 : _mSearchingByProjectionThreshold;
+    int _mKeyframesLimit = fSettings["Tracking.keyframesLimit"];
+    mKeyframesLimit = (_mKeyframesLimit == 0) ? 80 : (size_t)_mKeyframesLimit;
+    int _mKeyframeCandidateThreshold = fSettings["Tracking.keyframeCandidateThreshold"];
+    mKeyframeCandidateThreshold = (_mKeyframeCandidateThreshold == 0) ? 15 : _mKeyframeCandidateThreshold;
+    int _mPnpSolverRansacMinInliers = fSettings["Tracking.pnpSolverRansacMinInliers"];
+    mPnpSolverRansacMinInliers = (_mPnpSolverRansacMinInliers == 0) ? 10 : _mPnpSolverRansacMinInliers;
+    int _mPnpSolverRansacMaxIterations = fSettings["Tracking.pnpSolverRansacMaxIterations"];
+    mPnpSolverRansacMaxIterations = (_mPnpSolverRansacMaxIterations == 0) ? 300 : _mPnpSolverRansacMaxIterations;
+    int _mPnpSolverRansacMinSet = fSettings["Tracking.pnpSolverRansacMinSet"];
+    mPnpSolverRansacMinSet = (_mPnpSolverRansacMinSet == 0) ? 4 : _mPnpSolverRansacMinSet;
+    int _mRansacIterationsRelocalization = fSettings["Tracking.ransacIterationsRelocalization"];
+    mRansacIterationsRelocalization = (_mRansacIterationsRelocalization == 0) ? 5 : _mRansacIterationsRelocalization;
+
+    cout << endl << "Tracking parameters:" << endl;
+    cout << "- " << "ReferenceKeyframeNnRatioOrbMatcher: " << mReferenceKeyframeNnRatioOrbMatcher << endl;
+    cout << "- " << "MotionModelNnRatioOrbMatcher: " << mMotionModelNnRatioOrbMatcher << endl;
+    cout << "- " << "CosineDelta: " << mCosineDelta << endl;
+    cout << "- " << "SearchLocalPointsNnRatioOrbMatcher: " << mSearchLocalPointsNnRatioOrbMatcher << endl;
+    cout << "- " << "RelocalizationNnRatioOrbMatcher: " << mRelocalizationNnRatioOrbMatcher << endl;
+    cout << "- " << "PnpSolverRansacProbability: " << mPnpSolverRansacProbability << endl;
+    cout << "- " << "PnpSolverRansacEpsilon: " << mPnpSolverRansacEpsilon << endl;
+    cout << "- " << "PnpSolverRansacTh2: " << mPnpSolverRansacTh2 << endl;
+    cout << "- " << "P4pRelocalizationNnRatioOrbMatcher: " << mP4pRelocalizationNnRatioOrbMatcher << endl;
+    cout << "- " << "MinimumMatchesRefKeyframe: " << mMinimumMatchesRefKeyframe << endl;
+    cout << "- " << "KeyframeTrackingThreshold: " << mKeyframeTrackingThreshold << endl;
+    cout << "- " << "PointsCloserThreshold: " << mPointsCloserThreshold << endl;
+    cout << "- " << "StereoSearchingRadius: " << mStereoSearchingRadius << endl;
+    cout << "- " << "SearchingRadius: " << mSearchingRadius << endl;
+    cout << "- " << "SpeedupMatchesThreshold: " << mSpeedupMatchesThreshold << endl;
+    cout << "- " << "SpeedupMatchesThreshold2: " << mSpeedupMatchesThreshold2 << endl;
+    cout << "- " << "MotionModelThreshold: " << mMotionModelThreshold << endl;
+    cout << "- " << "LocalMapTrackingThreshold: " << mLocalMapTrackingThreshold << endl;
+    cout << "- " << "LocalMapTrackingThreshold2: " << mLocalMapTrackingThreshold2 << endl;
+    cout << "- " << "NewKeyframeThreshold: " << mNewKeyframeThreshold << endl;
+    cout << "- " << "RGBDSearchingRadiusThreshold: " << mRGBDSearchingRadiusThreshold << endl;
+    cout << "- " << "SearchingByProjectionThreshold: " << mSearchingByProjectionThreshold << endl;
+    cout << "- " << "KeyframesLimit: " << mKeyframesLimit << endl;
+    cout << "- " << "KeyframeCandidateThreshold: " << mKeyframeCandidateThreshold << endl;
+    cout << "- " << "PnpSolverRansacMinInliers: " << mPnpSolverRansacMinInliers << endl;
+    cout << "- " << "PnpSolverRansacMaxIterations: " << mPnpSolverRansacMaxIterations << endl;
+    cout << "- " << "PnpSolverRansacMinSet: " << mPnpSolverRansacMinSet << endl;
+    cout << "- " << "RansacIterationsRelocalization: " << mRansacIterationsRelocalization << endl;
 }
 
 void Tracking::SetLocalMapper(LocalMapping *pLocalMapper)
@@ -684,7 +781,7 @@ void Tracking::CreateInitialMapMonocular()
     // Bundle Adjustment
     cout << "New Map created with " << mpMap->MapPointsInMap() << " points" << endl;
 
-    Optimizer::GlobalBundleAdjustemnt(mpMap, 20);
+    mpOptimizer->GlobalBundleAdjustemnt(mpMap, 20);
 
     // Set median depth to 1
     float medianDepth = pKFini->ComputeSceneMedianDepth(2);
@@ -760,23 +857,22 @@ bool Tracking::TrackReferenceKeyFrame()
     // Compute FBag of Words vector
     mCurrentFrame.ComputeFboW();
 
-
     // We perform first an ORB matching with the reference keyframe
     // If enough matches are found we setup a PnP solver
-    ORBmatcher matcher(0.7,true);
+    ORBmatcher matcher(mReferenceKeyframeNnRatioOrbMatcher, true);
     vector<MapPoint*> vpMapPointMatches;
 
     int nmatches;
 
     nmatches = matcher.SearchByFboW(mpReferenceKF, mCurrentFrame, vpMapPointMatches);
 
-    if(nmatches < 15)
+    if(nmatches < mMinimumMatchesRefKeyframe)
         return false;
 
     mCurrentFrame.mvpMapPoints = vpMapPointMatches;
     mCurrentFrame.SetPose(mLastFrame.mTcw);
 
-    Optimizer::PoseOptimization(&mCurrentFrame);
+    mpOptimizer->PoseOptimization(&mCurrentFrame);
 
     // Discard outliers
     int nmatchesMap = 0;
@@ -799,7 +895,7 @@ bool Tracking::TrackReferenceKeyFrame()
         }
     }
 
-    return nmatchesMap>=10;
+    return nmatchesMap >= mKeyframeTrackingThreshold;
 }
 
 void Tracking::UpdateLastFrame()
@@ -863,14 +959,14 @@ void Tracking::UpdateLastFrame()
             nPoints++;
         }
 
-        if(vDepthIdx[j].first>mThDepth && nPoints>100)
+        if(vDepthIdx[j].first > mThDepth && nPoints > mPointsCloserThreshold)
             break;
     }
 }
 
 bool Tracking::TrackWithMotionModel()
 {
-    ORBmatcher matcher(0.9,true);
+    ORBmatcher matcher(mMotionModelNnRatioOrbMatcher, true);
 
     // Update last frame pose according to its reference keyframe
     // Create "visual odometry" points if in Localization Mode
@@ -883,27 +979,27 @@ bool Tracking::TrackWithMotionModel()
     // Project points seen in previous frame
     int th;
     if(mSensor!=System::STEREO)
-        th=15;
+      th = mStereoSearchingRadius;
     else
-        th=7;
+      th = mSearchingRadius;
     int nmatches = matcher.SearchByProjection(mCurrentFrame,mLastFrame,th,mSensor==System::MONOCULAR);
 
     // If few matches, uses a wider window search
-    if(nmatches<20)
+    if(nmatches < mSpeedupMatchesThreshold)
     {
-        fill(mCurrentFrame.mvpMapPoints.begin(),mCurrentFrame.mvpMapPoints.end(),static_cast<MapPoint*>(NULL));
-        nmatches = matcher.SearchByProjection(mCurrentFrame,mLastFrame,2*th,mSensor==System::MONOCULAR);
+      fill(mCurrentFrame.mvpMapPoints.begin(),mCurrentFrame.mvpMapPoints.end(),static_cast<MapPoint*>(NULL));
+      nmatches = matcher.SearchByProjection(mCurrentFrame,mLastFrame,2*th,mSensor==System::MONOCULAR);
     }
 
-    if(nmatches<20)
-        return false;
+    if(nmatches < mSpeedupMatchesThreshold2)
+      return false;
 
     // Optimize frame pose with all matches
-    Optimizer::PoseOptimization(&mCurrentFrame);
+    mpOptimizer->PoseOptimization(&mCurrentFrame);
 
     // Discard outliers
     int nmatchesMap = 0;
-    for(int i =0; i<mCurrentFrame.N; i++)
+    for(int i = 0; i < mCurrentFrame.N; i++)
     {
         if(mCurrentFrame.mvpMapPoints[i])
         {
@@ -924,11 +1020,11 @@ bool Tracking::TrackWithMotionModel()
 
     if(mbOnlyTracking)
     {
-        mbVO = nmatchesMap<10;
-        return nmatches>20;
+        mbVO = nmatchesMap < 10;
+        return nmatches > 20;
     }
 
-    return nmatchesMap>=10;
+    return nmatchesMap >= mMotionModelThreshold;
 }
 
 bool Tracking::TrackLocalMap()
@@ -941,7 +1037,7 @@ bool Tracking::TrackLocalMap()
     SearchLocalPoints();
 
     // Optimize Pose
-    Optimizer::PoseOptimization(&mCurrentFrame);
+    mpOptimizer->PoseOptimization(&mCurrentFrame);
     mnMatchesInliers = 0;
 
     // Update MapPoints Statistics
@@ -968,10 +1064,10 @@ bool Tracking::TrackLocalMap()
 
     // Decide if the tracking was succesful
     // More restrictive if there was a relocalization recently
-    if(mCurrentFrame.mnId<mnLastRelocFrameId+mMaxFrames && mnMatchesInliers<50)
+    if(mCurrentFrame.mnId < mnLastRelocFrameId + mMaxFrames && mnMatchesInliers < mLocalMapTrackingThreshold2)
         return false;
 
-    if(mnMatchesInliers<30)
+    if(mnMatchesInliers < mLocalMapTrackingThreshold)
         return false;
     else
         return true;
@@ -1129,7 +1225,7 @@ void Tracking::CreateNewKeyFrame()
                     nPoints++;
                 }
 
-                if(vDepthIdx[j].first>mThDepth && nPoints>100)
+                if(vDepthIdx[j].first > mThDepth && nPoints > mNewKeyframeThreshold)
                     break;
             }
         }
@@ -1175,23 +1271,23 @@ void Tracking::SearchLocalPoints()
         if(pMP->isBad())
             continue;
         // Project (this fills MapPoint variables for matching)
-        if(mCurrentFrame.isInFrustum(pMP,0.5))
+        if(mCurrentFrame.isInFrustum(pMP, mCosineDelta))
         {
             pMP->IncreaseVisible();
             nToMatch++;
         }
     }
 
-    if(nToMatch>0)
+    if(nToMatch > 0)
     {
-        ORBmatcher matcher(0.8);
-        int th = 1;
-        if(mSensor==System::RGBD)
-            th=3;
-        // If the camera has been relocalised recently, perform a coarser search
-        if(mCurrentFrame.mnId<mnLastRelocFrameId+2)
-            th=5;
-        matcher.SearchByProjection(mCurrentFrame,mvpLocalMapPoints,th);
+      ORBmatcher matcher(mSearchLocalPointsNnRatioOrbMatcher); 
+      int th = 1;
+      if(mSensor == System::RGBD)
+        th = mRGBDSearchingRadiusThreshold;
+      // If the camera has been relocalised recently, perform a coarser search
+      if(mCurrentFrame.mnId < mnLastRelocFrameId+2)
+        th = mSearchingByProjectionThreshold;
+      matcher.SearchByProjection(mCurrentFrame, mvpLocalMapPoints, th);
     }
 }
 
@@ -1285,7 +1381,7 @@ void Tracking::UpdateLocalKeyFrames()
     for(vector<KeyFrame*>::const_iterator itKF=mvpLocalKeyFrames.begin(), itEndKF=mvpLocalKeyFrames.end(); itKF!=itEndKF; itKF++)
     {
         // Limit the number of keyframes
-        if(mvpLocalKeyFrames.size()>80)
+        if(mvpLocalKeyFrames.size() > mKeyframesLimit)
             break;
 
         KeyFrame* pKF = *itKF;
@@ -1356,7 +1452,7 @@ bool Tracking::Relocalization()
 
     // We perform first an ORB matching with each candidate
     // If enough matches are found we setup a PnP solver
-    ORBmatcher matcher(0.75,true);
+    ORBmatcher matcher(mRelocalizationNnRatioOrbMatcher, true);
 
     vector<PnPsolver*> vpPnPsolvers;
     vpPnPsolvers.resize(nKFs);
@@ -1379,7 +1475,7 @@ bool Tracking::Relocalization()
             int nmatches;
             nmatches = matcher.SearchByFboW(pKF, mCurrentFrame, vvpMapPointMatches[i]);
 
-            if(nmatches<15)
+            if(nmatches < mKeyframeCandidateThreshold)
             {
                 vbDiscarded[i] = true;
                 continue;
@@ -1387,7 +1483,7 @@ bool Tracking::Relocalization()
             else
             {
                 PnPsolver* pSolver = new PnPsolver(mCurrentFrame,vvpMapPointMatches[i]);
-                pSolver->SetRansacParameters(0.99,10,300,4,0.5,5.991);
+                pSolver->SetRansacParameters(mPnpSolverRansacProbability, mPnpSolverRansacMinInliers, mPnpSolverRansacMaxIterations, mPnpSolverRansacMinSet, mPnpSolverRansacEpsilon, mPnpSolverRansacTh2);
                 vpPnPsolvers[i] = pSolver;
                 nCandidates++;
             }
@@ -1397,7 +1493,7 @@ bool Tracking::Relocalization()
     // Alternatively perform some iterations of P4P RANSAC
     // Until we found a camera pose supported by enough inliers
     bool bMatch = false;
-    ORBmatcher matcher2(0.9,true);
+    ORBmatcher matcher2(mP4pRelocalizationNnRatioOrbMatcher, true);
 
     while(nCandidates>0 && !bMatch)
     {
@@ -1406,13 +1502,13 @@ bool Tracking::Relocalization()
             if(vbDiscarded[i])
                 continue;
 
-            // Perform 5 Ransac Iterations
+            // Perform mRansacIterationsRelocalization Ransac Iterations
             vector<bool> vbInliers;
             int nInliers;
             bool bNoMore;
 
             PnPsolver* pSolver = vpPnPsolvers[i];
-            cv::Mat Tcw = pSolver->iterate(5,bNoMore,vbInliers,nInliers);
+            cv::Mat Tcw = pSolver->iterate(mRansacIterationsRelocalization, bNoMore, vbInliers, nInliers);
 
             // If Ransac reachs max. iterations discard keyframe
             if(bNoMore)
@@ -1441,7 +1537,7 @@ bool Tracking::Relocalization()
                         mCurrentFrame.mvpMapPoints[j]=NULL;
                 }
 
-                int nGood = Optimizer::PoseOptimization(&mCurrentFrame);
+                int nGood = mpOptimizer->PoseOptimization(&mCurrentFrame);
 
                 if(nGood<10)
                     continue;
@@ -1457,7 +1553,7 @@ bool Tracking::Relocalization()
 
                     if(nadditional+nGood>=50)
                     {
-                        nGood = Optimizer::PoseOptimization(&mCurrentFrame);
+                        nGood = mpOptimizer->PoseOptimization(&mCurrentFrame);
 
                         // If many inliers but still not enough, search by projection again in a narrower window
                         // the camera has been already optimized with many points
@@ -1472,7 +1568,7 @@ bool Tracking::Relocalization()
                             // Final optimization
                             if(nGood+nadditional>=50)
                             {
-                                nGood = Optimizer::PoseOptimization(&mCurrentFrame);
+                                nGood = mpOptimizer->PoseOptimization(&mCurrentFrame);
 
                                 for(int io =0; io<mCurrentFrame.N; io++)
                                     if(mCurrentFrame.mvbOutlier[io])

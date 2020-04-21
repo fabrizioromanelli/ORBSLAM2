@@ -179,7 +179,7 @@ vector<KeyFrame*> KeyFrameDatabase::DetectLoopCandidates(KeyFrame* pKF, float mi
 
     for(list<pair<float,KeyFrame*> >::iterator it=lAccScoreAndMatch.begin(), itend=lAccScoreAndMatch.end(); it!=itend; it++)
     {
-        if(it->first>minScoreToRetain)
+        if(it->first > minScoreToRetain)
         {
             KeyFrame* pKFi = it->second;
             if(!spAlreadyAddedKF.count(pKFi))

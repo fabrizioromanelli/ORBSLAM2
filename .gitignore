@@ -47,6 +47,7 @@ CameraTrajectory.txt
 *.dat
 *.bin
 *.map
+*.log
 lib/
 .idea/
 *.mapfile
