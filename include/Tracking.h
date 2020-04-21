@@ -244,7 +244,7 @@ protected:
     int mNewKeyframeThreshold;
     int mRGBDSearchingRadiusThreshold;
     int mSearchingByProjectionThreshold;
-    int mKeyframesLimit;
+    size_t mKeyframesLimit;
     int mKeyframeCandidateThreshold;
     int mPnpSolverRansacMinInliers;
     int mPnpSolverRansacMaxIterations;

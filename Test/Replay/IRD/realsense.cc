@@ -13,13 +13,13 @@ using namespace std;
 using namespace cv;
 using namespace ORB_SLAM2;
 
-void LoadImages(const string &sequenceDir, vector<string> &imageFilenamesIR, vector<string> &imageFilenamesD, vector<double> &timestamps);
+void LoadImages(const string sequenceDir, vector<string> &imageFilenamesIR, vector<string> &imageFilenamesD, vector<double> &timestamps, const string depthExtension);
 
 int main(int argc, char **argv)
 {
-  if(argc != 4)
+  if(argc != 5)
   {
-    cerr << endl << "Usage: ./Test path_to_vocabulary path_to_settings path_to_sequence" << endl;
+    cerr << endl << "Usage: ./Test path_to_vocabulary_file path_to_configuration_file path_to_sequence depth_image_extension" << endl;
     return 1;
   }
 
@@ -28,7 +28,8 @@ int main(int argc, char **argv)
   vector<string> imageFilenamesD;
   vector<double> timestamps;
   string sequenceDir = string(argv[3]);
-  LoadImages(sequenceDir, imageFilenamesIR, imageFilenamesD, timestamps);
+  string depthExtension = "."+string(argv[4]);
+  LoadImages(sequenceDir, imageFilenamesIR, imageFilenamesD, timestamps, depthExtension);
 
   // Check consistency in the number of images and depthmaps
   int nImages = imageFilenamesIR.size();
@@ -58,8 +59,14 @@ int main(int argc, char **argv)
       // Read image and depthmap from file
       imIR = cv::imread(string(argv[3])+"/infrared/"+imageFilenamesIR[ni], cv::IMREAD_UNCHANGED);
       imD  = cv::imread(string(argv[3])+"/depth/"+imageFilenamesD[ni], cv::IMREAD_UNCHANGED);
+      // The following converts jpgs 8bit to 16bits matrices
+      if (depthExtension.find(".jpg") == 0)
+        imD.convertTo(imD, CV_16SC1, 256.0 / 15.0);
+
       double tframe = timestamps[ni];
       SLAM.TrackRGBD(imIR, imD, tframe);
+
+      cout << "Image #" << ni << endl;
     }
 
     // Stop all threads
@@ -86,7 +93,7 @@ void ReadDirectory(const string& name, vector<string> &v)
   closedir(dirp);
 }
 
-void LoadImages(const string &sequenceDir, vector<string> &imageFilenamesIR, vector<string> &imageFilenamesD, vector<double> &timestamps)
+void LoadImages(const string sequenceDir, vector<string> &imageFilenamesIR, vector<string> &imageFilenamesD, vector<double> &timestamps, const string depthExtension)
 {
   ReadDirectory(sequenceDir + "/infrared", imageFilenamesIR);
   imageFilenamesIR.erase(imageFilenamesIR.begin());
@@ -102,7 +109,7 @@ void LoadImages(const string &sequenceDir, vector<string> &imageFilenamesIR, vec
   {
     size_t sPos = x.find("depth_");
     x.erase(sPos, 6);
-    sPos = x.find(".png");
+    sPos = x.find(depthExtension.c_str());
     x.erase(sPos, 4);
     timestamps.push_back(stod(x));
   }

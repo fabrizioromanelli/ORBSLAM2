@@ -50,7 +50,7 @@ Camera.RGB: 1
 # Close/Far threshold. Baseline times
 # Points seen as close by the stereo/RGBD sensor are considered reliable and 
 # inserted from just one frame. Far points require a match in two keyframes.
-ThDepth: 5000.0
+ThDepth: 500.0
 # ThDepth: 1.0e+09
 
 # Depthmap values factor for rescaling
@@ -73,7 +73,7 @@ sensor_processor/lateral_factor: 0.01576
 #--------------------------------------------------------------------------------------------
 
 # ORB Extractor: Number of features per image
-ORBextractor.nFeatures: 1000
+ORBextractor.nFeatures: 1200
 
 # ORB Extractor: Scale factor between levels in the scale pyramid
 ORBextractor.scaleFactor: 1.2
@@ -113,11 +113,11 @@ LoopClosing.minimumKeyFrames: 10
 LoopClosing.sim3nnRatioOrbMatcher: 0.75
 
 # Threshold to trigger RANSAC on Sim3
-LoopClosing.ransacThresholdTrigger: 20
+LoopClosing.ransacThresholdTrigger: 15 # 20
 
 # Loop Closing RANSAC parameters
-LoopClosing.ransacProbability: 0.99
-LoopClosing.ransacMinimalInliers: 20
+LoopClosing.ransacProbability: 0.95 # 0.99
+LoopClosing.ransacMinimalInliers: 10 # 20
 LoopClosing.ransacMaxIterations: 300
 
 # Loop detection threshold (the loop is considered as detected if the matches are greater or

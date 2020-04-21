@@ -203,7 +203,7 @@ Tracking::Tracking(System *pSys, fbow::Vocabulary* pFbowVoc, FrameDrawer *pFrame
     int _mSearchingByProjectionThreshold = fSettings["Tracking.searchingByProjectionThreshold"];
     mSearchingByProjectionThreshold = (_mSearchingByProjectionThreshold == 0) ? 5 : _mSearchingByProjectionThreshold;
     int _mKeyframesLimit = fSettings["Tracking.keyframesLimit"];
-    mKeyframesLimit = (_mKeyframesLimit == 0) ? 80 : _mKeyframesLimit;
+    mKeyframesLimit = (_mKeyframesLimit == 0) ? 80 : (size_t)_mKeyframesLimit;
     int _mKeyframeCandidateThreshold = fSettings["Tracking.keyframeCandidateThreshold"];
     mKeyframeCandidateThreshold = (_mKeyframeCandidateThreshold == 0) ? 15 : _mKeyframeCandidateThreshold;
     int _mPnpSolverRansacMinInliers = fSettings["Tracking.pnpSolverRansacMinInliers"];
