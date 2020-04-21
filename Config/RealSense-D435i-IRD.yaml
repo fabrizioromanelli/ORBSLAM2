@@ -193,7 +193,7 @@ Tracking.searchingRadius: 7
 Tracking.speedupMatchesThreshold: 20
 
 # If matches from ORBmatcher are less than this threshold after widening window search,
-# use twice the th value (track with motion model).
+# the track with motion model fails.
 Tracking.speedupMatchesThreshold2: 20
 
 # After removing ouliers, if the number of matches is greater than this threshold,
