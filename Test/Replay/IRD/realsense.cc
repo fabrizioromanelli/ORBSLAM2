@@ -15,6 +15,8 @@ using namespace ORB_SLAM2;
 
 void LoadImages(const string sequenceDir, vector<string> &imageFilenamesIR, vector<string> &imageFilenamesD, vector<double> &timestamps, const string depthExtension);
 
+void ProgressBar(float progress);
+
 int main(int argc, char **argv)
 {
   if(argc != 5)
@@ -65,9 +67,9 @@ int main(int argc, char **argv)
 
       double tframe = timestamps[ni];
       SLAM.TrackRGBD(imIR, imD, tframe);
-
-      cout << "Image #" << ni << endl;
+      ProgressBar((float)ni/nImages);
     }
+    std::cout << std::endl;
 
     // Stop all threads
     SLAM.Shutdown();
@@ -81,6 +83,21 @@ int main(int argc, char **argv)
   }
 
   return 0;
+}
+
+void ProgressBar(float progress)
+{
+  int barWidth = 70;
+
+  std::cout << "[";
+  int pos = barWidth * progress;
+  for (int i = 0; i < barWidth; ++i) {
+      if (i < pos) std::cout << "=";
+      else if (i == pos) std::cout << ">";
+      else std::cout << " ";
+  }
+  std::cout << "] " << int(progress * 100.0) << " %\r";
+  std::cout.flush();
 }
 
 void ReadDirectory(const string& name, vector<string> &v)

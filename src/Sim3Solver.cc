@@ -181,7 +181,6 @@ cv::Mat Sim3Solver::iterate(int nIterations, bool &bNoMore, vector<bool> &vbInli
 
         CheckInliers();
 
-        std::cout << "mnInliersi: " << mnInliersi << " mnBestInliers: " << mnBestInliers << std::endl;
         if(mnInliersi >= mnBestInliers)
         {
             mvbBestInliers = mvbInliersi;
@@ -191,7 +190,6 @@ cv::Mat Sim3Solver::iterate(int nIterations, bool &bNoMore, vector<bool> &vbInli
             mBestTranslation = mt12i.clone();
             mBestScale = ms12i;
 
-            std::cout << "mnInliersi: " << mnInliersi << " mRansacMinInliers: " << mRansacMinInliers << std::endl;
             if(mnInliersi > mRansacMinInliers)
             {
                 nInliers = mnInliersi;

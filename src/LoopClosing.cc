@@ -221,8 +221,6 @@ bool LoopClosing::DetectLoop()
                 int nPreviousConsistency = mvConsistentGroups[iG].second;
                 int nCurrentConsistency = nPreviousConsistency + 1;
 
-                std::cout << "is consistent! nCurrentConsistency: " << nCurrentConsistency << std::endl;
-
                 if(!vbConsistentGroup[iG])
                 {
                     ConsistentGroup cg = make_pair(spCandidateGroup,nCurrentConsistency);
@@ -231,7 +229,6 @@ bool LoopClosing::DetectLoop()
                 }
                 if(nCurrentConsistency >= mnCovisibilityConsistencyTh && !bEnoughConsistent)
                 {
-                  std::cout << "mvpEnoughConsistentCandidates.push_back(pCandidateKF)" << std::endl;
                     mvpEnoughConsistentCandidates.push_back(pCandidateKF);
                     bEnoughConsistent = true; //this avoid to insert the same candidate more than once
                 }
@@ -259,7 +256,6 @@ bool LoopClosing::DetectLoop()
     }
     else
     {
-        std::cout << "Loop Detected!" << std::endl;
         return true;
     }
 
@@ -302,7 +298,6 @@ bool LoopClosing::ComputeSim3()
         }
 
         int nmatches = matcher.SearchByFboW(mpCurrentKF, pKF, vvpMapPointMatches[i]);
-        std::cout << "nmatches: " << nmatches << " " << __LINE__ << std::endl;
 
         if(nmatches < mRansacThresholdTrigger)
         {
@@ -365,8 +360,6 @@ bool LoopClosing::ComputeSim3()
                 g2o::Sim3 gScm(Converter::toMatrix3d(R),Converter::toVector3d(t),s);
                 const int nInliers = mpOptimizer->OptimizeSim3(mpCurrentKF, pKF, vpMapPointMatches, gScm, 10, mbFixScale);
 
-std::cout << "nInliers: " << nInliers << " " << __LINE__ << std::endl;
-
                 // If optimization is successful stop ransacs and continue
                 if(nInliers >= 20)
                 {
@@ -423,8 +416,6 @@ std::cout << "nInliers: " << nInliers << " " << __LINE__ << std::endl;
         if(mvpCurrentMatchedPoints[i])
             nTotalMatches++;
     }
-
-std::cout << "nTotalMatches: " << nTotalMatches << " " << __LINE__ << std::endl;
 
     if(nTotalMatches >= mDetectionThreshold)
     {
