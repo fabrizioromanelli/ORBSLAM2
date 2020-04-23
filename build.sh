@@ -18,7 +18,7 @@ echo "Configuring and building Thirdparty/fbow ..."
 cd Thirdparty/fbow
 mkdir -p build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=../
+cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=../ -DUSE_AVX=OFF
 make install $1
 
 echo "Configuring and building Thirdparty/DLib ..."

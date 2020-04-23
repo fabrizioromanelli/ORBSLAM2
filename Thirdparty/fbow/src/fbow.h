@@ -297,6 +297,7 @@ private:
         }
     };
     //specific for surf in avx
+#ifdef USE_AVX
     struct L2_avx_8w:public Lx<__m256,float,32> {
 
         inline float computeDist(__m256 *ptr){
@@ -315,6 +316,7 @@ private:
             return  sum_ptr[0]+sum_ptr[4];
         }
     };
+#endif
 
  #endif
 

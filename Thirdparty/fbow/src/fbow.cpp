@@ -74,10 +74,12 @@ void Vocabulary::transform(const cv::Mat &features, int level, fBow &result, fBo
         else  _transform2<L1_x32>(features,level,result,result2);
     }
     else if(features.type()==CV_32FC1){
+#ifdef USE_AVX
         if( cpu_info->isSafeAVX() && _params._aligment%32==0){ //AVX version
             if ( _params._desc_size==256)  _transform2<L2_avx_8w>(features,level,result,result2);//specific for surf 256 bytes
             else  _transform2<L2_avx_generic>(features,level,result,result2);//any other
         }
+#endif
         if( cpu_info->isSafeSSE() && _params._aligment%16==0){//SSE version
             if ( _params._desc_size==256) _transform2<L2_sse3_16w>(features,level,result,result2);//specific for surf 256 bytes
             else _transform2<L2_se3_generic>(features,level,result,result2);//any other
@@ -117,10 +119,12 @@ fBow Vocabulary::transform(const cv::Mat &features)
         else  result=  _transform<L1_x32>(features );
     }
     else if(features.type()==CV_32FC1){
+#ifdef USE_AVX
         if( cpu_info->isSafeAVX() && _params._aligment%32==0){ //AVX version
             if ( _params._desc_size==256) result= _transform<L2_avx_8w>(features);//specific for surf 256 bytes
             else result= _transform<L2_avx_generic>(features);//any other
         }
+#endif
         if( cpu_info->isSafeSSE() && _params._aligment%16==0){//SSE version
             if ( _params._desc_size==256) result= _transform<L2_sse3_16w>(features);//specific for surf 256 bytes
             else result=_transform<L2_se3_generic>(features);//any other
