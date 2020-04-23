@@ -121,6 +121,10 @@ private:
   // Updates for IRD frames
   void updateIRD();
 
+  // Updates for IRD frames switching off the 
+  // laser between two frames
+  void updateIRD2();
+
   // Updates for IR Left and Right frames
   void updateIRL();
   void updateIRR();

@@ -35,7 +35,8 @@ void RealSense::run()
       updateRGBD();
       break;
     case IRD:
-      updateIRD();
+      // updateIRD();
+      updateIRD2();
       break;
     case IRL:
       updateIRL();
@@ -322,6 +323,32 @@ void RealSense::updateIRD()
   updateFrame();
   updateInfraredIRLeft();
   updateDepth();
+}
+
+void RealSense::updateIRD2()
+{
+  enableLaser(360.0);
+  updateFrame();
+  updateDepth();
+
+  rs2::frame dFrame   = frameset.get_depth_frame();
+  rs2_frame * dframeP = dFrame.get();
+
+  // Get DEPTH frame timestamp
+  std::cout << std::fixed << std::setw(11) << std::setprecision(6) << "DEPTH timestamp: " << rs2_get_frame_timestamp(dframeP, &e) << std::endl;
+
+  disableLaser();
+  std::cout << "Laser disabled" << std::endl;
+  updateFrame();
+  std::cout << "Frame updated" << std::endl;
+  updateInfraredIRLeft();
+  std::cout << "IR_LEFT updated" << std::endl;
+
+  rs2::frame cFrame  = frameset.get_infrared_frame(IR_LEFT);
+  rs2_frame * frameP = cFrame.get();
+
+  // Get IR_LEFT frame timestamp
+  std::cout << std::fixed << std::setw(11) << std::setprecision(6) << "IR_LEFT timestamp: " << rs2_get_frame_timestamp(frameP, &e) << std::endl;
 }
 
 void RealSense::updateIRL()

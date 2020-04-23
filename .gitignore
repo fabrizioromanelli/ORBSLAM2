@@ -36,6 +36,7 @@ Tools/Calibration/Monocular/camera_calibration
 Tools/Calibration/Stereo/camera_calibration_stereo
 Tools/Grab/Depth/grab_realsense_depth
 Tools/Grab/Infrared/grab_realsense_ir
+Tools/Grab/IRD/grab_realsense_ird
 Tools/Grab/Monocular/grab_monocular
 Tools/Grab/RGB/grab_realsense_rgb
 Tools/GrabSequence/IRD/grab_sequence_realsense_ird
