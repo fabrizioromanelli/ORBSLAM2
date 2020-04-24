@@ -12,12 +12,22 @@ bool save_frame_raw_data(const std::string& filename, rs2::frame frame);
 
 int main(int argc, char** argv)
 {
+  if(argc != 2)
+  {
+    cerr << endl << "Usage: ./grab_sequence_realsense_ird fps" << endl;
+    return 1;
+  }
+
   try {
     RealSense::sModality mode = RealSense::IRD;
-    RealSense realsense(mode);
+    uint32_t fps;
+    stringstream strValue;
+    strValue << argv[1];
+    strValue >> fps;
+    RealSense realsense(mode, fps);
 
     cout << endl << "-------" << endl;
-    cout << "Start processing video stream ..." << endl;
+    cout << "Start processing video stream @ " << fps << "fps" << endl;
 
     mkdir("infrared", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
     mkdir("depth", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);

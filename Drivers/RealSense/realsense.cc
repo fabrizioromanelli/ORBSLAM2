@@ -1,16 +1,16 @@
 #include "realsense.h"
 
 // Constructor
-RealSense::RealSense(const sModality modality)
+RealSense::RealSense(const sModality modality):
+sensorModality(modality), color_fps(30), ir_left_fps(30), ir_right_fps(30), depth_fps(30)
 {
-  sensorModality = modality;
   initialize(MIN_DELTA_TIMEFRAMES_THRESHOLD);
 }
 
 // Constructor with maximum delta timeframes as an input
-RealSense::RealSense(const sModality modality, double maximumDeltaTimeframes)
+RealSense::RealSense(const sModality modality, double maximumDeltaTimeframes):
+sensorModality(modality), color_fps(30), ir_left_fps(30), ir_right_fps(30), depth_fps(30)
 {
-  sensorModality = modality;
   if (maximumDeltaTimeframes > MIN_DELTA_TIMEFRAMES_THRESHOLD)
     initialize(maximumDeltaTimeframes);
   else
@@ -18,6 +18,12 @@ RealSense::RealSense(const sModality modality, double maximumDeltaTimeframes)
     std::cerr << "Maximum delta between timeframes is too high. Reduced to " << MIN_DELTA_TIMEFRAMES_THRESHOLD << "." << std::endl;
     initialize(MIN_DELTA_TIMEFRAMES_THRESHOLD);
   }
+}
+
+RealSense::RealSense(const sModality modality, uint32_t fps):
+sensorModality(modality), color_fps(fps), ir_left_fps(fps), ir_right_fps(fps), depth_fps(fps)
+{
+  initialize(MIN_DELTA_TIMEFRAMES_THRESHOLD);
 }
 
 // Destructor

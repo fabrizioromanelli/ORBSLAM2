@@ -14,11 +14,68 @@ public:
   // IRR  - Uses Infrared Right camera
   enum sModality { RGBD, IRD, IRL, IRR };
 
+private:
+  // Sensor modality
+  sModality sensorModality;
+
+  // RealSense
+  rs2::pipeline pipeline;
+  rs2::pipeline_profile pipeline_profile;
+  rs2::frameset aligned_frameset;
+  rs2::device realSense_device;
+
+  // Color Buffer
+  rs2::frame color_frame;
+  cv::Mat color_mat;
+  uint32_t color_width = 640;
+  uint32_t color_height = 480;
+  uint32_t color_fps;
+
+  // Infrared Left Buffer
+  rs2::frame ir_left_frame;
+  cv::Mat ir_left_mat;
+  uint32_t ir_left_width = 640;
+  uint32_t ir_left_height = 480;
+  uint32_t ir_left_fps;
+
+  // Infrared Right Buffer
+  rs2::frame ir_right_frame;
+  cv::Mat ir_right_mat;
+  uint32_t ir_right_width = 640;
+  uint32_t ir_right_height = 480;
+  uint32_t ir_right_fps;
+
+  // Depth Buffer
+  rs2::frame depth_frame;
+  cv::Mat depth_mat;
+  uint32_t depth_width = 640;
+  uint32_t depth_height = 480;
+  uint32_t depth_fps;
+
+  // Warmup frames
+  uint32_t warm_up_frames = 30;
+
+  // Frameset
+  rs2::frameset frameset;
+
+  // Error
+  rs2_error * e = 0;
+
+  // Maximum delta between RGB and Depth image timeframes (time in ms)
+  rs2_time_t maxDeltaTimeframes;
+  rs2_time_t MIN_DELTA_TIMEFRAMES_THRESHOLD = 20;
+
+  enum irCamera { IR_LEFT = 1, IR_RIGHT = 2};
+
+public:
   // Constructor
   RealSense(const sModality);
 
   // Constructor with maximum delta timeframes as an input
   RealSense(const sModality, double);
+
+  // Constructor with fps as an input
+  RealSense(const sModality, uint32_t);
 
   // Destructor
   ~RealSense();
@@ -50,59 +107,6 @@ public:
   // Control laser projector
   void enableLaser(float);
   void disableLaser();
-
-private:
-  // RealSense
-  rs2::pipeline pipeline;
-  rs2::pipeline_profile pipeline_profile;
-  rs2::frameset aligned_frameset;
-  rs2::device realSense_device;
-
-  // Color Buffer
-  rs2::frame color_frame;
-  cv::Mat color_mat;
-  uint32_t color_width = 640;
-  uint32_t color_height = 480;
-  uint32_t color_fps = 30;
-
-  // Infrared Left Buffer
-  rs2::frame ir_left_frame;
-  cv::Mat ir_left_mat;
-  uint32_t ir_left_width = 640;
-  uint32_t ir_left_height = 480;
-  uint32_t ir_left_fps = 30;
-
-  // Infrared Right Buffer
-  rs2::frame ir_right_frame;
-  cv::Mat ir_right_mat;
-  uint32_t ir_right_width = 640;
-  uint32_t ir_right_height = 480;
-  uint32_t ir_right_fps = 30;
-
-  // Depth Buffer
-  rs2::frame depth_frame;
-  cv::Mat depth_mat;
-  uint32_t depth_width = 640;
-  uint32_t depth_height = 480;
-  uint32_t depth_fps = 30;
-
-  // Warmup frames
-  uint32_t warm_up_frames = 30;
-
-  // Frameset
-  rs2::frameset frameset;
-
-  // Error
-  rs2_error * e = 0;
-
-  // Maximum delta between RGB and Depth image timeframes (time in ms)
-  rs2_time_t maxDeltaTimeframes;
-  rs2_time_t MIN_DELTA_TIMEFRAMES_THRESHOLD = 20;
-
-  // Sensor modality
-  sModality sensorModality;
-
-  enum irCamera { IR_LEFT = 1, IR_RIGHT = 2};
 
 private:
   // Initialize
