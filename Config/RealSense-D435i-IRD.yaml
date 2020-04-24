@@ -116,7 +116,7 @@ LoopClosing.sim3nnRatioOrbMatcher: 0.75
 LoopClosing.ransacThresholdTrigger: 15 # 20
 
 # Loop Closing RANSAC parameters
-LoopClosing.ransacProbability: 0.99
+LoopClosing.ransacProbability: 0.95
 LoopClosing.ransacMinimalInliers: 8 # 20
 LoopClosing.ransacMaxIterations: 300
 
