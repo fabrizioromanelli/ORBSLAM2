@@ -147,6 +147,9 @@ target_link_libraries(benchmark_rgbd_replay ${PROJECT_NAME})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Benchmarks/Replay/Stereo)
 add_executable(benchmark_stereo_replay Tools/Benchmarks/Replay/Stereo/benchmark.cc)
 target_link_libraries(benchmark_stereo_replay ${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Benchmarks/Replay/IRD)
+add_executable(benchmark_ird_replay Tools/Benchmarks/Replay/IRD/benchmark.cc)
+target_link_libraries(benchmark_ird_replay ${PROJECT_NAME})
 
 # Camera Calibration
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Calibration/Monocular)

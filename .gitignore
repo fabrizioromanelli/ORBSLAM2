@@ -30,6 +30,7 @@ Test/Replay/Stereo/stereo_euroc
 Test/Replay/Stereo/stereo_kitti
 Tools/Benchmarks/Live/Monocular/benchmark_mono_live
 Tools/Benchmarks/Replay/Monocular/benchmark_mono_replay
+Tools/Benchmarks/Replay/IRD/benchmark_ird_replay
 Tools/Benchmarks/Replay/RGBD/benchmark_rgbd_replay
 Tools/Benchmarks/Replay/Stereo/benchmark_stereo_replay
 Tools/Calibration/Monocular/camera_calibration

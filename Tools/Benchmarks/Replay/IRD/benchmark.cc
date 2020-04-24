@@ -1,3 +1,8 @@
+/**
+* Test video stream with ORB-SLAM2.
+*
+*/
+
 #include <iostream>
 #include <algorithm>
 #include <fstream>
@@ -6,22 +11,20 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/opencv.hpp>
 #include <System.h>
-#include <sys/types.h>
 #include <dirent.h>
 
 using namespace std;
 using namespace cv;
 using namespace ORB_SLAM2;
 
+void printCPUinfo();
 void LoadImages(const string sequenceDir, vector<string> &imageFilenamesIR, vector<string> &imageFilenamesD, vector<double> &timestamps, const string depthExtension);
-
-void ProgressBar(float progress);
 
 int main(int argc, char **argv)
 {
   if(argc != 5)
   {
-    cerr << endl << "Usage: ./realsense_replay path_to_vocabulary_file path_to_configuration_file path_to_sequence depth_image_extension" << endl;
+    cerr << endl << "Usage: ./benchmark_ird_replay path_to_vocabulary_file path_to_configuration_file path_to_sequence depth_image_extension" << endl;
     return 1;
   }
 
@@ -46,6 +49,10 @@ int main(int argc, char **argv)
     return 1;
   }
 
+  // Vector for tracking time statistics
+  vector<float> vTimesTrack;
+  vTimesTrack.resize(nImages);
+
   try {
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
     System SLAM(argv[1], argv[2], System::RGBD, true, true);
@@ -66,17 +73,32 @@ int main(int argc, char **argv)
         imD.convertTo(imD, CV_16SC1, 256.0 / 15.0);
 
       double tframe = timestamps[ni];
+
+#ifdef COMPILEDWITHC11
+      chrono::steady_clock::time_point t1 = chrono::steady_clock::now();
+#else
+      chrono::monotonic_clock::time_point t1 = chrono::monotonic_clock::now();
+#endif
+
+      // Pass the image to the SLAM system
       SLAM.TrackRGBD(imIR, imD, tframe);
-      ProgressBar((float)ni/nImages);
+
+#ifdef COMPILEDWITHC11
+      chrono::steady_clock::time_point t2 = chrono::steady_clock::now();
+#else
+      chrono::monotonic_clock::time_point t2 = chrono::monotonic_clock::now();
+#endif
+
+      // integral duration: requires duration_cast
+      auto int_ms = chrono::duration_cast<chrono::milliseconds>(t2 - t1);
+
+      cout << "Image #" << ni << " SLAM.TrackIRD duration: " << int_ms.count() << "ms" << endl;
     }
-    std::cout << std::endl;
 
     // Stop all threads
     SLAM.Shutdown();
-
-    // Save camera trajectory
-    SLAM.SaveTrajectory("CameraTrajectory.dat");
-    // SLAM.SaveKeyFrameTrajectory("KeyFrameTrajectory.dat");
+    // Get CPU information and prints them out
+    printCPUinfo();
   }
   catch(exception& ex) {
     cout << ex.what() << endl;
@@ -85,19 +107,17 @@ int main(int argc, char **argv)
   return 0;
 }
 
-void ProgressBar(float progress)
+void printCPUinfo()
 {
-  int barWidth = 70;
-
-  std::cout << "[";
-  int pos = barWidth * progress;
-  for (int i = 0; i < barWidth; ++i) {
-      if (i < pos) std::cout << "=";
-      else if (i == pos) std::cout << ">";
-      else std::cout << " ";
-  }
-  std::cout << "] " << int(progress * 100.0) << " %\r";
-  std::cout.flush();
+    FILE *cpuinfo = fopen("/proc/cpuinfo", "rb");
+    char *arg = 0;
+    size_t size = 0;
+    while(getdelim(&arg, &size, 0, cpuinfo) != -1)
+    {
+       puts(arg);
+    }
+    free(arg);
+    fclose(cpuinfo);
 }
 
 void ReadDirectory(const string& name, vector<string> &v)
