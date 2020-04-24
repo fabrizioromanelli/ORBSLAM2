@@ -21,9 +21,13 @@ using namespace ORB_SLAM2;
 
 int main(int argc, char **argv)
 {
-  if(argc != 4)
+  if(argc != 5)
   {
-    cerr << endl << "Usage: ./Test path_to_vocabulary path_to_settings mode" << endl;
+    cerr << endl << "Usage: ./realsense_replay" << endl 
+                 << "         path_to_vocabulary" << endl
+                 << "         path_to_settings" << endl
+                 << "         mode[RGBD/IRD]" << endl
+                 << "         display[ON/OFF]" << endl;
     return 1;
   }
 
@@ -37,8 +41,13 @@ int main(int argc, char **argv)
     RealSense realsense(mode);
     // realsense.enableLaser(40.0);
 
+    bool display = false;
+    string displayS = string(argv[5]);
+    if(displayS.compare("ON") == 0)
+      display = true;
+
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
-    System SLAM(argv[1], argv[2], System::RGBD, true, true);
+    System SLAM(argv[1], argv[2], System::RGBD, display, true);
 
     cout << endl << "-------" << endl;
     cout << "Start processing video stream ..." << endl;

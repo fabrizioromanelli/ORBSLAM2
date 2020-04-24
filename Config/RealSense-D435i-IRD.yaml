@@ -103,7 +103,7 @@ ORBextractor.edgeThreshold: 19
 # group if they share at least a keyframe. We must detect a consistent loop in
 # several consecutive keyframes to accept it (the consecutive keyframes are given
 # by the mnCovisibilityConsistencyTh).
-LoopClosing.covisibilityConsistencyThreshold: 3
+LoopClosing.covisibilityConsistencyThreshold: 2 # 3
 
 # If the map contains less than a minimum keyframes or less than these keyframes
 # have passed from last loop detection, return false as no loop detected.

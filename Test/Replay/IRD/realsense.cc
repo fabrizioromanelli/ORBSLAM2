@@ -19,9 +19,14 @@ void ProgressBar(float progress);
 
 int main(int argc, char **argv)
 {
-  if(argc != 5)
+  if(argc != 6)
   {
-    cerr << endl << "Usage: ./realsense_replay path_to_vocabulary_file path_to_configuration_file path_to_sequence depth_image_extension" << endl;
+    cerr << endl << "Usage: ./realsense_replay" << endl 
+                 << "         path_to_vocabulary_file" << endl
+                 << "         path_to_configuration_file" << endl
+                 << "         path_to_sequence" << endl
+                 << "         depth_image_extension[jpg/png]" << endl
+                 << "         display[ON/OFF]" << endl;
     return 1;
   }
 
@@ -46,9 +51,14 @@ int main(int argc, char **argv)
     return 1;
   }
 
+  bool display = false;
+  string displayS = string(argv[5]);
+  if(displayS.compare("ON") == 0)
+    display = true;
+
   try {
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
-    System SLAM(argv[1], argv[2], System::RGBD, true, true);
+    System SLAM(argv[1], argv[2], System::RGBD, display, true);
 
     cout << endl << "-------" << endl;
     cout << "Start processing video stream ..." << endl;
