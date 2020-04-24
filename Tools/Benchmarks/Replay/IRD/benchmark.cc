@@ -55,7 +55,7 @@ int main(int argc, char **argv)
 
   try {
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
-    System SLAM(argv[1], argv[2], System::RGBD, true, true);
+    System SLAM(argv[1], argv[2], System::RGBD, false, true);
 
     cout << endl << "-------" << endl;
     cout << "Start processing video stream ..." << endl;
