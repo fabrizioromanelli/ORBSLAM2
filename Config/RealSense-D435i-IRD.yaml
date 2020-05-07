@@ -263,8 +263,8 @@ Viewer.GraphLineWidth: 0.9
 Viewer.PointSize: 2
 Viewer.CameraSize: 0.1
 Viewer.CameraLineWidth: 3
-Viewer.ViewpointX: 10
-Viewer.ViewpointY: -0.5
+Viewer.ViewpointX: 0.1
+Viewer.ViewpointY: -10
 Viewer.ViewpointZ: 0
 Viewer.ViewpointF: 500
 

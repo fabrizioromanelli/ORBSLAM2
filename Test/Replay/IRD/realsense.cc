@@ -71,12 +71,21 @@ int main(int argc, char **argv)
       // Read image and depthmap from file
       imIR = cv::imread(string(argv[3])+"/infrared/"+imageFilenamesIR[ni], cv::IMREAD_UNCHANGED);
       imD  = cv::imread(string(argv[3])+"/depth/"+imageFilenamesD[ni], cv::IMREAD_UNCHANGED);
+
+      // The following lines work for images
+      // half size the infrared ones. (e.g. 320x240)
+      // cv::Mat imDresized;
+      // cv::resize(imD, imDresized, cv::Size(), 2, 2, cv::INTER_CUBIC);
+
       // The following converts jpgs 8bit to 16bits matrices
       if (depthExtension.find(".jpg") == 0)
         imD.convertTo(imD, CV_16SC1, 256.0 / 15.0);
 
       double tframe = timestamps[ni];
       SLAM.TrackRGBD(imIR, imD, tframe);
+      // The following line work for images
+      // half size the infrared ones. (e.g. 320x240)
+      // SLAM.TrackRGBD(imIR, imDresized, tframe);
       ProgressBar((float)ni/nImages);
     }
     std::cout << std::endl;
