@@ -74,18 +74,18 @@ int main(int argc, char **argv)
 
       // The following lines work for images
       // half size the infrared ones. (e.g. 320x240)
-      // cv::Mat imDresized;
-      // cv::resize(imD, imDresized, cv::Size(), 2, 2, cv::INTER_CUBIC);
+      cv::Mat imDresized;
+      cv::resize(imD, imDresized, cv::Size(), 2, 2, cv::INTER_CUBIC);
 
       // The following converts jpgs 8bit to 16bits matrices
       if (depthExtension.find(".jpg") == 0)
         imD.convertTo(imD, CV_16SC1, 256.0 / 15.0);
 
-      double tframe = timestamps[ni];
-      SLAM.TrackRGBD(imIR, imD, tframe);
-      // The following line work for images
+      double tframe = timestamps[ni]*132000;
+      // SLAM.TrackRGBD(imIR, imD, tframe);
+      // The following line works for images
       // half size the infrared ones. (e.g. 320x240)
-      // SLAM.TrackRGBD(imIR, imDresized, tframe);
+      SLAM.TrackRGBD(imIR, imDresized, tframe);
       ProgressBar((float)ni/nImages);
     }
     std::cout << std::endl;
@@ -143,10 +143,11 @@ void LoadImages(const string sequenceDir, vector<string> &imageFilenamesIR, vect
 
   for (auto x : imageFilenamesD)
   {
-    size_t sPos = x.find("depth_");
-    x.erase(sPos, 6);
+    // size_t sPos = x.find("depth_");
+    // x.erase(sPos, 6);
+    size_t sPos;
     sPos = x.find(depthExtension.c_str());
-    x.erase(sPos, 4);
+    x.erase(sPos, depthExtension.length()+1);
     timestamps.push_back(stod(x));
   }
 }
