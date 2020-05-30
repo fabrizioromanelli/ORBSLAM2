@@ -23,11 +23,12 @@ int main(int argc, char **argv)
 {
   if(argc != 5)
   {
-    cerr << endl << "Usage: ./realsense_replay" << endl 
+    cerr << endl << "Usage: ./realsense_live" << endl 
                  << "         path_to_vocabulary" << endl
-                 << "         path_to_settings" << endl
+                 << "         path_to_configuration" << endl
                  << "         mode[RGBD/IRD]" << endl
-                 << "         display[ON/OFF]" << endl;
+                 << "         display[ON/OFF]" << endl
+                 << "         save_file[ON/OFF]" << endl;
     return 1;
   }
 
@@ -42,9 +43,15 @@ int main(int argc, char **argv)
     // realsense.enableLaser(40.0);
 
     bool display = false;
-    string displayS = string(argv[5]);
+    string displayS = string(argv[4]);
     if(displayS.compare("ON") == 0)
       display = true;
+
+    bool saveFile = false;
+    string saveFileS = string(argv[4]);
+    if(saveFileS.compare("ON") == 0)
+      saveFile = true;
+
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
     System SLAM(argv[1], argv[2], System::RGBD, display, true);
@@ -90,19 +97,21 @@ int main(int argc, char **argv)
         SLAM.TrackRGBD(irMatrix, depthMatrix, realsense.getIRLeftTimestamp());
 
         // Saving files
-        char filename_ir_[50] = "./infrared/ir_";
-        char *filename_ir = &filename_ir_[0];
-        strcat(filename_ir, to_string(realsense.getIRLeftTimestamp()).c_str());
-        strcat(filename_ir, ".jpg");
-        imwrite(filename_ir, irMatrix);
+        if (saveFile) {
+          char filename_ir_[50] = "./infrared/ir_";
+          char *filename_ir = &filename_ir_[0];
+          strcat(filename_ir, to_string(realsense.getIRLeftTimestamp()).c_str());
+          strcat(filename_ir, ".jpg");
+          imwrite(filename_ir, irMatrix);
 
-        // depthMatrix.convertTo(depthMatrix, CV_8UC1, 15 / 256.0);
+          // depthMatrix.convertTo(depthMatrix, CV_8UC1, 15 / 256.0);
 
-        char filename_depth_[50] = "./depth/depth_";
-        char *filename_depth = &filename_depth_[0];
-        strcat(filename_depth, to_string(realsense.getIRLeftTimestamp()).c_str());
-        strcat(filename_depth, ".png");
-        imwrite(filename_depth, depthMatrix);
+          char filename_depth_[50] = "./depth/depth_";
+          char *filename_depth = &filename_depth_[0];
+          strcat(filename_depth, to_string(realsense.getIRLeftTimestamp()).c_str());
+          strcat(filename_depth, ".png");
+          imwrite(filename_depth, depthMatrix);
+        }
       }
 
       int key = waitKey(10);
