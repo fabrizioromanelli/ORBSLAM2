@@ -69,6 +69,7 @@ add_library(${PROJECT_NAME} SHARED
         src/Initializer.cc
         src/Viewer.cc
         src/HPose.cpp
+        src/Wrapper.cc
         )
 
 target_link_libraries(${PROJECT_NAME}
