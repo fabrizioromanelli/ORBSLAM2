@@ -85,7 +85,10 @@ int main(int argc, char **argv)
       // SLAM.TrackRGBD(imIR, imD, tframe);
       // The following line works for images
       // half size the infrared ones. (e.g. 320x240)
-      SLAM.TrackRGBD(imIR, imDresized, tframe);
+      cv::Mat test = SLAM.TrackRGBD(imIR, imDresized, tframe);
+
+      cout << "Camera pose: " << test << endl;
+
       ProgressBar((float)ni/nImages);
     }
     std::cout << std::endl;
@@ -151,3 +154,10 @@ void LoadImages(const string sequenceDir, vector<string> &imageFilenamesIR, vect
     timestamps.push_back(stod(x));
   }
 }
+
+// X: -0.003 Y: 0.013 Z: -0.028
+// Camera pose: 
+//  [0.99937624, 0.026254445, 0.023618288, -0.0032980845;
+//  -0.025839692, 0.99950945, -0.017697753, 0.013493983;
+//  -0.024071345, 0.017076425, 0.99956441, -0.027921962;
+//  0, 0, 0, 1]
