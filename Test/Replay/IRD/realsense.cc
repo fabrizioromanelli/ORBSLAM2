@@ -17,6 +17,37 @@ void LoadImages(const string sequenceDir, vector<string> &imageFilenamesIR, vect
 
 void ProgressBar(float progress);
 
+inline void computeQuaternion( cv::Mat a, float q[] ) {
+  float trace = a.at<float>(0, 0) + a.at<float>(1, 1) + a.at<float>(2, 2);
+  if( trace > 0 ) {
+    float s = 0.5 / sqrt(trace + 1.0);
+    q[0] = 0.25 / s;
+    q[1] = ( a.at<float>(2, 1) - a.at<float>(1, 2) ) * s;
+    q[2] = ( a.at<float>(0, 2) - a.at<float>(2, 0) ) * s;
+    q[3] = ( a.at<float>(1, 0) - a.at<float>(0, 1) ) * s;
+  } else {
+    if ( a.at<float>(0, 0) > a.at<float>(1, 1) && a.at<float>(0, 0) > a.at<float>(2, 2) ) {
+      float s = 2.0 * sqrt( 1.0 + a.at<float>(0, 0) - a.at<float>(1, 1) - a.at<float>(2, 2));
+      q[0] = (a.at<float>(2, 1) - a.at<float>(1, 2) ) / s;
+      q[1] = 0.25 * s;
+      q[2] = (a.at<float>(0, 1) + a.at<float>(1, 0) ) / s;
+      q[3] = (a.at<float>(0, 2) + a.at<float>(2, 0) ) / s;
+    } else if (a.at<float>(1, 1) > a.at<float>(2, 2)) {
+      float s = 2.0 * sqrt( 1.0 + a.at<float>(1, 1) - a.at<float>(0, 0) - a.at<float>(2, 2));
+      q[0] = (a.at<float>(0, 2) - a.at<float>(2, 0) ) / s;
+      q[1] = (a.at<float>(0, 1) + a.at<float>(1, 0) ) / s;
+      q[2] = 0.25 * s;
+      q[3] = (a.at<float>(1, 2) + a.at<float>(2, 1) ) / s;
+    } else {
+      float s = 2.0 * sqrt( 1.0 + a.at<float>(2, 2) - a.at<float>(0, 0) - a.at<float>(1, 1) );
+      q[0] = (a.at<float>(1, 0) - a.at<float>(0, 1) ) / s;
+      q[1] = (a.at<float>(0, 2) + a.at<float>(2, 0) ) / s;
+      q[2] = (a.at<float>(1, 2) + a.at<float>(2, 1) ) / s;
+      q[3] = 0.25 * s;
+    }
+  }
+}
+
 int main(int argc, char **argv)
 {
   if(argc != 6)
@@ -87,7 +118,16 @@ int main(int argc, char **argv)
       // half size the infrared ones. (e.g. 320x240)
       cv::Mat test = SLAM.TrackRGBD(imIR, imDresized, tframe);
 
-      cout << "Camera pose: " << test << endl;
+      if (!test.empty()) {
+        cout << test.type() << endl;
+        cout << "Camera pose X: " << test.at<float>(0, 3) << endl;
+        cout << "Camera pose Y: " << test.at<float>(1, 3) << endl;
+        cout << "Camera pose Z: " << test.at<float>(2, 3) << endl;
+
+        float _quaternion[4];
+        computeQuaternion(test, _quaternion);
+        cout << "_quaternion: " << _quaternion[0] << " " << _quaternion[1] << " " << _quaternion[2] << " " << _quaternion[3] << endl;
+      }
 
       ProgressBar((float)ni/nImages);
     }
