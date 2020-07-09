@@ -129,6 +129,8 @@ int main(int argc, char **argv)
         cout << "_quaternion: " << _quaternion[0] << " " << _quaternion[1] << " " << _quaternion[2] << " " << _quaternion[3] << endl;
       }
 
+    cout << SLAM.GetTrackingState() << endl;
+
       ProgressBar((float)ni/nImages);
     }
     std::cout << std::endl;

@@ -95,3 +95,25 @@ float * runSLAM(void *System, void *imData, void *depthData, int width, int heig
 
   return(_cameraPose);
 }
+
+/**
+ * This function check the status of the ORBSLAM2 algorithm
+ * 
+ * @param  System Represents the pointer to a class of type System
+ * @return an array of ints with number of loop closures and an int with -1 (system not ready), 0 (no images yet), 1 (not initialized), 2 (ok), 3 (track lost)
+ */
+int * statusSLAM(void *System) {
+  int _status[2];
+  ORB_SLAM2::System *slam = static_cast<ORB_SLAM2::System *>(System);
+
+  // enum eTrackingState{
+  //   SYSTEM_NOT_READY=-1,
+  //   NO_IMAGES_YET=0,
+  //   NOT_INITIALIZED=1,
+  //   OK=2,
+  //   LOST=3
+  // };
+  _status[1] = slam->GetTrackingState();
+
+  return(_status);
+}
