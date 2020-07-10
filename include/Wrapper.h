@@ -7,5 +7,6 @@ extern "C" {
   API void* STD initSLAM(char *strVocFile, char *strSettingsFile, int sensor, int saveMap);
   API void STD closeSLAM(void *System);
   API float * STD runSLAM(void *System, void *im, void *depth, int width, int height, double timestamp);
-  API int * STD statusSLAM(void *System);
+  API int STD statusSLAM(void *System);
+  API int STD mapChangedSLAM(void *System);
 }

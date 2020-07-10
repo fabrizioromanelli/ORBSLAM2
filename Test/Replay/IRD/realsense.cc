@@ -9,7 +9,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 
-#include <Wrapper.h>
+// #include <Wrapper.h>
 
 using namespace std;
 using namespace cv;
@@ -120,23 +120,21 @@ int main(int argc, char **argv)
       // half size the infrared ones. (e.g. 320x240)
       cv::Mat test = SLAM.TrackRGBD(imIR, imDresized, tframe);
 
-      if (!test.empty()) {
-        cout << test.type() << endl;
-        cout << "Camera pose X: " << test.at<float>(0, 3) << endl;
-        cout << "Camera pose Y: " << test.at<float>(1, 3) << endl;
-        cout << "Camera pose Z: " << test.at<float>(2, 3) << endl;
+      // if (!test.empty()) {
+      //   cout << test.type() << endl;
+      //   cout << "Camera pose X: " << test.at<float>(0, 3) << endl;
+      //   cout << "Camera pose Y: " << test.at<float>(1, 3) << endl;
+      //   cout << "Camera pose Z: " << test.at<float>(2, 3) << endl;
 
-        float _quaternion[4];
-        computeQuaternion(test, _quaternion);
-        cout << "_quaternion: " << _quaternion[0] << " " << _quaternion[1] << " " << _quaternion[2] << " " << _quaternion[3] << endl;
+      //   float _quaternion[4];
+      //   computeQuaternion(test, _quaternion);
+      //   cout << "_quaternion: " << _quaternion[0] << " " << _quaternion[1] << " " << _quaternion[2] << " " << _quaternion[3] << endl;
 
-        // TEST
-        int * testing;
-        testing = statusSLAM((void *)&SLAM);
-        cout << "testing[0]: " << testing[0] << endl;
-        cout << "testing[1]: " << testing[1] << endl;
-        // TEST
-      }
+      //   // TEST
+      //   cout << "testing 0: " << statusSLAM((void *) &SLAM) << endl;
+      //   cout << "testing 1: " << mapChangedSLAM((void *) &SLAM) << endl;
+      //   // TEST
+      // }
 
       ProgressBar((float)ni/nImages);
     }
