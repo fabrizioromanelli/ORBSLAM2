@@ -9,6 +9,8 @@
 #include <sys/types.h>
 #include <dirent.h>
 
+#include <Wrapper.h>
+
 using namespace std;
 using namespace cv;
 using namespace ORB_SLAM2;
@@ -127,9 +129,14 @@ int main(int argc, char **argv)
         float _quaternion[4];
         computeQuaternion(test, _quaternion);
         cout << "_quaternion: " << _quaternion[0] << " " << _quaternion[1] << " " << _quaternion[2] << " " << _quaternion[3] << endl;
-      }
 
-    cout << SLAM.GetTrackingState() << endl;
+        // TEST
+        int * testing;
+        testing = statusSLAM((void *)&SLAM);
+        cout << "testing[0]: " << testing[0] << endl;
+        cout << "testing[1]: " << testing[1] << endl;
+        // TEST
+      }
 
       ProgressBar((float)ni/nImages);
     }

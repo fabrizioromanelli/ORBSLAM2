@@ -41,7 +41,7 @@ inline void computeQuaternion( cv::Mat a, float q[] ) {
  * @param  saveMap Represents the a boolean value (0 or 1) to tell the system to save a map at the end of the algorithm or not
  * @return a pointer to a class of type System
  */
-void* initSLAM(char *strVocFile, char *strSettingsFile, int sensor, int saveMap) {
+void * initSLAM(char *strVocFile, char *strSettingsFile, int sensor, int saveMap) {
   return new ORB_SLAM2::System(string(strVocFile), string(strSettingsFile), static_cast<ORB_SLAM2::System::eSensor>(sensor), false, saveMap > 0);
 }
 
@@ -70,7 +70,8 @@ void closeSLAM(void *System) {
  * @return an array of floats with [x, y, z] position and a quaternion [qw, qx, qy, qz] for the orientation (the values are concat)
  */
 float * runSLAM(void *System, void *imData, void *depthData, int width, int height, double timestamp) {
-  float _cameraPose[7], _quaternion[4];
+  static float _cameraPose[7];
+  float _quaternion[4];
   ORB_SLAM2::System *slam = static_cast<ORB_SLAM2::System *>(System);
 
   cv::Mat ir_left(cv::Size(width, height), CV_8UC1, imData, cv::Mat::AUTO_STEP);
@@ -97,14 +98,16 @@ float * runSLAM(void *System, void *imData, void *depthData, int width, int heig
 }
 
 /**
- * This function check the status of the ORBSLAM2 algorithm
+ * This function checks the status of the ORBSLAM2 algorithm
  * 
  * @param  System Represents the pointer to a class of type System
  * @return an array of ints with number of loop closures and an int with -1 (system not ready), 0 (no images yet), 1 (not initialized), 2 (ok), 3 (track lost)
  */
 int * statusSLAM(void *System) {
-  int _status[2];
+  static int _status[2];
   ORB_SLAM2::System *slam = static_cast<ORB_SLAM2::System *>(System);
+
+  _status[0] = 0;
 
   // enum eTrackingState{
   //   SYSTEM_NOT_READY=-1,
