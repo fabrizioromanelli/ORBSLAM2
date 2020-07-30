@@ -21,14 +21,15 @@ using namespace ORB_SLAM2;
 
 int main(int argc, char **argv)
 {
-  if(argc != 6)
+  if(argc != 7)
   {
     cerr << endl << "Usage: ./realsense_live" << endl 
                  << "         path_to_vocabulary" << endl
                  << "         path_to_configuration" << endl
                  << "         mode[RGBD/IRD]" << endl
                  << "         display[ON/OFF]" << endl
-                 << "         save_file[ON/OFF]" << endl;
+                 << "         save_file[ON/OFF]" << endl
+                 << "         autoclose[ON/OFF]" << endl;
     return 1;
   }
 
@@ -42,16 +43,21 @@ int main(int argc, char **argv)
     RealSense realsense(mode);
     // realsense.enableLaser(40.0);
 
+    // Clone parameters from command line
     bool display = false;
     string displayS = string(argv[4]);
     if(displayS.compare("ON") == 0)
       display = true;
 
     bool saveFile = false;
-    string saveFileS = string(argv[4]);
+    string saveFileS = string(argv[5]);
     if(saveFileS.compare("ON") == 0)
       saveFile = true;
 
+    bool autoclose = false;
+    string autocloseS = string(argv[6]);
+    if(autocloseS.compare("ON") == 0)
+      autoclose = true;
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
     System SLAM(argv[1], argv[2], System::RGBD, display, true);
@@ -94,29 +100,31 @@ int main(int argc, char **argv)
         cv::Mat irMatrix    = realsense.getIRLeftMatrix();
         cv::Mat depthMatrix = realsense.getDepthMatrix();
         // Pass the IR Left and Depth images to the SLAM system
-        SLAM.TrackRGBD(irMatrix, depthMatrix, realsense.getIRLeftTimestamp());
+        cv::Mat cameraPose = SLAM.TrackRGBD(irMatrix, depthMatrix, realsense.getIRLeftTimestamp());
+        cout << "Camera position" << cameraPose << endl;
 
         // Saving files
-        // if (saveFile) {
-        //   char filename_ir_[50] = "./infrared/ir_";
-        //   char *filename_ir = &filename_ir_[0];
-        //   strcat(filename_ir, to_string(realsense.getIRLeftTimestamp()).c_str());
-        //   strcat(filename_ir, ".jpg");
-        //   imwrite(filename_ir, irMatrix);
+        if (saveFile) {
+          char filename_ir_[50] = "./infrared/ir_";
+          char *filename_ir = &filename_ir_[0];
+          strcat(filename_ir, to_string(realsense.getIRLeftTimestamp()).c_str());
+          strcat(filename_ir, ".jpg");
+          imwrite(filename_ir, irMatrix);
 
-        //   // depthMatrix.convertTo(depthMatrix, CV_8UC1, 15 / 256.0);
+          // depthMatrix.convertTo(depthMatrix, CV_8UC1, 15 / 256.0);
 
-        //   char filename_depth_[50] = "./depth/depth_";
-        //   char *filename_depth = &filename_depth_[0];
-        //   strcat(filename_depth, to_string(realsense.getIRLeftTimestamp()).c_str());
-        //   strcat(filename_depth, ".png");
-        //   imwrite(filename_depth, depthMatrix);
-        // }
+          char filename_depth_[50] = "./depth/depth_";
+          char *filename_depth = &filename_depth_[0];
+          strcat(filename_depth, to_string(realsense.getIRLeftTimestamp()).c_str());
+          strcat(filename_depth, ".png");
+          imwrite(filename_depth, depthMatrix);
+        }
       }
 
       int key = waitKey(10);
-      // Stop SLAM when Spacebar is pressed
-      if( key == 32 ) {
+      // Stop SLAM when Spacebar is pressed or if the map changed (so a loop has been closed)
+      if( key == 32 || (SLAM.MapChanged() && autoclose)) {
+        cout << "Loop closed ==> shutting down SLAM" << endl;
         break;
       }
     }
