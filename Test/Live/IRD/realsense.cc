@@ -21,15 +21,16 @@ using namespace ORB_SLAM2;
 
 int main(int argc, char **argv)
 {
-  if(argc != 7)
+  if(argc != 8)
   {
     cerr << endl << "Usage: ./realsense_live" << endl 
                  << "         path_to_vocabulary" << endl
                  << "         path_to_configuration" << endl
                  << "         mode[RGBD/IRD]" << endl
                  << "         display[ON/OFF]" << endl
-                 << "         save_file[ON/OFF]" << endl
-                 << "         autoclose[ON/OFF]" << endl;
+                 << "         save images files[ON/OFF]" << endl
+                 << "         auto close after loop closure[ON/OFF]" << endl
+                 << "         print camera trajectory[ON/OFF]" << endl;
     return 1;
   }
 
@@ -59,25 +60,22 @@ int main(int argc, char **argv)
     if(autocloseS.compare("ON") == 0)
       autoclose = true;
 
+    bool printTraj = false;
+    string printTrajS = string(argv[7]);
+    if(printTrajS.compare("ON") == 0)
+      printTraj = true;
+
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
     System SLAM(argv[1], argv[2], System::RGBD, display, true);
 
     cout << endl << "-------" << endl;
     cout << "Start processing video stream ..." << endl;
 
-    // int dir_err = mkdir("infrared", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-    // if (dir_err == -1)
-    // {
-    //   cerr << "Error creating directory infrared!" << endl;
-    //   exit(1);
-    // }
-
-    // dir_err = mkdir("depth", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-    // if (dir_err == -1)
-    // {
-    //   cerr << "Error creating directory depth!" << endl;
-    //   exit(1);
-    // }
+    if (saveFile)
+    {
+      int dir_err = mkdir("infrared", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+      dir_err = mkdir("depth", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    }
 
     // Main loop
     for(;;)
@@ -101,7 +99,9 @@ int main(int argc, char **argv)
         cv::Mat depthMatrix = realsense.getDepthMatrix();
         // Pass the IR Left and Depth images to the SLAM system
         cv::Mat cameraPose = SLAM.TrackRGBD(irMatrix, depthMatrix, realsense.getIRLeftTimestamp());
-        cout << "Camera position" << cameraPose << endl;
+
+        if (printTraj)
+          cout << "Camera position" << cameraPose << endl;
 
         // Saving files
         if (saveFile) {
