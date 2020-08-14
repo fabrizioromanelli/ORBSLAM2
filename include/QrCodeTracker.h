@@ -27,8 +27,10 @@ public:
   std::string getDecodedData();
   cv::Mat getBoundingBox();
   cv::Mat getRectifiedImage();
+  void display();
 
 protected:
+  cv::Mat inputImage;
 
 private:
   cv::QRCodeDetector *qrDecoder;

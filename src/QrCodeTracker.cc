@@ -17,8 +17,9 @@ QrCodeTracker::QrCodeTracker()
   qrDecoder = new QRCodeDetector();
 }
 
-void QrCodeTracker::Track(Mat inputImage)
+void QrCodeTracker::Track(Mat _inputImage)
 {
+  inputImage = _inputImage;
   decodedData = qrDecoder->detectAndDecode(inputImage, bbox, rectifiedImage);
 }
 
@@ -40,5 +41,16 @@ Mat QrCodeTracker::getRectifiedImage()
   return(rectifiedImage);
 }
 
+void QrCodeTracker::display()
+{
+  int n = bbox.rows;
+  for(int i = 0 ; i < n ; i++)
+  {
+    line(inputImage, Point2i(bbox.at<float>(i,0),bbox.at<float>(i,1)), Point2i(bbox.at<float>((i+1) % n,0), bbox.at<float>((i+1) % n,1)), Scalar(255,0,0), 3);
+  }
+  imshow("Result", inputImage);
+  rectifiedImage.convertTo(rectifiedImage, CV_8UC3);
+  imshow("Rectified QRCode", rectifiedImage);
+}
 
 } //namespace ORB_SLAM
