@@ -33,6 +33,8 @@ int main(int argc, char **argv)
     cout << qrCodeTracker->getDecodedData() << endl;
     cout << "Bounding Box: " << qrCodeTracker->getBoundingBox() << endl;
     cout << "Bounding Box Center: " << qrCodeTracker->getBoundingBoxCenter() << endl;
+    qrCodeTracker->setThresholds(98, 97);
+    if (qrCodeTracker->isInsideBbox()) cout << "QR Code is inside bounding box" << endl; else cout << "QR Code is outside bounding box" << endl;
     qrCodeTracker->display();
   }
   catch(exception& ex) {

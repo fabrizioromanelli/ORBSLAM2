@@ -27,15 +27,21 @@ public:
   cv::Mat getBoundingBox();
   cv::Mat getRectifiedImage();
   cv::Point getBoundingBoxCenter();
+  void setThresholds(unsigned int, unsigned int);
+  bool isInsideBbox();
   void display();
 
 protected:
   cv::Mat inputImage;
+  unsigned int imgWidth;
+  unsigned int imgHeight;
 
 private:
   cv::QRCodeDetector *qrDecoder;
   cv::Mat bbox, rectifiedImage;
   std::string decodedData;
+  cv::Point qrCenter;
+  cv::Rect thRect;
 };
 
 } //namespace ORB_SLAM

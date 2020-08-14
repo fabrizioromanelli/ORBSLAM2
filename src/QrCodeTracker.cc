@@ -12,7 +12,7 @@ using namespace std;
 namespace ORB_SLAM2
 {
 
-QrCodeTracker::QrCodeTracker()
+QrCodeTracker::QrCodeTracker() : thRect(300, 220, 20, 20)
 {
   qrDecoder = new QRCodeDetector();
 }
@@ -20,7 +20,21 @@ QrCodeTracker::QrCodeTracker()
 void QrCodeTracker::Track(Mat _inputImage)
 {
   inputImage = _inputImage;
+  imgWidth   = _inputImage.cols;
+  imgHeight  = _inputImage.rows;
   decodedData = qrDecoder->detectAndDecode(inputImage, bbox, rectifiedImage);
+
+  Rect r = boundingRect(bbox);
+  Point center(r.x+r.width/2, r.y+r.height/2);
+  qrCenter = center;
+}
+
+void QrCodeTracker::setThresholds(unsigned int w, unsigned int h)
+{
+  thRect.x = imgWidth/2 - w/2;
+  thRect.y = imgHeight/2 - h/2;
+  thRect.width  = w;
+  thRect.height = h;
 }
 
 std::string QrCodeTracker::getDecodedData()
@@ -38,14 +52,21 @@ Mat QrCodeTracker::getBoundingBox()
 
 Point QrCodeTracker::getBoundingBoxCenter()
 {
-  Rect r = boundingRect(bbox);
-  Point center(r.x+r.width/2, r.y+r.height/2);
-  return(center);
+  return(qrCenter);
 }
 
 Mat QrCodeTracker::getRectifiedImage()
 {
   return(rectifiedImage);
+}
+
+bool QrCodeTracker::isInsideBbox()
+{
+  cout << "thRect " << thRect << endl;
+  if (qrCenter.inside(thRect))
+    return(true);
+  else
+    return(false);
 }
 
 void QrCodeTracker::display()
@@ -57,7 +78,7 @@ void QrCodeTracker::display()
   }
   imshow("Result", inputImage);
   rectifiedImage.convertTo(rectifiedImage, CV_8UC3);
-  // imshow("Rectified QRCode", rectifiedImage);
+  imshow("Rectified QRCode", rectifiedImage);
 }
 
 } //namespace ORB_SLAM
