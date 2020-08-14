@@ -50,7 +50,7 @@ void QrCodeTracker::display()
   }
   imshow("Result", inputImage);
   rectifiedImage.convertTo(rectifiedImage, CV_8UC3);
-  imshow("Rectified QRCode", rectifiedImage);
+  // imshow("Rectified QRCode", rectifiedImage);
 }
 
 } //namespace ORB_SLAM

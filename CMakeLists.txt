@@ -107,6 +107,9 @@ target_link_libraries(realsense_live ${PROJECT_NAME})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/Monocular)
 add_executable(mono_camera Test/Live/Monocular/mono_camera.cc)
 target_link_libraries(mono_camera ${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/QRCode)
+add_executable(qrCode_live Test/Live/QRCode/qrCode.cc)
+target_link_libraries(qrCode_live ${PROJECT_NAME})
 
 # Build Tests for Replay sequences
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/IRD)
@@ -127,6 +130,9 @@ add_executable(stereo_kitti Test/Replay/Stereo/stereo_kitti.cc)
 target_link_libraries(stereo_kitti ${PROJECT_NAME})
 add_executable(stereo_euroc Test/Replay/Stereo/stereo_euroc.cc)
 target_link_libraries(stereo_euroc ${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/QRCode)
+add_executable(qrCode_replay Test/Replay/QRCode/qrCode.cc)
+target_link_libraries(qrCode_replay ${PROJECT_NAME})
 
 # Build V-SLAM application
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Drone)

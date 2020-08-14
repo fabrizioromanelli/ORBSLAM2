@@ -19,7 +19,6 @@ namespace ORB_SLAM2
 
 class QrCodeTracker
 {
-
 public:
   QrCodeTracker();
   // Main tracking function. It is independent of the input sensor.
