@@ -36,6 +36,13 @@ Mat QrCodeTracker::getBoundingBox()
   return(bbox);
 }
 
+Point QrCodeTracker::getBoundingBoxCenter()
+{
+  Rect r = boundingRect(bbox);
+  Point center(r.x+r.width/2, r.y+r.height/2);
+  return(center);
+}
+
 Mat QrCodeTracker::getRectifiedImage()
 {
   return(rectifiedImage);

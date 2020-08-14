@@ -31,6 +31,8 @@ int main(int argc, char **argv)
     QrCodeTracker *qrCodeTracker = new QrCodeTracker();
     qrCodeTracker->Track(inputImage);
     cout << qrCodeTracker->getDecodedData() << endl;
+    cout << "Bounding Box: " << qrCodeTracker->getBoundingBox() << endl;
+    cout << "Bounding Box Center: " << qrCodeTracker->getBoundingBoxCenter() << endl;
     qrCodeTracker->display();
   }
   catch(exception& ex) {

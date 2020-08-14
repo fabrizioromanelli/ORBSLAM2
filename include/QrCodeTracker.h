@@ -26,6 +26,7 @@ public:
   std::string getDecodedData();
   cv::Mat getBoundingBox();
   cv::Mat getRectifiedImage();
+  cv::Point getBoundingBoxCenter();
   void display();
 
 protected:
