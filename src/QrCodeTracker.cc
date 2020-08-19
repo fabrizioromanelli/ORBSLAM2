@@ -29,7 +29,7 @@ void QrCodeTracker::Check(Mat _inputImage)
   qrCenter = center;
 }
 
-void QrCodeTracker::Track(cv::Mat _inputImage, cv::Point _SLAMPosition)
+void QrCodeTracker::Track(cv::Mat _inputImage, cv::Point2d _SLAMPosition)
 {
   std::string decodedData;
 
