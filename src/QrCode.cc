@@ -14,7 +14,7 @@ namespace ORB_SLAM2
 
 QrCode::QrCode(){}
 
-QrCode::QrCode(std::string _code, cv::Point _bBoxCenter, cv::Point _SLAMPosition) : code(_code), bBoxCenter(_bBoxCenter), SLAMPosition(_SLAMPosition) {}
+QrCode::QrCode(std::string _code, cv::Point _bBoxCenter, cv::Point2d _SLAMPosition) : code(_code), bBoxCenter(_bBoxCenter), SLAMPosition(_SLAMPosition) {}
 
 void QrCode::setCode(std::string _code)
 {
@@ -26,7 +26,7 @@ void QrCode::setBboxCenter(cv::Point _bBoxCenter)
   bBoxCenter = _bBoxCenter;
 }
 
-void QrCode::setSLAMPosition(cv::Point _SLAMPosition)
+void QrCode::setSLAMPosition(cv::Point2d _SLAMPosition)
 {
   SLAMPosition = _SLAMPosition;
 }
@@ -41,7 +41,7 @@ cv::Point QrCode::getBboxCenter()
   return bBoxCenter;
 }
 
-cv::Point QrCode::getSLAMPosition()
+cv::Point2d QrCode::getSLAMPosition()
 {
   return SLAMPosition;
 }

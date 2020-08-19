@@ -13,6 +13,9 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
 #include "QrCode.h"
 
 namespace ORB_SLAM2
@@ -34,7 +37,7 @@ public:
   bool isInsideBbox();
   void display();
   void addQrCodeToMap(QrCode);
-  void loadQrCodeList(std::string);
+  void loadQrCodeList();
   void saveQrCodeList();
   cv::Point getPositionFromCode(std::string);
 

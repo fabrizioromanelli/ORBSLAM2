@@ -29,6 +29,9 @@ int main(int argc, char **argv)
     cout << endl << "-------" << endl;
     cout << "Start processing image file ..." << endl;
     QrCodeTracker *qrCodeTracker = new QrCodeTracker();
+
+qrCodeTracker->loadQrCodeList();
+
     qrCodeTracker->Check(inputImage);
     std::string decodedData;
     if (qrCodeTracker->getDecodedData(decodedData)) {
@@ -44,12 +47,14 @@ int main(int argc, char **argv)
     if (qrCodeTracker->getDecodedData(decodedData) && qrCodeTracker->isInsideBbox()) {
       cout << "Recording data..." << endl;
       // Fake SLAM position
-      cv::Point fakeSLAMPos(10,20); // this position must be taken from the SLAM current position...
+      cv::Point2d fakeSLAMPos(1.25345, 0.92649); // this position must be taken from the SLAM current position...
       QrCode newQrCode(decodedData, qrCodeTracker->getBoundingBoxCenter(), fakeSLAMPos);
       qrCodeTracker->addQrCodeToMap(newQrCode);
-      std::vector<QrCode> * qrCodeList = qrCodeTracker->getQrCodeList();
-      std::cout << "From list " << qrCodeList->at(0).getCode() << std::endl;
+      QrCode newQrCode2("TESTO LE ROBBE", qrCodeTracker->getBoundingBoxCenter(), fakeSLAMPos);
+      qrCodeTracker->addQrCodeToMap(newQrCode2);
     }
+
+    qrCodeTracker->saveQrCodeList();
 
     qrCodeTracker->display();
   }

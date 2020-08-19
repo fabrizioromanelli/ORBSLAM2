@@ -59,3 +59,4 @@ lib/
 .idea/
 *.mapfile
 Drone/DroneVslam
+QRCodes.txt

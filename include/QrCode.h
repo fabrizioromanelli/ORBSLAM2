@@ -21,18 +21,18 @@ class QrCode
 {
 public:
   QrCode();
-  QrCode(std::string, cv::Point, cv::Point);
+  QrCode(std::string, cv::Point, cv::Point2d);
   void setCode(std::string);
   void setBboxCenter(cv::Point);
-  void setSLAMPosition(cv::Point);
+  void setSLAMPosition(cv::Point2d);
   std::string getCode();
   cv::Point getBboxCenter();
-  cv::Point getSLAMPosition();
+  cv::Point2d getSLAMPosition();
 
 private:
   std::string code;
   cv::Point bBoxCenter;
-  cv::Point SLAMPosition;
+  cv::Point2d SLAMPosition;
 };
 
 } //namespace ORB_SLAM

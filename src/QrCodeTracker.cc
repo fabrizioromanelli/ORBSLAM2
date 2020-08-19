@@ -42,14 +42,63 @@ void QrCodeTracker::Track(cv::Mat _inputImage, cv::Point _SLAMPosition)
   }
 }
 
-void QrCodeTracker::loadQrCodeList(std::string _filename)
+istream& operator >> (istream &fi, cv::Point &p)
 {
+   char char1, char2, char3;
+   fi >> char1 >> p.x >>char2 >> p.y >> char3;
+   if (char1=='[' &&  char2==',' && char3==']')
+    return fi;
+}
 
+istream& operator >> (istream &fi, cv::Point2d &p)
+{
+   char char1, char2, char3;
+   fi >> char1 >> p.x >>char2 >> p.y >> char3;
+   if (char1=='[' &&  char2==',' && char3==']')
+    return fi;
+}
+
+void QrCodeTracker::loadQrCodeList()
+{
+  std::string empty, code;
+  cv::Point bBoxCenter;
+  cv::Point2d SLAMPosition;
+  std::ifstream in("QRCodes.txt");
+
+  int lineNum = 0;
+  std::string line;
+  while (std::getline(in, line))
+  {
+    std::istringstream iss(line);
+    if (lineNum == 1)
+      code = line;
+    if (lineNum == 2)
+      iss >> bBoxCenter;
+    if (lineNum == 3) {
+      iss >> SLAMPosition;
+      lineNum = 0;
+      QrCode newQrCode(code, bBoxCenter, SLAMPosition);
+      this->addQrCodeToMap(newQrCode);
+      continue;
+    }
+    lineNum++;
+  }
 }
 
 void QrCodeTracker::saveQrCodeList()
 {
+  std::ofstream out("QRCodes.txt");
 
+  // Loop over all the detected QRCodes
+  int i = 1;
+  for(std::vector<QrCode>::iterator it = qrCodes.begin(); it != qrCodes.end(); ++it, ++i) {
+    out << "#### Detected code " << i << " ####" << endl;
+    out << it->getCode() << endl;
+    out << it->getBboxCenter() << endl;
+    out << it->getSLAMPosition() << endl;
+  }
+
+  out.close();
 }
 
 std::vector<QrCode> * QrCodeTracker::getQrCodeList()
@@ -135,7 +184,7 @@ void QrCodeTracker::addQrCodeToMap(QrCode _newQrCode)
 
   if (addFlag) {
     qrCodes.push_back(_newQrCode);
-    std::cout << "Adding the following QrCode: " << qrCodes[0].getCode() << std::endl;
+    std::cout << "Adding the following QrCode: " << _newQrCode.getCode() << std::endl;
   } else {
     std::cout << _newQrCode.getCode() << " is already in the list." << std::endl;
   }
