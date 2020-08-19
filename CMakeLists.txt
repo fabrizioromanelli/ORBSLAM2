@@ -71,6 +71,7 @@ add_library(${PROJECT_NAME} SHARED
         src/HPose.cpp
         src/Wrapper.cc
         src/QrCodeTracker.cc
+        src/QrCode.cc
         )
 
 target_link_libraries(${PROJECT_NAME}

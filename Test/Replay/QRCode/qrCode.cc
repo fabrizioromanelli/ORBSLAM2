@@ -30,11 +30,25 @@ int main(int argc, char **argv)
     cout << "Start processing image file ..." << endl;
     QrCodeTracker *qrCodeTracker = new QrCodeTracker();
     qrCodeTracker->Track(inputImage);
-    cout << qrCodeTracker->getDecodedData() << endl;
+    std::string decodedData;
+    if (qrCodeTracker->getDecodedData(decodedData)) {
+      cout << decodedData << endl;
+    } else {
+      cout << "No data detected" << endl;
+    }
     cout << "Bounding Box: " << qrCodeTracker->getBoundingBox() << endl;
     cout << "Bounding Box Center: " << qrCodeTracker->getBoundingBoxCenter() << endl;
     // qrCodeTracker->setThresholds(98, 97);
     if (qrCodeTracker->isInsideBbox()) cout << "QR Code is inside bounding box" << endl; else cout << "QR Code is outside bounding box" << endl;
+
+    if (qrCodeTracker->getDecodedData(decodedData) && qrCodeTracker->isInsideBbox()) {
+      cout << "Recording data..." << endl;
+      // Fake SLAM position
+      cv::Point fakeSLAMPos(10,20);
+      QrCode newQrCode(decodedData, qrCodeTracker->getBoundingBoxCenter(), fakeSLAMPos);
+      qrCodeTracker->addQrCodeToMap(newQrCode);
+    }
+
     qrCodeTracker->display();
   }
   catch(exception& ex) {

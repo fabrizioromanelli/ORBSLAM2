@@ -13,6 +13,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <iostream>
+#include "QrCode.h"
 
 namespace ORB_SLAM2
 {
@@ -23,13 +24,14 @@ public:
   QrCodeTracker();
   // Main tracking function. It is independent of the input sensor.
   void Track(cv::Mat);
-  std::string getDecodedData();
+  bool getDecodedData(std::string &);
   cv::Mat getBoundingBox();
   cv::Mat getRectifiedImage();
   cv::Point getBoundingBoxCenter();
   void setThresholds(unsigned int, unsigned int);
   bool isInsideBbox();
   void display();
+  void addQrCodeToMap(QrCode);
 
 protected:
   cv::Mat inputImage;
@@ -42,6 +44,7 @@ private:
   std::string decodedData;
   cv::Point qrCenter;
   cv::Rect thRect;
+  std::vector<QrCode> qrCodes;
 };
 
 } //namespace ORB_SLAM

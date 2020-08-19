@@ -37,12 +37,15 @@ void QrCodeTracker::setThresholds(unsigned int w, unsigned int h)
   thRect.height = h;
 }
 
-std::string QrCodeTracker::getDecodedData()
+bool QrCodeTracker::getDecodedData(std::string & _decodedData)
 {
   if (decodedData.length() > 0)
-    return(decodedData);
+  {
+    _decodedData = decodedData;
+    return(true);
+  }
   else
-    return("QR Code not detected");
+    return(false);
 }
 
 Mat QrCodeTracker::getBoundingBox()
@@ -79,6 +82,12 @@ void QrCodeTracker::display()
   imshow("Result", inputImage);
   rectifiedImage.convertTo(rectifiedImage, CV_8UC3);
   imshow("Rectified QRCode", rectifiedImage);
+}
+
+void QrCodeTracker::addQrCodeToMap(QrCode _newQrCode)
+{
+  qrCodes.push_back(_newQrCode);
+  std::cout << qrCodes[0].getCode() << std::endl;
 }
 
 } //namespace ORB_SLAM
