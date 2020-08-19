@@ -23,8 +23,10 @@ class QrCodeTracker
 public:
   QrCodeTracker();
   // Main tracking function. It is independent of the input sensor.
-  void Track(cv::Mat);
+  void Check(cv::Mat);
+  void Track(cv::Mat, cv::Point);
   bool getDecodedData(std::string &);
+  std::vector<QrCode> * getQrCodeList();
   cv::Mat getBoundingBox();
   cv::Mat getRectifiedImage();
   cv::Point getBoundingBoxCenter();
@@ -32,6 +34,9 @@ public:
   bool isInsideBbox();
   void display();
   void addQrCodeToMap(QrCode);
+  void loadQrCodeList(std::string);
+  void saveQrCodeList();
+  cv::Point getPositionFromCode(std::string);
 
 protected:
   cv::Mat inputImage;

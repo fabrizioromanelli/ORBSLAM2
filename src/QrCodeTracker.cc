@@ -17,7 +17,7 @@ QrCodeTracker::QrCodeTracker() : thRect(120, 40, 400, 400)
   qrDecoder = new QRCodeDetector();
 }
 
-void QrCodeTracker::Track(Mat _inputImage)
+void QrCodeTracker::Check(Mat _inputImage)
 {
   inputImage = _inputImage;
   imgWidth   = _inputImage.cols;
@@ -27,6 +27,45 @@ void QrCodeTracker::Track(Mat _inputImage)
   Rect r = boundingRect(bbox);
   Point center(r.x+r.width/2, r.y+r.height/2);
   qrCenter = center;
+}
+
+void QrCodeTracker::Track(cv::Mat _inputImage, cv::Point _SLAMPosition)
+{
+  std::string decodedData;
+
+  this->Check(_inputImage);
+
+  if (this->getDecodedData(decodedData) && this->isInsideBbox()) {
+    cout << "Recording data..." << endl;
+    QrCode newQrCode(decodedData, this->getBoundingBoxCenter(), _SLAMPosition);
+    this->addQrCodeToMap(newQrCode);
+  }
+}
+
+void QrCodeTracker::loadQrCodeList(std::string _filename)
+{
+
+}
+
+void QrCodeTracker::saveQrCodeList()
+{
+
+}
+
+std::vector<QrCode> * QrCodeTracker::getQrCodeList()
+{
+  return &qrCodes;
+}
+
+cv::Point QrCodeTracker::getPositionFromCode(std::string _inputCode)
+{
+  for(std::vector<QrCode>::iterator it = qrCodes.begin(); it != qrCodes.end(); ++it) {
+    if (!it->getCode().compare(_inputCode)) {
+      return (it->getSLAMPosition());
+    }
+  }
+
+  return (cv::Point(-1, -1));
 }
 
 void QrCodeTracker::setThresholds(unsigned int w, unsigned int h)
