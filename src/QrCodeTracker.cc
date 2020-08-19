@@ -86,8 +86,20 @@ void QrCodeTracker::display()
 
 void QrCodeTracker::addQrCodeToMap(QrCode _newQrCode)
 {
-  qrCodes.push_back(_newQrCode);
-  std::cout << qrCodes[0].getCode() << std::endl;
+  bool addFlag = true;
+  for(std::vector<QrCode>::iterator it = qrCodes.begin(); it != qrCodes.end(); ++it) {
+    if (!it->getCode().compare(_newQrCode.getCode())) {
+      addFlag = false;
+      break;
+    }
+  }
+
+  if (addFlag) {
+    qrCodes.push_back(_newQrCode);
+    std::cout << "Adding the following QrCode: " << qrCodes[0].getCode() << std::endl;
+  } else {
+    std::cout << _newQrCode.getCode() << " is already in the list." << std::endl;
+  }
 }
 
 } //namespace ORB_SLAM
