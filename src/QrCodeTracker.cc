@@ -12,7 +12,7 @@ using namespace std;
 namespace ORB_SLAM2
 {
 
-QrCodeTracker::QrCodeTracker() : thRect(300, 220, 20, 20)
+QrCodeTracker::QrCodeTracker() : thRect(120, 40, 400, 400)
 {
   qrDecoder = new QRCodeDetector();
 }
