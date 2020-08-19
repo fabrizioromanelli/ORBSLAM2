@@ -1,5 +1,6 @@
 #include "Wrapper.h"
 #include <System.h>
+#include <QrCodeTracker.h>
 
 inline void computeQuaternion( cv::Mat a, float q[] ) {
   float trace = a.at<float>(0, 0) + a.at<float>(1, 1) + a.at<float>(2, 2);
@@ -126,4 +127,53 @@ int statusSLAM(void *System) {
 int mapChangedSLAM(void *System) {
   ORB_SLAM2::System *slam = static_cast<ORB_SLAM2::System *>(System);
   return((int)slam->MapChanged());
+}
+
+/**
+ * This function loads the QRCode list
+ * 
+ * @return a pointer to a class of type QrCodeTracker
+ */
+void * initQRCodeTracker() {
+  return new ORB_SLAM2::QrCodeTracker();
+}
+
+/**
+ * This function loads the QRCodes from the QRCodes.txt file
+ * 
+ * @param  QrCodeTracker Represents the pointer to a class of type QrCodeTracker
+ * @return none
+ */
+void loadQRCodes(void *QrCodeTracker) {
+  ORB_SLAM2::QrCodeTracker *qrCodeTracker = static_cast<ORB_SLAM2::QrCodeTracker *>(QrCodeTracker);
+  qrCodeTracker->loadQrCodeList();
+}
+
+/**
+ * This function saves the QRCodes to the QRCodes.txt file
+ * 
+ * @param  QrCodeTracker Represents the pointer to a class of type QrCodeTracker
+ * @return none
+ */
+void saveQRCodes(void *QrCodeTracker) {
+  ORB_SLAM2::QrCodeTracker *qrCodeTracker = static_cast<ORB_SLAM2::QrCodeTracker *>(QrCodeTracker);
+  qrCodeTracker->saveQrCodeList();
+}
+
+/**
+ * This function tracks the QRCode on the input image
+ * 
+ * @param  QrCodeTracker Represents the pointer to a class of type QrCodeTracker
+ * @param  im Represents the pointer to a frame
+ * @param  width Represents the width of the frames
+ * @param  height Represents the height of the frames
+ * @param  x Represents the X coordinate of the current SLAM position
+ * @param  y Represents the Y coordinate of the current SLAM position
+ * @return none
+ */
+void track(void *QrCodeTracker, void *im, int width, int height, double x, double y) {
+  ORB_SLAM2::QrCodeTracker *qrCodeTracker = static_cast<ORB_SLAM2::QrCodeTracker *>(QrCodeTracker);
+
+  cv::Mat imageInput(cv::Size(width, height), CV_8UC1, im, cv::Mat::AUTO_STEP);
+  qrCodeTracker->Track(imageInput, cv::Point2d(x, y));
 }

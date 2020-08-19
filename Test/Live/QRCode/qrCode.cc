@@ -32,6 +32,7 @@ int main(int argc, char **argv)
     RealSense::sModality mode = RealSense::RGBD;
     RealSense realsense(mode);
     QrCodeTracker *qrCodeTracker = new QrCodeTracker();
+    qrCodeTracker->loadQrCodeList();
 
     // Main loop
     for(;;)
