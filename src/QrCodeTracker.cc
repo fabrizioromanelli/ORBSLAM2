@@ -22,11 +22,16 @@ void QrCodeTracker::Check(Mat _inputImage)
   inputImage = _inputImage;
   imgWidth   = _inputImage.cols;
   imgHeight  = _inputImage.rows;
+
   decodedData = qrDecoder->detectAndDecode(inputImage, bbox, rectifiedImage);
 
-  Rect r = boundingRect(bbox);
-  Point center(r.x+r.width/2, r.y+r.height/2);
-  qrCenter = center;
+  try
+  {
+    Rect r = boundingRect(bbox);
+    Point center(r.x+r.width/2, r.y+r.height/2);
+    qrCenter = center;
+  }
+  catch(const std::exception& e){}
 }
 
 void QrCodeTracker::Track(cv::Mat _inputImage, cv::Point2d _SLAMPosition)
@@ -36,7 +41,6 @@ void QrCodeTracker::Track(cv::Mat _inputImage, cv::Point2d _SLAMPosition)
   this->Check(_inputImage);
 
   if (this->getDecodedData(decodedData) && this->isInsideBbox()) {
-    cout << "Recording data..." << endl;
     QrCode newQrCode(decodedData, this->getBoundingBoxCenter(), _SLAMPosition);
     this->addQrCodeToMap(newQrCode);
   }
@@ -153,7 +157,6 @@ Mat QrCodeTracker::getRectifiedImage()
 
 bool QrCodeTracker::isInsideBbox()
 {
-  cout << "thRect " << thRect << endl;
   if (qrCenter.inside(thRect))
     return(true);
   else
@@ -168,8 +171,8 @@ void QrCodeTracker::display()
     line(inputImage, Point2i(bbox.at<float>(i,0),bbox.at<float>(i,1)), Point2i(bbox.at<float>((i+1) % n,0), bbox.at<float>((i+1) % n,1)), Scalar(255,0,0), 3);
   }
   imshow("Result", inputImage);
-  rectifiedImage.convertTo(rectifiedImage, CV_8UC3);
-  imshow("Rectified QRCode", rectifiedImage);
+  // rectifiedImage.convertTo(rectifiedImage, CV_8UC3);
+  // imshow("Rectified QRCode", rectifiedImage);
 }
 
 void QrCodeTracker::addQrCodeToMap(QrCode _newQrCode)
