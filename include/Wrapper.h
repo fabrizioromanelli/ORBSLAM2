@@ -10,7 +10,9 @@ extern "C" {
   API int STD statusSLAM(void *System);
   API int STD mapChangedSLAM(void *System);
   API void* STD initQRCodeTracker();
+  API void STD closeQRCodeTracker(void *QrCodeTracker);
   API void STD loadQRCodes(void *QrCodeTracker);
   API void STD saveQRCodes(void *QrCodeTracker);
   API void STD track(void *QrCodeTracker, void *im, double x, double y);
+  API float * STD detect(void *QrCodeTracker, void *im, int width, int height);
 }

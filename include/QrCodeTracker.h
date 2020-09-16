@@ -28,6 +28,7 @@ public:
   // Main tracking function. It is independent of the input sensor.
   void Check(cv::Mat);
   void Track(cv::Mat, cv::Point2d);
+  cv::Point Detect(cv::Mat);
   bool getDecodedData(std::string &);
   std::vector<QrCode> * getQrCodeList();
   cv::Mat getBoundingBox();

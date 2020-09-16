@@ -46,6 +46,25 @@ void QrCodeTracker::Track(cv::Mat _inputImage, cv::Point2d _SLAMPosition)
   }
 }
 
+Point QrCodeTracker::Detect(cv::Mat _inputImage)
+{
+  Point temp;
+  std::string decodedData;
+
+  this->Check(_inputImage);
+
+  if (this->getDecodedData(decodedData)) {
+    temp.x = this->getBoundingBoxCenter().x - imgWidth/2;
+    temp.y = this->getBoundingBoxCenter().y - imgHeight/2;
+  } else {
+    // Fixing a high value for both X and Y in order to
+    // always return an initialized value.
+    temp.x = 9999;
+    temp.y = 9999;
+  }
+  return(temp);
+}
+
 istream& operator >> (istream &fi, cv::Point &p)
 {
    char char1, char2, char3;

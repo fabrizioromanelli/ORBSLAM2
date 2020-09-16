@@ -30,8 +30,11 @@ int main(int argc, char **argv)
     cout << "Start processing image file ..." << endl;
     QrCodeTracker *qrCodeTracker = new QrCodeTracker();
 
-    qrCodeTracker->Track(inputImage, Point2d(2.13, 4.82));
-    qrCodeTracker->saveQrCodeList();
+    // qrCodeTracker->Track(inputImage, Point2d(2.13, 4.82));
+    // qrCodeTracker->saveQrCodeList();
+    cv::Point test;
+    test = qrCodeTracker->Detect(inputImage);
+    std::cout << test << std::endl;
     qrCodeTracker->display();
   }
   catch(exception& ex) {
