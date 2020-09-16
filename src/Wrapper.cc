@@ -130,12 +130,24 @@ int mapChangedSLAM(void *System) {
 }
 
 /**
- * This function loads the QRCode list
+ * This function returns a QRCode tracker
  * 
  * @return a pointer to a class of type QrCodeTracker
  */
 void * initQRCodeTracker() {
   return new ORB_SLAM2::QrCodeTracker();
+}
+
+/**
+ * This function closes the QRCode tracker and frees all the dynamic memory allocation
+ * 
+ * @param  System Represents the pointer to a class of type System
+ * @return none
+ */
+void closeQRCodeTracker(void *QrCode) {
+  ORB_SLAM2::QrCodeTracker *destroy = static_cast<ORB_SLAM2::QrCodeTracker *>(QrCode);
+  delete destroy;
+  return;
 }
 
 /**
@@ -176,4 +188,26 @@ void track(void *QrCodeTracker, void *im, int width, int height, double x, doubl
 
   cv::Mat imageInput(cv::Size(width, height), CV_8UC1, im, cv::Mat::AUTO_STEP);
   qrCodeTracker->Track(imageInput, cv::Point2d(x, y));
+}
+
+/**
+ * This function detects the QRCode on the input image and outputs displacement if found any
+ * 
+ * 
+ * @param  QrCodeTracker Represents the pointer to a class of type QrCodeTracker
+ * @param  im Represents the pointer to a frame
+ * @param  width Represents the width of the frames
+ * @param  height Represents the height of the frames
+ * @return an array of floats with [x, y] position
+ */
+float * detect(void *QrCodeTracker, void *im, int width, int height) {
+  static float _qrCodePose[2];
+  cv::Point _qrBboxPose;
+  ORB_SLAM2::QrCodeTracker *qrCodeTracker = static_cast<ORB_SLAM2::QrCodeTracker *>(QrCodeTracker);
+
+  cv::Mat imageInput(cv::Size(width, height), CV_8UC1, im, cv::Mat::AUTO_STEP);
+  _qrBboxPose = qrCodeTracker->Detect(imageInput);
+  _qrCodePose[0] = _qrBboxPose.x;
+  _qrCodePose[1] = _qrBboxPose.y;
+  return(_qrCodePose);
 }
