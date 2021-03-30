@@ -199,6 +199,9 @@ install(DIRECTORY "Thirdparty/fbow/lib/"
 install(DIRECTORY "Thirdparty/g2o/lib/"
     DESTINATION "/usr/local/lib")
 
+install(DIRECTORY "Thirdparty/DLib/lib/"
+    DESTINATION "/usr/local/lib")
+
 install(DIRECTORY "Thirdparty/fbow/include/fbow/"
     DESTINATION "/usr/local/include/Thirdparty/fbow"
     FILES_MATCHING
