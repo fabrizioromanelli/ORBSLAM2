@@ -87,7 +87,13 @@ void Viewer::Run()
     pangolin::OpenGlMatrix Twc;
     Twc.SetIdentity();
 
-    cv::namedWindow("ORB-SLAM2: Current Frame");
+    int curFrameWidth, curFrameHeight;
+    curFrameWidth  = mImageWidth;
+    curFrameHeight = mImageHeight+20;
+
+    pangolin::CreateWindowAndBind("ORB-SLAM2: Current Frame",curFrameWidth,curFrameHeight);
+    pangolin::View& d_stream = pangolin::CreateDisplay().SetBounds(0.0, 1.0, 1.0, 0.0, (double)-curFrameWidth/curFrameHeight);
+    pangolin::GlTexture imageTexture(curFrameWidth,curFrameHeight,GL_RGB,false,0,GL_RGB,GL_UNSIGNED_BYTE);
 
     bool bFollow = true;
     bool bLocalizationMode = false;
@@ -127,6 +133,7 @@ void Viewer::Run()
             bLocalizationMode = false;
         }
 
+        pangolin::BindToContext("ORB-SLAM2: Map Viewer");
         d_cam.Activate(s_cam);
         glClearColor(1.0f,1.0f,1.0f,1.0f);
         mpMapDrawer->DrawCurrentCamera(Twc);
@@ -137,9 +144,15 @@ void Viewer::Run()
 
         pangolin::FinishFrame();
 
-        cv::Mat im = mpFrameDrawer->DrawFrame();
-        cv::imshow("ORB-SLAM2: Current Frame",im);
-        cv::waitKey(mT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        pangolin::BindToContext("ORB-SLAM2: Current Frame");
+
+        cv::Mat toShow = mpFrameDrawer->DrawFrame();
+        cv::Mat img(toShow.cols, toShow.rows, CV_16UC1, (void *)toShow.data);
+        imageTexture.Upload((void*)img.data,GL_RGB,GL_UNSIGNED_BYTE);
+        d_stream.Activate();
+        imageTexture.RenderToViewportFlipY();
+        pangolin::FinishFrame();
 
         if(menuReset)
         {
