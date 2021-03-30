@@ -202,7 +202,7 @@ install(DIRECTORY "Thirdparty/g2o/lib/"
 install(DIRECTORY "Thirdparty/DLib/lib/"
     DESTINATION "/usr/local/lib")
 
-install(DIRECTORY "Thirdparty/fbow/include/fbow/"
+install(DIRECTORY "Thirdparty/fbow/"
     DESTINATION "/usr/local/include/Thirdparty/fbow"
     FILES_MATCHING
     PATTERN "*.h")
