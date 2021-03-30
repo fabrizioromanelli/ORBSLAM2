@@ -29,9 +29,9 @@ endif()
 
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 
-find_package(OpenCV 4.2.0 QUIET)
+find_package(OpenCV 4.5.1 QUIET)
 if(NOT OpenCV_FOUND)
-  message(FATAL_ERROR "OpenCV > 4.2.0 not found.")
+  message(FATAL_ERROR "OpenCV > 4.5.1 not found.")
 endif()
 
 find_package(Eigen3 3.1.0 REQUIRED)
@@ -188,3 +188,42 @@ target_link_libraries(grab_realsense_rgb ${PROJECT_NAME})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/GrabSequence/IRD)
 add_executable(grab_sequence_realsense_ird Tools/GrabSequence/IRD/grab_sequence_realsense_ird.cc)
 target_link_libraries(grab_sequence_realsense_ird ${PROJECT_NAME})
+
+# Install library and headers
+install (TARGETS ${PROJECT_NAME}
+    LIBRARY DESTINATION "/usr/local/lib")
+
+install(DIRECTORY "Thirdparty/fbow/lib/"
+    DESTINATION "/usr/local/lib")
+
+install(DIRECTORY "Thirdparty/g2o/lib/"
+    DESTINATION "/usr/local/lib")
+
+install(DIRECTORY "Thirdparty/fbow/include/fbow/"
+    DESTINATION "/usr/local/include/Thirdparty/fbow"
+    FILES_MATCHING
+    PATTERN "*.h")
+
+install(DIRECTORY "Thirdparty/DLib/include/"
+    DESTINATION "/usr/local/include/Thirdparty/DLib")
+
+install(DIRECTORY "Thirdparty/g2o/g2o/"
+    DESTINATION "/usr/local/include/Thirdparty/g2o/g2o")
+
+install(DIRECTORY "Thirdparty/g2o/"
+    DESTINATION "/usr/local/include/Thirdparty/g2o"
+    FILES_MATCHING
+    PATTERN "*.h")
+
+install(DIRECTORY "include/"
+        DESTINATION "/usr/local/include/${PROJECT_NAME}"
+        FILES_MATCHING
+        PATTERN "*.h")
+
+install(DIRECTORY "Config/"
+        DESTINATION "/usr/local/share/${PROJECT_NAME}/Config")
+
+install(DIRECTORY "Vocabulary/"
+        DESTINATION "/usr/local/share/${PROJECT_NAME}/Vocabulary"
+        FILES_MATCHING
+        PATTERN "*.fbow")

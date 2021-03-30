@@ -59,6 +59,9 @@ else
 fi
 make $1
 
+sudo make install
+sudo ldconfig
+
 cd ..
 
 if [ "$3" == "ROS" ]; then
