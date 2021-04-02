@@ -115,6 +115,7 @@ IF(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
     if(${CMAKE_SYSTEM_PROCESSOR} MATCHES arm*) # We can use only -O2 because the -O3 causes gcc crash
         set(USE_O2 ON CACHE BOOL "Enable -O2 for GCC")
         set(USE_FAST_MATH OFF CACHE BOOL "Enable -ffast-math for GCC")
+	unset(USE_SSE3 CACHE)
     endif()
     if(${CMAKE_SYSTEM_PROCESSOR} MATCHES powerpc*)
         set(USE_O3 ON CACHE BOOL "Enable -O3 for GCC")
