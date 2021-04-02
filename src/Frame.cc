@@ -21,7 +21,12 @@
 #include "Frame.h"
 #include "Converter.h"
 #include "ORBmatcher.h"
+#include "omp.h"
+#include <FindType.hpp>
+#include <opencv2/core/cuda.hpp>
+#include <cuda/mat_norm.hpp>
 #include <thread>
+#include <Utils.hpp>
 
 namespace ORB_SLAM2
 {
@@ -60,7 +65,7 @@ Frame::Frame(const Frame &frame)
 // Constructor for Stereo cameras.
 Frame::Frame(const cv::Mat &imLeft, const cv::Mat &imRight, const double &timeStamp, ORBextractor* extractorLeft, ORBextractor* extractorRight, fbow::Vocabulary* voc, cv::Mat &K, cv::Mat &distCoef, const float &bf, const float &thDepth)
     :mpFBOWvocabulary(voc), mpORBextractorLeft(extractorLeft), mpORBextractorRight(extractorRight), mTimeStamp(timeStamp), mK(K.clone()), mDistCoef(distCoef.clone()), mbf(bf), mThDepth(thDepth),
-     mpReferenceKF(static_cast<KeyFrame*>(NULL))
+     mpReferenceKF(static_cast<KeyFrame*>(NULL)), matNormGPU()
 {
     // Frame ID
     mnId=nNextId++;
@@ -75,21 +80,30 @@ Frame::Frame(const cv::Mat &imLeft, const cv::Mat &imRight, const double &timeSt
     mvInvLevelSigma2 = mpORBextractorLeft->GetInverseScaleSigmaSquares();
 
     // ORB extraction
+    SET_CLOCK(orbStart);
     thread threadLeft(&Frame::ExtractORB,this,0,imLeft);
     thread threadRight(&Frame::ExtractORB,this,1,imRight);
     threadLeft.join();
     threadRight.join();
+    SET_CLOCK(orbEnd);
+    PRINT_CLOCK("Frame ORB extraction", orbEnd, orbStart);
 
     N = mvKeys.size();
 
     if(mvKeys.empty())
         return;
 
+    SET_CLOCK(distortStart);
     UndistortKeyPoints();
+    SET_CLOCK(distortEnd);
+    PRINT_CLOCK("Undistort key points", distortEnd, distortStart); 
 
+    SET_CLOCK(sMatchStart);
     ComputeStereoMatches();
+    SET_CLOCK(sMatchEnd);
+    PRINT_CLOCK("Stereo Match Computation", sMatchEnd, sMatchStart); 
 
-    mvpMapPoints = vector<MapPoint*>(N,static_cast<MapPoint*>(NULL));    
+    mvpMapPoints = vector<MapPoint*>(N,static_cast<MapPoint*>(NULL));
     mvbOutlier = vector<bool>(N,false);
 
 
@@ -113,7 +127,10 @@ Frame::Frame(const cv::Mat &imLeft, const cv::Mat &imRight, const double &timeSt
 
     mb = mbf/fx;
 
+    SET_CLOCK(assignFeaturesStart);
     AssignFeaturesToGrid();
+    SET_CLOCK(assignFeaturesEnd);
+    PRINT_CLOCK("Assign Features", assignFeaturesEnd, assignFeaturesStart);
 }
 
 // Constructor for RGB-D cameras.
@@ -126,7 +143,7 @@ Frame::Frame(const cv::Mat &imGray, const cv::Mat &imDepth, const double &timeSt
 
     // Scale Level Info
     mnScaleLevels = mpORBextractorLeft->GetLevels();
-    mfScaleFactor = mpORBextractorLeft->GetScaleFactor();    
+    mfScaleFactor = mpORBextractorLeft->GetScaleFactor();
     mfLogScaleFactor = log(mfScaleFactor);
     mvScaleFactors = mpORBextractorLeft->GetScaleFactors();
     mvInvScaleFactors = mpORBextractorLeft->GetInverseScaleFactors();
@@ -134,7 +151,10 @@ Frame::Frame(const cv::Mat &imGray, const cv::Mat &imDepth, const double &timeSt
     mvInvLevelSigma2 = mpORBextractorLeft->GetInverseScaleSigmaSquares();
 
     // ORB extraction
+    SET_CLOCK(orbStart);
     ExtractORB(0,imGray);
+    SET_CLOCK(orbEnd);
+    PRINT_CLOCK("Frame ORB extraction", orbEnd, orbStart);
 
     N = mvKeys.size();
 
@@ -189,7 +209,10 @@ Frame::Frame(const cv::Mat &imGray, const double &timeStamp, ORBextractor* extra
     mvInvLevelSigma2 = mpORBextractorLeft->GetInverseScaleSigmaSquares();
 
     // ORB extraction
-    ExtractORB(0, imGray);
+    SET_CLOCK(mono);
+    ExtractORB(0,imGray);
+    SET_CLOCK(mono2);
+    PRINT_CLOCK("Mono ORB Extract", mono2, mono);
 
     N = mvKeys.size();
 
@@ -260,7 +283,7 @@ void Frame::SetPose(cv::Mat Tcw)
 }
 
 void Frame::UpdatePoseMatrices()
-{ 
+{
     mRcw = mTcw.rowRange(0,3).colRange(0,3);
     mRwc = mRcw.t();
     mtcw = mTcw.rowRange(0,3).col(3);
@@ -272,7 +295,7 @@ bool Frame::isInFrustum(MapPoint *pMP, float viewingCosLimit)
     pMP->mbTrackInView = false;
 
     // 3D in absolute coordinates
-    cv::Mat P = pMP->GetWorldPos(); 
+    cv::Mat P = pMP->GetWorldPos();
 
     // 3D in camera coordinates
     const cv::Mat Pc = mRcw*P+mtcw;
@@ -422,6 +445,7 @@ void Frame::UndistortKeyPoints()
 
     // Fill undistorted keypoint vector
     mvKeysUn.resize(N);
+    #pragma omp parallel for 
     for(int i=0; i<N; i++)
     {
         cv::KeyPoint kp = mvKeys[i];
@@ -562,9 +586,13 @@ void Frame::ComputeStereoMatches()
 
             // sliding window search
             const int w = 5;
-            cv::Mat IL = mpORBextractorLeft->mvImagePyramid[kpL.octave].rowRange(scaledvL-w,scaledvL+w+1).colRange(scaleduL-w,scaleduL+w+1);
-            IL.convertTo(IL,CV_32F);
-            IL = IL - IL.at<float>(w,w) *cv::Mat::ones(IL.rows,IL.cols,CV_32F);
+            // CPU-CODE
+            //cv::Mat IL = mpORBextractorLeft->mvImagePyramid[kpL.octave].rowRange(scaledvL-w,scaledvL+w+1).colRange(scaleduL-w,scaleduL+w+1);
+            //IL.convertTo(IL,CV_32F);
+            //IL = IL - IL.at<float>(w,w) *cv::Mat::ones(IL.rows,IL.cols,CV_32F);
+            cv::cuda::GpuMat gMat = mpORBextractorLeft->mvImagePyramid[kpL.octave].rowRange(scaledvL - w, scaledvL + w + 1).colRange(scaleduL - w, scaleduL + w + 1);
+            cv::Mat IL(gMat);
+            IL = IL - IL.at<uint8_t>(w,w) *cv::Mat::ones(IL.rows,IL.cols,CV_8UC1);
 
             int bestDist = INT_MAX;
             int bestincR = 0;
@@ -577,13 +605,18 @@ void Frame::ComputeStereoMatches()
             if(iniu<0 || endu >= mpORBextractorRight->mvImagePyramid[kpL.octave].cols)
                 continue;
 
+            cv::cuda::GpuMat r = mpORBextractorRight->mvImagePyramid[kpL.octave];
+            cv::Mat r2(r);
             for(int incR=-L; incR<=+L; incR++)
             {
-                cv::Mat IR = mpORBextractorRight->mvImagePyramid[kpL.octave].rowRange(scaledvL-w,scaledvL+w+1).colRange(scaleduR0+incR-w,scaleduR0+incR+w+1);
-                IR.convertTo(IR,CV_32F);
-                IR = IR - IR.at<float>(w,w) *cv::Mat::ones(IR.rows,IR.cols,CV_32F);
-
-                float dist = cv::norm(IL,IR,cv::NORM_L1);
+                cv::Mat IR = r2.rowRange(scaledvL - w, scaledvL + w + 1).colRange(scaleduR0 + incR - w, scaleduR0 + incR + w + 1);
+                IR = IR - IR.at<uint8_t>(w,w) *cv::Mat::ones(IR.rows,IR.cols,CV_8UC1);
+                float dist = (float) cv::norm(IL,IR,cv::NORM_L1);
+                // CPU-CODE
+                //cv::Mat IR = mpORBextractorRight->mvImagePyramid[kpL.octave].rowRange(scaledvL-w,scaledvL+w+1).colRange(scaleduR0+incR-w,scaleduR0+incR+w+1);
+                //IR.convertTo(IR,CV_32F);
+                //IR = IR - IR.at<float>(w,w) *cv::Mat::ones(IR.rows,IR.cols,CV_32F);
+                //float dist = cv::norm(IL,IR,cv::NORM_L1);
                 if(dist<bestDist)
                 {
                     bestDist =  dist;

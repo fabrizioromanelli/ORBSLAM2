@@ -32,8 +32,14 @@
 
 #include"Optimizer.h"
 #include"PnPsolver.h"
+#include"SGFilter.h"
 
 #include<iostream>
+#include<atomic>
+#include<thread>
+#include"omp.h"
+#include<Utils.hpp>
+#include<parallel_for_thread.hpp>
 
 #include<mutex>
 
@@ -295,7 +301,10 @@ cv::Mat Tracking::GrabImageStereo(const cv::Mat &imRectLeft, const cv::Mat &imRe
 
     mCurrentFrame = Frame(mImGray, imGrayRight, timestamp, mpORBextractorLeft, mpORBextractorRight, mpFBOWVocabulary, mK, mDistCoef, mbf, mThDepth);
 
+    SET_CLOCK(ts);
     Track();
+    SET_CLOCK(te);
+    PRINT_CLOCK("Track time", te, ts); 
 
     return mCurrentFrame.mTcw.clone();
 }
@@ -325,7 +334,10 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB,const cv::Mat &imD, const d
 
     mCurrentFrame = Frame(mImGray, imDepth, timestamp, mpORBextractorLeft, mpFBOWVocabulary, mK, mDistCoef, mbf, mThDepth);
 
+    SET_CLOCK(ts);
     Track();
+    SET_CLOCK(te);
+    PRINT_CLOCK("Track time", te, ts); 
 
     return mCurrentFrame.mTcw.clone();
 }
@@ -358,13 +370,17 @@ cv::Mat Tracking::GrabImageMonocular(const cv::Mat &im, const double &timestamp)
         mCurrentFrame = Frame(mImGray, timestamp, mpORBextractorLeft, mpFBOWVocabulary, mK, mDistCoef, mbf, mThDepth);
     }
 
+    SET_CLOCK(ts);
     Track();
+    SET_CLOCK(te);
+    PRINT_CLOCK("Track time", te, ts); 
 
     return mCurrentFrame.mTcw.clone();
 }
 
 void Tracking::Track()
 {
+    didOptimizePose = false;
     if(mState==NO_IMAGES_YET)
     {
         mState = NOT_INITIALIZED;
@@ -534,6 +550,7 @@ void Tracking::Track()
             mpMapDrawer->SetCurrentCameraPose(mCurrentFrame.mTcw);
 
             // Clean VO matches
+	          #pragma omp parallel for
             for(int i=0; i<mCurrentFrame.N; i++)
             {
                 MapPoint* pMP = mCurrentFrame.mvpMapPoints[i];
@@ -561,6 +578,7 @@ void Tracking::Track()
             // pass to the new keyframe, so that bundle adjustment will finally decide
             // if they are outliers or not. We don't want next frame to estimate its position
             // with those points so we discard them in the frame.
+	          #pragma omp parallel for
             for(int i=0; i<mCurrentFrame.N;i++)
             {
                 if(mCurrentFrame.mvpMapPoints[i] && mCurrentFrame.mvbOutlier[i])
@@ -620,6 +638,7 @@ void Tracking::StereoInitialization()
         mpMap->AddKeyFrame(pKFini);
 
         // Create MapPoints and associate to KeyFrame
+        #pragma omp parallel for
         for(int i=0; i<mCurrentFrame.N;i++)
         {
             float z = mCurrentFrame.mvDepth[i];
@@ -670,6 +689,7 @@ void Tracking::MonocularInitialization()
             mInitialFrame = Frame(mCurrentFrame);
             mLastFrame = Frame(mCurrentFrame);
             mvbPrevMatched.resize(mCurrentFrame.mvKeysUn.size());
+	          #pragma omp parallel for
             for(size_t i=0; i<mCurrentFrame.mvKeysUn.size(); i++)
                 mvbPrevMatched[i]=mCurrentFrame.mvKeysUn[i].pt;
 
@@ -712,6 +732,7 @@ void Tracking::MonocularInitialization()
 
         if(mpInitializer->Initialize(mCurrentFrame, mvIniMatches, Rcw, tcw, mvIniP3D, vbTriangulated))
         {
+            #pragma omp parallel for reduction(-:nmatches)
             for(size_t i=0, iend=mvIniMatches.size(); i<iend;i++)
             {
                 if(mvIniMatches[i]>=0 && !vbTriangulated[i])
@@ -801,6 +822,7 @@ void Tracking::CreateInitialMapMonocular()
 
     // Scale points
     vector<MapPoint*> vpAllMapPoints = pKFini->GetMapPointMatches();
+    #pragma omp parallel for
     for(size_t iMP=0; iMP<vpAllMapPoints.size(); iMP++)
     {
         if(vpAllMapPoints[iMP])
@@ -836,6 +858,7 @@ void Tracking::CreateInitialMapMonocular()
 
 void Tracking::CheckReplacedInLastFrame()
 {
+    #pragma omp parallel for
     for(int i =0; i<mLastFrame.N; i++)
     {
         MapPoint* pMP = mLastFrame.mvpMapPoints[i];
@@ -854,6 +877,7 @@ void Tracking::CheckReplacedInLastFrame()
 
 bool Tracking::TrackReferenceKeyFrame()
 {
+    SET_CLOCK(refs);
     // Compute FBag of Words vector
     mCurrentFrame.ComputeFboW();
 
@@ -873,6 +897,7 @@ bool Tracking::TrackReferenceKeyFrame()
     mCurrentFrame.SetPose(mLastFrame.mTcw);
 
     mpOptimizer->PoseOptimization(&mCurrentFrame);
+    didOptimizePose = true;
 
     // Discard outliers
     int nmatchesMap = 0;
@@ -895,6 +920,8 @@ bool Tracking::TrackReferenceKeyFrame()
         }
     }
 
+    SET_CLOCK(refe);
+    PRINT_CLOCK("Track reference frame", refe, refs);
     return nmatchesMap >= mKeyframeTrackingThreshold;
 }
 
@@ -913,6 +940,7 @@ void Tracking::UpdateLastFrame()
     // We sort points according to their measured depth by the stereo/RGB-D sensor
     vector<pair<float,int> > vDepthIdx;
     vDepthIdx.reserve(mLastFrame.N);
+    #pragma omp parallel for
     for(int i=0; i<mLastFrame.N;i++)
     {
         float z = mLastFrame.mvDepth[i];
@@ -966,6 +994,7 @@ void Tracking::UpdateLastFrame()
 
 bool Tracking::TrackWithMotionModel()
 {
+    SET_CLOCK(mots);
     ORBmatcher matcher(mMotionModelNnRatioOrbMatcher, true);
 
     // Update last frame pose according to its reference keyframe
@@ -996,9 +1025,11 @@ bool Tracking::TrackWithMotionModel()
 
     // Optimize frame pose with all matches
     mpOptimizer->PoseOptimization(&mCurrentFrame);
+    didOptimizePose = true;
 
     // Discard outliers
     int nmatchesMap = 0;
+    #pragma omp parallel for reduction(+:nmatchesMap), reduction(-:nmatches)
     for(int i = 0; i < mCurrentFrame.N; i++)
     {
         if(mCurrentFrame.mvpMapPoints[i])
@@ -1024,6 +1055,8 @@ bool Tracking::TrackWithMotionModel()
         return nmatches > 20;
     }
 
+    SET_CLOCK(mote);
+    PRINT_CLOCK("Track Motion Model", mote, mots);
     return nmatchesMap >= mMotionModelThreshold;
 }
 
@@ -1031,16 +1064,23 @@ bool Tracking::TrackLocalMap()
 {
     // We have an estimation of the camera pose and some map points tracked in the frame.
     // We retrieve the local map and try to find matches to points in the local map.
-
+    SET_CLOCK(local);
     UpdateLocalMap();
+    SET_CLOCK(updatelocalmap);
 
     SearchLocalPoints();
+    SET_CLOCK(searchlocalpoints);
+    PRINT_CLOCK("Search Local Points", searchlocalpoints, updatelocalmap); 
 
     // Optimize Pose
-    mpOptimizer->PoseOptimization(&mCurrentFrame);
+		if (!didOptimizePose)
+      mpOptimizer->PoseOptimization(&mCurrentFrame);
+    SET_CLOCK(poseopt);
     mnMatchesInliers = 0;
 
     // Update MapPoints Statistics
+    int inliers = 0;
+    #pragma omp parallel for reduction(+:inliers)
     for(int i=0; i<mCurrentFrame.N; i++)
     {
         if(mCurrentFrame.mvpMapPoints[i])
@@ -1051,17 +1091,19 @@ bool Tracking::TrackLocalMap()
                 if(!mbOnlyTracking)
                 {
                     if(mCurrentFrame.mvpMapPoints[i]->Observations()>0)
-                        mnMatchesInliers++;
+                        inliers++;
                 }
                 else
-                    mnMatchesInliers++;
+                    inliers++;
             }
             else if(mSensor==System::STEREO)
                 mCurrentFrame.mvpMapPoints[i] = static_cast<MapPoint*>(NULL);
 
         }
     }
+    mnMatchesInliers = inliers;
 
+    SET_CLOCK(locale);
     // Decide if the tracking was succesful
     // More restrictive if there was a relocalization recently
     if(mCurrentFrame.mnId < mnLastRelocFrameId + mMaxFrames && mnMatchesInliers < mLocalMapTrackingThreshold2)
@@ -1102,6 +1144,7 @@ bool Tracking::NeedNewKeyFrame()
     int nTrackedClose= 0;
     if(mSensor!=System::MONOCULAR)
     {
+        #pragma omp parallel for reduction(+:nTrackedClose,nNonTrackedClose)
         for(int i =0; i<mCurrentFrame.N; i++)
         {
             if(mCurrentFrame.mvDepth[i]>0 && mCurrentFrame.mvDepth[i]<mThDepth)
@@ -1161,6 +1204,7 @@ bool Tracking::NeedNewKeyFrame()
 
 void Tracking::CreateNewKeyFrame()
 {
+    SET_CLOCK(create);
     if(!mpLocalMapper->SetNotStop(true))
         return;
 
@@ -1178,6 +1222,8 @@ void Tracking::CreateNewKeyFrame()
         // If there are less than 100 close points we create the 100 closest.
         vector<pair<float,int> > vDepthIdx;
         vDepthIdx.reserve(mCurrentFrame.N);
+
+	      #pragma omp parallel for
         for(int i=0; i<mCurrentFrame.N; i++)
         {
             float z = mCurrentFrame.mvDepth[i];
@@ -1237,6 +1283,8 @@ void Tracking::CreateNewKeyFrame()
 
     mnLastKeyFrameId = mCurrentFrame.mnId;
     mpLastKeyFrame = pKF;
+    SET_CLOCK(createDone);
+    PRINT_CLOCK("Create New Keyframe", createDone, create); 
 }
 
 void Tracking::SearchLocalPoints()
@@ -1465,6 +1513,7 @@ bool Tracking::Relocalization()
 
     int nCandidates=0;
 
+    #pragma omp parallel for reduction(+:nCandidates)
     for(int i=0; i<nKFs; i++)
     {
         KeyFrame* pKF = vpCandidateKFs[i];

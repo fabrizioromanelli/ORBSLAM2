@@ -31,6 +31,8 @@
 #include<Eigen/StdVector>
 
 #include "Converter.h"
+#include "omp.h"
+#include <Utils.hpp>
 
 #include<mutex>
 
@@ -234,6 +236,7 @@ void Optimizer::BundleAdjustment(const vector<KeyFrame *> &vpKFs, const vector<M
     // Recover optimized data
 
     //Keyframes
+    #pragma omp parallel for
     for(size_t i=0; i<vpKFs.size(); i++)
     {
         KeyFrame* pKF = vpKFs[i];
@@ -254,6 +257,7 @@ void Optimizer::BundleAdjustment(const vector<KeyFrame *> &vpKFs, const vector<M
     }
 
     //Points
+    #pragma omp parallel for
     for(size_t i=0; i<vpMP.size(); i++)
     {
         if(vbNotIncludedMP[i])
@@ -282,6 +286,7 @@ void Optimizer::BundleAdjustment(const vector<KeyFrame *> &vpKFs, const vector<M
 
 int Optimizer::PoseOptimization(Frame *pFrame)
 {
+    SET_CLOCK(popt);
     g2o::SparseOptimizer optimizer;
     g2o::BlockSolver_6_3::LinearSolverType * linearSolver;
 
@@ -423,6 +428,7 @@ int Optimizer::PoseOptimization(Frame *pFrame)
         optimizer.optimize(its[it]);
 
         nBad=0;
+        #pragma omp parallel for reduction(+:nBad)
         for(size_t i=0, iend=vpEdgesMono.size(); i<iend; i++)
         {
             g2o::EdgeSE3ProjectXYZOnlyPose* e = vpEdgesMono[i];
@@ -452,6 +458,7 @@ int Optimizer::PoseOptimization(Frame *pFrame)
                 e->setRobustKernel(0);
         }
 
+        #pragma omp parallel for reduction(+:nBad)
         for(size_t i=0, iend=vpEdgesStereo.size(); i<iend; i++)
         {
             g2o::EdgeStereoSE3ProjectXYZOnlyPose* e = vpEdgesStereo[i];
@@ -491,6 +498,8 @@ int Optimizer::PoseOptimization(Frame *pFrame)
     cv::Mat pose = Converter::toCvMat(SE3quat_recov);
     pFrame->SetPose(pose);
 
+    SET_CLOCK(popte);
+    PRINT_CLOCK("Pose Optimization", popte, popt);
     return nInitialCorrespondences-nBad;
 }
 
