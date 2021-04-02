@@ -775,10 +775,10 @@ void ORBextractor::ComputeKeyPointsOctTree(vector<vector<KeyPoint> >& allKeypoin
 
     const float W = 30;
 
+    const int minBorderX = edgeThreshold - 3;
+    const int minBorderY = minBorderX;
     for (int level = 0; level < nlevels; ++level)
     {
-        const int minBorderX = edgeThreshold - 3;
-        const int minBorderY = minBorderX;
         const int maxBorderX = mvImagePyramid[level].cols-edgeThreshold+3;
         const int maxBorderY = mvImagePyramid[level].rows-edgeThreshold+3;
 
@@ -791,13 +791,14 @@ void ORBextractor::ComputeKeyPointsOctTree(vector<vector<KeyPoint> >& allKeypoin
         }
         gpuFast.joinDetectAsync(vToDistributeKeys);
         if (level + 1 < nlevels) {
-          const int maxBorderX = mvImagePyramid[level+1].cols-EDGE_THRESHOLD+3;
-          const int maxBorderY = mvImagePyramid[level+1].rows-EDGE_THRESHOLD+3;
+          const int maxBorderX = mvImagePyramid[level+1].cols-edgeThreshold+3;
+          const int maxBorderY = mvImagePyramid[level+1].rows-edgeThreshold+3;
           gpuFast.detectAsync(mvImagePyramid[level+1].rowRange(minBorderY, maxBorderY).colRange(minBorderX, maxBorderX));
         }
+
         // compute orientations and Gaussian Blur
         if (level != 0) {
-          ic_angle.launch_async(mvImagePyramid[level-1], allKeypoints[level-1].data(), allKeypoints[level-1].size(), HALF_PATCH_SIZE, minBorderX, minBorderY, level-1, PATCH_SIZE * mvScaleFactor[level-1]);
+          ic_angle.launch_async(mvImagePyramid[level-1], allKeypoints[level-1].data(), allKeypoints[level-1].size(), halfPatchSize, minBorderX, minBorderY, level-1, patchSize * mvScaleFactor[level-1]);
           cv::cuda::GpuMat &gMat = mvImagePyramid[level-1];
           mpGaussianFilter->apply(gMat, gMat, ic_angle.cvStream());
         }
@@ -821,7 +822,7 @@ void ORBextractor::ComputeKeyPointsOctTree(vector<vector<KeyPoint> >& allKeypoin
 
     // compute orientations
     cv::cuda::GpuMat &gMat = mvImagePyramid[nlevels-1];
-    ic_angle.launch_async(gMat, allKeypoints[nlevels-1].data(), allKeypoints[nlevels-1].size(), HALF_PATCH_SIZE, minBorderX, minBorderY, nlevels-1, PATCH_SIZE * mvScaleFactor[nlevels-1]);
+    ic_angle.launch_async(gMat, allKeypoints[nlevels-1].data(), allKeypoints[nlevels-1].size(), halfPatchSize, minBorderX, minBorderY, nlevels-1, patchSize * mvScaleFactor[nlevels-1]);
     mpGaussianFilter->apply(gMat, gMat, ic_angle.cvStream());
     ic_angle.join(allKeypoints[nlevels-1].data(), allKeypoints[nlevels-1].size());
 }
@@ -920,11 +921,11 @@ void ORBextractor::ComputePyramid(Mat image) {
     for (int level = 0; level < nlevels; ++level) {
         float scale = mvInvScaleFactor[level];
         Size sz(cvRound((float)image.cols*scale), cvRound((float)image.rows*scale));
-        Size wholeSize(sz.width + EDGE_THRESHOLD*2, sz.height + EDGE_THRESHOLD*2);
+        Size wholeSize(sz.width + edgeThreshold*2, sz.height + edgeThreshold*2);
         cuda::GpuMat target(wholeSize, image.type(), cuda::gpu_mat_allocator);
         // cuda::GpuMat target(wholeSize, image.type());
         mvImagePyramidBorder.push_back(target);
-        mvImagePyramid.push_back(target(Rect(EDGE_THRESHOLD, EDGE_THRESHOLD, sz.width, sz.height)));
+        mvImagePyramid.push_back(target(Rect(edgeThreshold, edgeThreshold, sz.width, sz.height)));
     }
     mvImagePyramidBorder.resize(nlevels);
     mvImagePyramid.resize(nlevels);
@@ -939,11 +940,11 @@ void ORBextractor::ComputePyramid(Mat image) {
     // Compute the resized image
     if (level != 0) {
       cuda::resize(mvImagePyramid[level-1], mvImagePyramid[level], sz, 0, 0, INTER_LINEAR, mcvStream);
-      cuda::copyMakeBorder(mvImagePyramid[level], target, EDGE_THRESHOLD, EDGE_THRESHOLD, EDGE_THRESHOLD, EDGE_THRESHOLD,
+      cuda::copyMakeBorder(mvImagePyramid[level], target, edgeThreshold, edgeThreshold, edgeThreshold, edgeThreshold,
                             BORDER_REFLECT_101, cv::Scalar(), mcvStream);
     } else {
       cuda::GpuMat gpuImg(image);
-      cuda::copyMakeBorder(gpuImg, target, EDGE_THRESHOLD, EDGE_THRESHOLD, EDGE_THRESHOLD, EDGE_THRESHOLD,
+      cuda::copyMakeBorder(gpuImg, target, edgeThreshold, edgeThreshold, edgeThreshold, edgeThreshold,
                             BORDER_REFLECT_101, cv::Scalar(), mcvStream);
     }
   }

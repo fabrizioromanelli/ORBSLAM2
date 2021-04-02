@@ -310,7 +310,7 @@ int ORBmatcher::SearchByProjection(KeyFrame* pKF, cv::Mat Scw, const vector<MapP
 
     // For each Candidate MapPoint Project and Match
     #pragma omp parallel for reduction(+:nmatches)
-    for(int iMP=0, iendMP=vpPoints.size(); iMP<iendMP; iMP++)
+    for(size_t iMP=0; iMP<vpPoints.size(); iMP++)
     {
         MapPoint* pMP = vpPoints[iMP];
 

@@ -733,7 +733,7 @@ void Tracking::MonocularInitialization()
         if(mpInitializer->Initialize(mCurrentFrame, mvIniMatches, Rcw, tcw, mvIniP3D, vbTriangulated))
         {
             #pragma omp parallel for reduction(-:nmatches)
-            for(size_t i=0, iend=mvIniMatches.size(); i<iend;i++)
+            for(size_t i=0; i<mvIniMatches.size(); i++)
             {
                 if(mvIniMatches[i]>=0 && !vbTriangulated[i])
                 {

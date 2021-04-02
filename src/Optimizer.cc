@@ -429,7 +429,7 @@ int Optimizer::PoseOptimization(Frame *pFrame)
 
         nBad=0;
         #pragma omp parallel for reduction(+:nBad)
-        for(size_t i=0, iend=vpEdgesMono.size(); i<iend; i++)
+        for(size_t i=0; i<vpEdgesMono.size(); i++)
         {
             g2o::EdgeSE3ProjectXYZOnlyPose* e = vpEdgesMono[i];
 
@@ -459,7 +459,7 @@ int Optimizer::PoseOptimization(Frame *pFrame)
         }
 
         #pragma omp parallel for reduction(+:nBad)
-        for(size_t i=0, iend=vpEdgesStereo.size(); i<iend; i++)
+        for(size_t i=0; i<vpEdgesStereo.size(); i++)
         {
             g2o::EdgeStereoSE3ProjectXYZOnlyPose* e = vpEdgesStereo[i];
 
