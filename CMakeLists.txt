@@ -13,8 +13,11 @@ IF(JETSON_BUILD)
     ADD_DEFINITIONS(-D__ANDROID__)
 ENDIF(JETSON_BUILD)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O3 -march=native -D EIGEN_NO_DEPRECATED_WARNING -Wno-ignored-attributes -Wno-unused-result")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3 -march=native -D EIGEN_NO_DEPRECATED_WARNING -Wno-ignored-attributes -Wno-unused-result")
+set(CMAKE_C_FLAGS_DEBUG "-O2 -g -DEIGEN_NO_DEPRECATED_WARNING -Wno-unused-but-set-variable -Wno-unused-function")
+set(CMAKE_CXX_FLAGS_DEBUG "-O2 -g -DEIGEN_NO_DEPRECATED_WARNING -Wno-unused-but-set-variable -Wno-unused-function")
+
+set(CMAKE_C_FLAGS_RELEASE "-O3 -DEIGEN_NO_DEPRECATED_WARNING -Wno-unused-but-set-variable -Wno-unused-function")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DEIGEN_NO_DEPRECATED_WARNING -Wno-unused-but-set-variable -Wno-unused-function")
 
 include(FindOpenMP)
 LIST(APPEND CMAKE_C_FLAGS "-Wall -Wextra -DUSE_NVTX")
@@ -119,7 +122,7 @@ target_link_libraries(${PROJECT_NAME}
         )
 
 # Adding RealSense driver library
-add_library(${REALSENSE} SHARED
+cuda_add_library(${REALSENSE} SHARED
         Drivers/RealSense/realsense.cc
         )
 
