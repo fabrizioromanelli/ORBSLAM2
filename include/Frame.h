@@ -26,6 +26,8 @@
 #include "MapPoint.h"
 #include "KeyFrame.h"
 #include "ORBextractor.h"
+#include <opencv2/core/cuda.hpp>
+#include <cuda/mat_norm.hpp>
 
 #include <opencv2/opencv.hpp>
 
@@ -186,7 +188,7 @@ public:
 
     static bool mbInitialComputations;
 
-
+    cuda::MatNormGPU matNormGPU;
 private:
 
     // Undistort keypoints given OpenCV distortion parameters.

@@ -16,21 +16,37 @@ ENDIF(JETSON_BUILD)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O3 -march=native -D EIGEN_NO_DEPRECATED_WARNING -Wno-ignored-attributes -Wno-unused-result")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3 -march=native -D EIGEN_NO_DEPRECATED_WARNING -Wno-ignored-attributes -Wno-unused-result")
 
+include(FindOpenMP)
+LIST(APPEND CMAKE_C_FLAGS "-Wall -Wextra -DUSE_NVTX")
+LIST(APPEND CMAKE_CXX_FLAGS "-Wall -Wextra -DUSE_NVTX")
+
+find_package(CUDA QUIET REQUIRED)
+set(CUDA_PROPAGATE_HOST_FLAGS OFF)
+SET(CUDA_HOST_COMPILER /usr/bin/g++)
+LIST(APPEND CUDA_NVCC_FLAGS "--compiler-options -fno-strict-aliasing -use_fast_math")
+
 # Check C++11 or C++0x support
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
 CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
 if(COMPILER_SUPPORTS_CXX11)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -std=c++11")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+  set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -std=c++11")
   add_definitions(-DCOMPILEDWITHC11)
   message(STATUS "Using flag -std=c++11.")
 elseif(COMPILER_SUPPORTS_CXX0X)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+  set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -std=c++0x")
   add_definitions(-DCOMPILEDWITHC0X)
   message(STATUS "Using flag -std=c++0x.")
 else()
   message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
+
+message(STATUS ${CUDACXX})
+message(STATUS ${CMAKE_CUDACXX_COMPILER})
+message(STATUS ${CMAKE_CUDA_COMPILER})
 
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 
@@ -53,7 +69,11 @@ include_directories(
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 
-add_library(${PROJECT_NAME} SHARED
+cuda_include_directories(
+  ${CUDA_TOOLKIT_ROOT_DIR}/samples/common/inc
+)
+
+cuda_add_library(${PROJECT_NAME} SHARED
         src/System.cc
         src/Tracking.cc
         src/LocalMapping.cc
@@ -73,6 +93,12 @@ add_library(${PROJECT_NAME} SHARED
         src/Sim3Solver.cc
         src/Initializer.cc
         src/Viewer.cc
+        src/SGFilter.cc
+        src/cuda/Allocator_gpu.cu
+        src/cuda/Fast_gpu.cu
+        src/cuda/Orb_gpu.cu
+        src/cuda/Cuda.cu
+        src/cuda/mat_norm.cu
         src/HPose.cpp
         src/Wrapper.cc
         src/QrCodeTracker.cc
@@ -88,6 +114,8 @@ target_link_libraries(${PROJECT_NAME}
         ${PROJECT_SOURCE_DIR}/Thirdparty/DLib/lib/libDLib.so
         ${PROJECT_SOURCE_DIR}/Thirdparty/fbow/lib/libfbow.so
         ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
+        nvToolsExt
+        -lboost_system
         )
 
 # Adding RealSense driver library
