@@ -116,6 +116,7 @@ IF(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
         set(USE_O2 ON CACHE BOOL "Enable -O2 for GCC")
         set(USE_FAST_MATH OFF CACHE BOOL "Enable -ffast-math for GCC")
 	unset(USE_SSE3 CACHE)
+	add_compile_definitions(__ANDROID__)
     endif()
     if(${CMAKE_SYSTEM_PROCESSOR} MATCHES powerpc*)
         set(USE_O3 ON CACHE BOOL "Enable -O3 for GCC")
