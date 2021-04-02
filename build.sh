@@ -2,6 +2,7 @@
 # Usage: ./build.sh <parallel_jobs> <build_type> <ros>
 #        parallel_jobs: -jx where x is the number of threads
 #        build_type   : could be one of the following: Release or Debug
+#        jetson_build : could be: ON or OFF
 #        ros          : could be ROS or left blank for standard compilation
 
 BUILD_TYPE=$2
@@ -52,7 +53,11 @@ echo "Configuring and building ORB_SLAM2 ..."
 mkdir -p build
 cd build
 if [ "$BUILD_TYPE" == "Release" ] || [ "$BUILD_TYPE" == "Debug" ]; then
-  cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+  if [ "$3" == "ON" ]; then
+    cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DJETSON_BUILD=ON
+  else
+    cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+  fi
 else
   echo "[ERROR] Invalid build type. Should be one of the following: Release/Debug."
   exit 1
@@ -64,7 +69,7 @@ sudo ldconfig
 
 cd ..
 
-if [ "$3" == "ROS" ]; then
+if [ "$4" == "ROS" ]; then
   echo "Building ROS nodes"
 
   cd Examples/ROS/ORB_SLAM2
