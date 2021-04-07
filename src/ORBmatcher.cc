@@ -26,6 +26,9 @@
 #include<opencv2/features2d/features2d.hpp>
 
 #include<stdint-gcc.h>
+#include<parallel_for_thread.hpp>
+#include<atomic>
+#include"omp.h"
 
 using namespace std;
 
@@ -45,7 +48,7 @@ int ORBmatcher::SearchByProjection(Frame &F, const vector<MapPoint*> &vpMapPoint
     int nmatches=0;
 
     const bool bFactor = th!=1.0;
-
+    #pragma omp parallel for reduction(+:nmatches)
     for(size_t iMP=0; iMP<vpMapPoints.size(); iMP++)
     {
         MapPoint* pMP = vpMapPoints[iMP];
@@ -182,6 +185,7 @@ int ORBmatcher::SearchByFboW(KeyFrame* pKF,Frame &F, vector<MapPoint*> &vpMapPoi
             const vector<unsigned int> vIndicesKF = KFit->second;
             const vector<unsigned int> vIndicesF = Fit->second;
 
+	          #pragma omp parallel for reduction(+:nmatches)
             for(size_t iKF=0; iKF<vIndicesKF.size(); iKF++)
             {
                 const unsigned int realIdxKF = vIndicesKF[iKF];
@@ -267,7 +271,8 @@ int ORBmatcher::SearchByFboW(KeyFrame* pKF,Frame &F, vector<MapPoint*> &vpMapPoi
 
         ComputeThreeMaxima(rotHist, HISTO_LENGTH, ind1, ind2, ind3);
 
-        for(int i = 0; i < HISTO_LENGTH; i++)
+	#pragma omp parallel for reduction(-:nmatches)
+        for(int i=0; i<HISTO_LENGTH; i++)
         {
             if(i == ind1 || i == ind2 || i == ind3)
                 continue;
@@ -304,7 +309,8 @@ int ORBmatcher::SearchByProjection(KeyFrame* pKF, cv::Mat Scw, const vector<MapP
     int nmatches=0;
 
     // For each Candidate MapPoint Project and Match
-    for(int iMP=0, iendMP=vpPoints.size(); iMP<iendMP; iMP++)
+    #pragma omp parallel for reduction(+:nmatches)
+    for(size_t iMP=0; iMP<vpPoints.size(); iMP++)
     {
         MapPoint* pMP = vpPoints[iMP];
 
@@ -410,6 +416,8 @@ int ORBmatcher::SearchForInitialization(Frame &F1, Frame &F2, vector<cv::Point2f
     vector<int> vMatchedDistance(F2.mvKeysUn.size(),INT_MAX);
     vector<int> vnMatches21(F2.mvKeysUn.size(),-1);
 
+    std::atomic<long long> nm(nmatches);
+    parallel_for(F1.mvKeysUn.size(), [&](size_t start, size_t end){
     for(size_t i1=0, iend1=F1.mvKeysUn.size(); i1<iend1; i1++)
     {
         cv::KeyPoint kp1 = F1.mvKeysUn[i1];
@@ -458,12 +466,12 @@ int ORBmatcher::SearchForInitialization(Frame &F1, Frame &F2, vector<cv::Point2f
                 if(vnMatches21[bestIdx2]>=0)
                 {
                     vnMatches12[vnMatches21[bestIdx2]]=-1;
-                    nmatches--;
+            		    nm.fetch_sub(1, std::memory_order_relaxed);
                 }
                 vnMatches12[i1]=bestIdx2;
                 vnMatches21[bestIdx2]=i1;
                 vMatchedDistance[bestIdx2]=bestDist;
-                nmatches++;
+            		nm.fetch_add(1, std::memory_order_relaxed);
 
                 if(mbCheckOrientation)
                 {
@@ -480,6 +488,8 @@ int ORBmatcher::SearchForInitialization(Frame &F1, Frame &F2, vector<cv::Point2f
         }
 
     }
+    });
+    nmatches = (int) nm;
 
     if(mbCheckOrientation)
     {
@@ -489,6 +499,7 @@ int ORBmatcher::SearchForInitialization(Frame &F1, Frame &F2, vector<cv::Point2f
 
         ComputeThreeMaxima(rotHist,HISTO_LENGTH,ind1,ind2,ind3);
 
+	      #pragma omp parallel for reduction(-:nmatches)
         for(int i=0; i<HISTO_LENGTH; i++)
         {
             if(i==ind1 || i==ind2 || i==ind3)

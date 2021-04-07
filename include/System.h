@@ -34,6 +34,8 @@
 #include "LoopClosing.h"
 #include "KeyFrameDatabase.h"
 #include "Viewer.h"
+#include "omp.h"
+#include <Utils.hpp>
 #include "HPose.h"
 
 #include "BoostArchiver.h"

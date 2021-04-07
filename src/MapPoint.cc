@@ -20,6 +20,7 @@
 
 #include "MapPoint.h"
 #include "ORBmatcher.h"
+#include "omp.h"
 
 #include<mutex>
 
@@ -380,6 +381,17 @@ float MapPoint::GetMaxDistanceInvariance()
 {
     unique_lock<mutex> lock(mMutexPos);
     return 1.2f*mfMaxDistance;
+}
+
+int MapPoint::PredictScale(const float &currentDist, const float &logScaleFactor)
+{
+    float ratio;
+    {
+        unique_lock<mutex> lock3(mMutexPos);
+        ratio = mfMaxDistance/currentDist;
+    }
+
+    return ceil(log(ratio)/logScaleFactor);
 }
 
 int MapPoint::PredictScale(const float &currentDist, KeyFrame* pKF)

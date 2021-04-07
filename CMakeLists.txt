@@ -13,23 +13,49 @@ IF(JETSON_BUILD)
     ADD_DEFINITIONS(-D__ANDROID__)
 ENDIF(JETSON_BUILD)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O3 -march=native -D EIGEN_NO_DEPRECATED_WARNING -Wno-ignored-attributes -Wno-unused-result")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3 -march=native -D EIGEN_NO_DEPRECATED_WARNING -Wno-ignored-attributes -Wno-unused-result")
+set(CMAKE_C_FLAGS_DEBUG "-O2 -g")
+set(CMAKE_CXX_FLAGS_DEBUG "-O2 -g")
+
+set(CMAKE_C_FLAGS_RELEASE "-O3 -DEIGEN_NO_DEPRECATED_WARNING -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-variable -Wno-unused-parameter -Wno-missing-field-initializers -Wno-attributes -Wno-return-type")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DEIGEN_NO_DEPRECATED_WARNING -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-variable -Wno-unused-parameter -Wno-missing-field-initializers -Wno-attributes -Wno-return-type")
+
+if(CUDA_BUILD)
+  include(FindOpenMP)
+  LIST(APPEND CMAKE_C_FLAGS "-Wall -Wextra -DUSE_NVTX")
+  LIST(APPEND CMAKE_CXX_FLAGS "-Wall -Wextra -DUSE_NVTX")
+  find_package(CUDA QUIET REQUIRED)
+  set(CUDA_PROPAGATE_HOST_FLAGS OFF)
+  SET(CUDA_HOST_COMPILER /usr/bin/g++)
+  LIST(APPEND CUDA_NVCC_FLAGS "--compiler-options -fno-strict-aliasing -use_fast_math")
+endif()
 
 # Check C++11 or C++0x support
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
 CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
 if(COMPILER_SUPPORTS_CXX11)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -std=c++11")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+  if(CUDA_BUILD)
+    set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -std=c++11")
+  endif()
   add_definitions(-DCOMPILEDWITHC11)
   message(STATUS "Using flag -std=c++11.")
 elseif(COMPILER_SUPPORTS_CXX0X)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+  if(CUDA_BUILD)
+    set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -std=c++0x")
+  endif()
   add_definitions(-DCOMPILEDWITHC0X)
   message(STATUS "Using flag -std=c++0x.")
 else()
   message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+endif()
+
+if(CUDA_BUILD)
+  message(STATUS ${CUDACXX})
+  message(STATUS ${CMAKE_CUDACXX_COMPILER})
+  message(STATUS ${CMAKE_CUDA_COMPILER})
 endif()
 
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
@@ -53,46 +79,101 @@ include_directories(
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 
-add_library(${PROJECT_NAME} SHARED
-        src/System.cc
-        src/Tracking.cc
-        src/LocalMapping.cc
-        src/LoopClosing.cc
-        src/ORBextractor.cc
-        src/ORBmatcher.cc
-        src/FrameDrawer.cc
-        src/Converter.cc
-        src/MapPoint.cc
-        src/KeyFrame.cc
-        src/Map.cc
-        src/MapDrawer.cc
-        src/Optimizer.cc
-        src/PnPsolver.cc
-        src/Frame.cc
-        src/KeyFrameDatabase.cc
-        src/Sim3Solver.cc
-        src/Initializer.cc
-        src/Viewer.cc
-        src/HPose.cpp
-        src/QrCodeTracker.cc
-        src/QrCode.cc
-        )
+if(CUDA_BUILD)
+  cuda_include_directories(
+    ${CUDA_TOOLKIT_ROOT_DIR}/samples/common/inc
+  )
 
-target_link_libraries(${PROJECT_NAME}
-        ${REALSENSE}
-        ${OpenCV_LIBS}
-        ${EIGEN3_LIBS}
-        ${Pangolin_LIBRARIES}
-        ${realsense2_LIBRARY}
-        ${PROJECT_SOURCE_DIR}/Thirdparty/DLib/lib/libDLib.so
-        ${PROJECT_SOURCE_DIR}/Thirdparty/fbow/lib/libfbow.so
-        ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
-        )
+  cuda_add_library(${PROJECT_NAME} SHARED
+          src/System.cc
+          src/Tracking.cc
+          src/LocalMapping.cc
+          src/LoopClosing.cc
+          src/ORBextractor.cc
+          src/ORBmatcher.cc
+          src/FrameDrawer.cc
+          src/Converter.cc
+          src/MapPoint.cc
+          src/KeyFrame.cc
+          src/Map.cc
+          src/MapDrawer.cc
+          src/Optimizer.cc
+          src/PnPsolver.cc
+          src/Frame.cc
+          src/KeyFrameDatabase.cc
+          src/Sim3Solver.cc
+          src/Initializer.cc
+          src/Viewer.cc
+          src/SGFilter.cc
+          src/cuda/Allocator_gpu.cu
+          src/cuda/Fast_gpu.cu
+          src/cuda/Orb_gpu.cu
+          src/cuda/Cuda.cu
+          src/cuda/mat_norm.cu
+          src/HPose.cpp
+          src/QrCodeTracker.cc
+          src/QrCode.cc
+          )
 
-# Adding RealSense driver library
-add_library(${REALSENSE} SHARED
-        Drivers/RealSense/realsense.cc
-        )
+  target_link_libraries(${PROJECT_NAME}
+          ${REALSENSE}
+          ${OpenCV_LIBS}
+          ${EIGEN3_LIBS}
+          ${Pangolin_LIBRARIES}
+          ${realsense2_LIBRARY}
+          ${PROJECT_SOURCE_DIR}/Thirdparty/DLib/lib/libDLib.so
+          ${PROJECT_SOURCE_DIR}/Thirdparty/fbow/lib/libfbow.so
+          ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
+          nvToolsExt
+          -lboost_system
+          )
+
+  # Adding RealSense driver library
+  cuda_add_library(${REALSENSE} SHARED
+          Drivers/RealSense/realsense.cc
+          )
+else()
+  add_library(${PROJECT_NAME} SHARED
+          src/System.cc
+          src/Tracking.cc
+          src/LocalMapping.cc
+          src/LoopClosing.cc
+          src/ORBextractor.cc
+          src/ORBmatcher.cc
+          src/FrameDrawer.cc
+          src/Converter.cc
+          src/MapPoint.cc
+          src/KeyFrame.cc
+          src/Map.cc
+          src/MapDrawer.cc
+          src/Optimizer.cc
+          src/PnPsolver.cc
+          src/Frame.cc
+          src/KeyFrameDatabase.cc
+          src/Sim3Solver.cc
+          src/Initializer.cc
+          src/Viewer.cc
+          src/HPose.cpp
+          src/QrCodeTracker.cc
+          src/QrCode.cc
+          )
+
+  target_link_libraries(${PROJECT_NAME}
+          ${REALSENSE}
+          ${OpenCV_LIBS}
+          ${EIGEN3_LIBS}
+          ${Pangolin_LIBRARIES}
+          ${realsense2_LIBRARY}
+          ${PROJECT_SOURCE_DIR}/Thirdparty/DLib/lib/libDLib.so
+          ${PROJECT_SOURCE_DIR}/Thirdparty/fbow/lib/libfbow.so
+          ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
+          )
+
+  # Adding RealSense driver library
+  add_library(${REALSENSE} SHARED
+          Drivers/RealSense/realsense.cc
+          )
+endif()
 
 target_link_libraries(${REALSENSE}
         ${OpenCV_LIBS}
@@ -117,81 +198,81 @@ add_executable(qrCode_live Test/Live/QRCode/qrCode.cc)
 target_link_libraries(qrCode_live ${PROJECT_NAME})
 
 # Build Tests for Replay sequences
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/IRD)
-add_executable(realsense_replay Test/Replay/IRD/realsense.cc)
-target_link_libraries(realsense_replay ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/Monocular)
-add_executable(mono_euroc Test/Replay/Monocular/mono_euroc.cc)
-target_link_libraries(mono_euroc ${PROJECT_NAME})
-add_executable(mono_kitti Test/Replay/Monocular/mono_kitti.cc)
-target_link_libraries(mono_kitti ${PROJECT_NAME})
-add_executable(mono_tum Test/Replay/Monocular/mono_tum.cc)
-target_link_libraries(mono_tum ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/RGBD)
-add_executable(RGBD-tum Test/Replay/RGBD/rgbd_tum.cc)
-target_link_libraries(RGBD-tum ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/Stereo)
-add_executable(stereo_kitti Test/Replay/Stereo/stereo_kitti.cc)
-target_link_libraries(stereo_kitti ${PROJECT_NAME})
-add_executable(stereo_euroc Test/Replay/Stereo/stereo_euroc.cc)
-target_link_libraries(stereo_euroc ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/QRCode)
-add_executable(qrCode_replay Test/Replay/QRCode/qrCode.cc)
-target_link_libraries(qrCode_replay ${PROJECT_NAME})
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/IRD)
+# add_executable(realsense_replay Test/Replay/IRD/realsense.cc)
+# target_link_libraries(realsense_replay ${PROJECT_NAME})
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/Monocular)
+# add_executable(mono_euroc Test/Replay/Monocular/mono_euroc.cc)
+# target_link_libraries(mono_euroc ${PROJECT_NAME})
+# add_executable(mono_kitti Test/Replay/Monocular/mono_kitti.cc)
+# target_link_libraries(mono_kitti ${PROJECT_NAME})
+# add_executable(mono_tum Test/Replay/Monocular/mono_tum.cc)
+# target_link_libraries(mono_tum ${PROJECT_NAME})
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/RGBD)
+# add_executable(RGBD-tum Test/Replay/RGBD/rgbd_tum.cc)
+# target_link_libraries(RGBD-tum ${PROJECT_NAME})
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/Stereo)
+# add_executable(stereo_kitti Test/Replay/Stereo/stereo_kitti.cc)
+# target_link_libraries(stereo_kitti ${PROJECT_NAME})
+# add_executable(stereo_euroc Test/Replay/Stereo/stereo_euroc.cc)
+# target_link_libraries(stereo_euroc ${PROJECT_NAME})
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/QRCode)
+# add_executable(qrCode_replay Test/Replay/QRCode/qrCode.cc)
+# target_link_libraries(qrCode_replay ${PROJECT_NAME})
 
-# Build V-SLAM application
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Drone)
-add_executable(DroneVslam Drone/DroneVslam.cc)
-target_link_libraries(DroneVslam ${PROJECT_NAME})
+# # Build V-SLAM application
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Drone)
+# add_executable(DroneVslam Drone/DroneVslam.cc)
+# target_link_libraries(DroneVslam ${PROJECT_NAME})
 
-#
-# Tools
-#
-# Benchmarks
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Benchmarks/Live/Monocular)
-add_executable(benchmark_mono_live Tools/Benchmarks/Live/Monocular/benchmark.cc)
-target_link_libraries(benchmark_mono_live ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Benchmarks/Replay/Monocular)
-add_executable(benchmark_mono_replay Tools/Benchmarks/Replay/Monocular/benchmark.cc)
-target_link_libraries(benchmark_mono_replay ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Benchmarks/Replay/RGBD)
-add_executable(benchmark_rgbd_replay Tools/Benchmarks/Replay/RGBD/benchmark.cc)
-target_link_libraries(benchmark_rgbd_replay ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Benchmarks/Replay/Stereo)
-add_executable(benchmark_stereo_replay Tools/Benchmarks/Replay/Stereo/benchmark.cc)
-target_link_libraries(benchmark_stereo_replay ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Benchmarks/Replay/IRD)
-add_executable(benchmark_ird_replay Tools/Benchmarks/Replay/IRD/benchmark.cc)
-target_link_libraries(benchmark_ird_replay ${PROJECT_NAME})
+# #
+# # Tools
+# #
+# # Benchmarks
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Benchmarks/Live/Monocular)
+# add_executable(benchmark_mono_live Tools/Benchmarks/Live/Monocular/benchmark.cc)
+# target_link_libraries(benchmark_mono_live ${PROJECT_NAME})
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Benchmarks/Replay/Monocular)
+# add_executable(benchmark_mono_replay Tools/Benchmarks/Replay/Monocular/benchmark.cc)
+# target_link_libraries(benchmark_mono_replay ${PROJECT_NAME})
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Benchmarks/Replay/RGBD)
+# add_executable(benchmark_rgbd_replay Tools/Benchmarks/Replay/RGBD/benchmark.cc)
+# target_link_libraries(benchmark_rgbd_replay ${PROJECT_NAME})
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Benchmarks/Replay/Stereo)
+# add_executable(benchmark_stereo_replay Tools/Benchmarks/Replay/Stereo/benchmark.cc)
+# target_link_libraries(benchmark_stereo_replay ${PROJECT_NAME})
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Benchmarks/Replay/IRD)
+# add_executable(benchmark_ird_replay Tools/Benchmarks/Replay/IRD/benchmark.cc)
+# target_link_libraries(benchmark_ird_replay ${PROJECT_NAME})
 
-# Camera Calibration
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Calibration/Monocular)
-add_executable(camera_calibration Tools/Calibration/Monocular/camera_calibration.cc)
-target_link_libraries(camera_calibration ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Calibration/Stereo)
-add_executable(camera_calibration_stereo Tools/Calibration/Stereo/camera_calibration_stereo.cc)
-target_link_libraries(camera_calibration_stereo ${PROJECT_NAME})
+# # Camera Calibration
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Calibration/Monocular)
+# add_executable(camera_calibration Tools/Calibration/Monocular/camera_calibration.cc)
+# target_link_libraries(camera_calibration ${PROJECT_NAME})
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Calibration/Stereo)
+# add_executable(camera_calibration_stereo Tools/Calibration/Stereo/camera_calibration_stereo.cc)
+# target_link_libraries(camera_calibration_stereo ${PROJECT_NAME})
 
-# Grab single images
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Grab/Depth)
-add_executable(grab_realsense_depth Tools/Grab/Depth/grab_realsense_depth.cc)
-target_link_libraries(grab_realsense_depth ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Grab/Infrared)
-add_executable(grab_realsense_ir Tools/Grab/Infrared/grab_realsense_ir.cc)
-target_link_libraries(grab_realsense_ir ${PROJECT_NAME})
-# Here we unset the CMAKE_BUILD_TYPE because -O3 option causes a crash
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Grab/Monocular)
-add_executable(grab_monocular Tools/Grab/Monocular/grab_monocular.cc)
-target_compile_options(grab_monocular PRIVATE -O0)
-target_link_libraries(grab_monocular ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Grab/RGB)
-add_executable(grab_realsense_rgb Tools/Grab/RGB/grab_realsense_rgb.cc)
-target_link_libraries(grab_realsense_rgb ${PROJECT_NAME})
+# # Grab single images
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Grab/Depth)
+# add_executable(grab_realsense_depth Tools/Grab/Depth/grab_realsense_depth.cc)
+# target_link_libraries(grab_realsense_depth ${PROJECT_NAME})
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Grab/Infrared)
+# add_executable(grab_realsense_ir Tools/Grab/Infrared/grab_realsense_ir.cc)
+# target_link_libraries(grab_realsense_ir ${PROJECT_NAME})
+# # Here we unset the CMAKE_BUILD_TYPE because -O3 option causes a crash
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Grab/Monocular)
+# add_executable(grab_monocular Tools/Grab/Monocular/grab_monocular.cc)
+# target_compile_options(grab_monocular PRIVATE -O0)
+# target_link_libraries(grab_monocular ${PROJECT_NAME})
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/Grab/RGB)
+# add_executable(grab_realsense_rgb Tools/Grab/RGB/grab_realsense_rgb.cc)
+# target_link_libraries(grab_realsense_rgb ${PROJECT_NAME})
 
-# Grab sequencess
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/GrabSequence/IRD)
-add_executable(grab_sequence_realsense_ird Tools/GrabSequence/IRD/grab_sequence_realsense_ird.cc)
-target_link_libraries(grab_sequence_realsense_ird ${PROJECT_NAME})
+# # Grab sequencess
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Tools/GrabSequence/IRD)
+# add_executable(grab_sequence_realsense_ird Tools/GrabSequence/IRD/grab_sequence_realsense_ird.cc)
+# target_link_libraries(grab_sequence_realsense_ird ${PROJECT_NAME})
 
 # Install library and headers
 install (TARGETS ${PROJECT_NAME}
