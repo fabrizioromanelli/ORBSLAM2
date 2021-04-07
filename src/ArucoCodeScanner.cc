@@ -12,46 +12,36 @@ using namespace std;
 namespace ORB_SLAM2
 {
 
-QrCodeTracker::QrCodeTracker() : thRect(120, 40, 400, 400)
+ArucoCodeScanner::ArucoCodeScanner()
 {
-  qrDecoder = new QRCodeDetector();
+  parameters = cv::aruco::DetectorParameters::create();
+  dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_6X6_250);
 }
 
-void QrCodeTracker::Check(Mat _inputImage)
+// Scan for any Aruco code in the image
+void ArucoCodeScanner::Scan(Mat _inputImage)
 {
   inputImage = _inputImage;
-  imgWidth   = _inputImage.cols;
-  imgHeight  = _inputImage.rows;
 
-  decodedData = qrDecoder->detectAndDecode(inputImage, bbox, rectifiedImage);
+  cv::aruco::detectMarkers(inputImage, dictionary, markerCorners, markerIds, parameters, rejectedCandidates);
 
-  try
-  {
-    Rect r = boundingRect(bbox);
-    Point center(r.x+r.width/2, r.y+r.height/2);
-    qrCenter = center;
-  }
-  catch(const std::exception& e){}
+  // try
+  // {
+  //   Rect r = boundingRect(bbox);
+  //   Point center(r.x+r.width/2, r.y+r.height/2);
+  //   arucoCenter = center;
+  // }
+  // catch(const std::exception& e){}
 }
 
-void QrCodeTracker::Track(cv::Mat _inputImage, cv::Point2d _SLAMPosition)
-{
-  std::string decodedData;
-
-  this->Check(_inputImage);
-
-  if (this->getDecodedData(decodedData) && this->isInsideBbox()) {
-    QrCode newQrCode(decodedData, this->getBoundingBoxCenter(), _SLAMPosition);
-    this->addQrCodeToMap(newQrCode);
-  }
-}
-
-Point QrCodeTracker::Detect(cv::Mat _inputImage)
+// Scan for any Aruco code in the image and returns true if the code is
+// in the list of "good" ones.
+Point ArucoCodeScanner::Detect(cv::Mat _inputImage)
 {
   Point temp;
   std::string decodedData;
 
-  this->Check(_inputImage);
+  this->Scan(_inputImage);
 
   if (this->getDecodedData(decodedData)) {
     temp.x = this->getBoundingBoxCenter().x - imgWidth/2;
@@ -81,12 +71,11 @@ istream& operator >> (istream &fi, cv::Point2d &p)
     return fi;
 }
 
-void QrCodeTracker::loadQrCodeList()
+void ArucoCodeScanner::loadArucoCodeList()
 {
   std::string empty, code;
   cv::Point bBoxCenter;
-  cv::Point2d SLAMPosition;
-  std::ifstream in("QRCodes.txt");
+  std::ifstream in("arucoCodes.dat");
 
   int lineNum = 0;
   std::string line;
@@ -100,63 +89,12 @@ void QrCodeTracker::loadQrCodeList()
     if (lineNum == 3) {
       iss >> SLAMPosition;
       lineNum = 0;
-      QrCode newQrCode(code, bBoxCenter, SLAMPosition);
+      ArucoCode newQrCode(code, bBoxCenter);
       this->addQrCodeToMap(newQrCode);
       continue;
     }
     lineNum++;
   }
-}
-
-void QrCodeTracker::saveQrCodeList()
-{
-  std::ofstream out("QRCodes.txt");
-
-  // Loop over all the detected QRCodes
-  int i = 1;
-  for(std::vector<QrCode>::iterator it = qrCodes.begin(); it != qrCodes.end(); ++it, ++i) {
-    out << "#### Detected code " << i << " ####" << endl;
-    out << it->getCode() << endl;
-    out << it->getBboxCenter() << endl;
-    out << it->getSLAMPosition() << endl;
-  }
-
-  out.close();
-}
-
-std::vector<QrCode> * QrCodeTracker::getQrCodeList()
-{
-  return &qrCodes;
-}
-
-cv::Point QrCodeTracker::getPositionFromCode(std::string _inputCode)
-{
-  for(std::vector<QrCode>::iterator it = qrCodes.begin(); it != qrCodes.end(); ++it) {
-    if (!it->getCode().compare(_inputCode)) {
-      return (it->getSLAMPosition());
-    }
-  }
-
-  return (cv::Point(-1, -1));
-}
-
-void QrCodeTracker::setThresholds(unsigned int w, unsigned int h)
-{
-  thRect.x = imgWidth/2 - w/2;
-  thRect.y = imgHeight/2 - h/2;
-  thRect.width  = w;
-  thRect.height = h;
-}
-
-bool QrCodeTracker::getDecodedData(std::string & _decodedData)
-{
-  if (decodedData.length() > 0)
-  {
-    _decodedData = decodedData;
-    return(true);
-  }
-  else
-    return(false);
 }
 
 Mat QrCodeTracker::getBoundingBox()
@@ -169,19 +107,6 @@ Point QrCodeTracker::getBoundingBoxCenter()
   return(qrCenter);
 }
 
-Mat QrCodeTracker::getRectifiedImage()
-{
-  return(rectifiedImage);
-}
-
-bool QrCodeTracker::isInsideBbox()
-{
-  if (qrCenter.inside(thRect))
-    return(true);
-  else
-    return(false);
-}
-
 void QrCodeTracker::display()
 {
   int n = bbox.rows;
@@ -190,26 +115,6 @@ void QrCodeTracker::display()
     line(inputImage, Point2i(bbox.at<float>(i,0),bbox.at<float>(i,1)), Point2i(bbox.at<float>((i+1) % n,0), bbox.at<float>((i+1) % n,1)), Scalar(255,0,0), 3);
   }
   imshow("Result", inputImage);
-  // rectifiedImage.convertTo(rectifiedImage, CV_8UC3);
-  // imshow("Rectified QRCode", rectifiedImage);
-}
-
-void QrCodeTracker::addQrCodeToMap(QrCode _newQrCode)
-{
-  bool addFlag = true;
-  for(std::vector<QrCode>::iterator it = qrCodes.begin(); it != qrCodes.end(); ++it) {
-    if (!it->getCode().compare(_newQrCode.getCode())) {
-      addFlag = false;
-      break;
-    }
-  }
-
-  if (addFlag) {
-    qrCodes.push_back(_newQrCode);
-    std::cout << "Adding the following QrCode: " << _newQrCode.getCode() << std::endl;
-  } else {
-    std::cout << _newQrCode.getCode() << " is already in the list." << std::endl;
-  }
 }
 
 } //namespace ORB_SLAM
