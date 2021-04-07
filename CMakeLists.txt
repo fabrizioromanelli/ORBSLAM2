@@ -111,7 +111,6 @@ if(CUDA_BUILD)
           src/cuda/Cuda.cu
           src/cuda/mat_norm.cu
           src/HPose.cpp
-          src/Wrapper.cc
           src/QrCodeTracker.cc
           src/QrCode.cc
           )
@@ -134,7 +133,46 @@ if(CUDA_BUILD)
           Drivers/RealSense/realsense.cc
           )
 else()
+  add_library(${PROJECT_NAME} SHARED
+          src/System.cc
+          src/Tracking.cc
+          src/LocalMapping.cc
+          src/LoopClosing.cc
+          src/ORBextractor.cc
+          src/ORBmatcher.cc
+          src/FrameDrawer.cc
+          src/Converter.cc
+          src/MapPoint.cc
+          src/KeyFrame.cc
+          src/Map.cc
+          src/MapDrawer.cc
+          src/Optimizer.cc
+          src/PnPsolver.cc
+          src/Frame.cc
+          src/KeyFrameDatabase.cc
+          src/Sim3Solver.cc
+          src/Initializer.cc
+          src/Viewer.cc
+          src/HPose.cpp
+          src/QrCodeTracker.cc
+          src/QrCode.cc
+          )
 
+  target_link_libraries(${PROJECT_NAME}
+          ${REALSENSE}
+          ${OpenCV_LIBS}
+          ${EIGEN3_LIBS}
+          ${Pangolin_LIBRARIES}
+          ${realsense2_LIBRARY}
+          ${PROJECT_SOURCE_DIR}/Thirdparty/DLib/lib/libDLib.so
+          ${PROJECT_SOURCE_DIR}/Thirdparty/fbow/lib/libfbow.so
+          ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
+          )
+
+  # Adding RealSense driver library
+  add_library(${REALSENSE} SHARED
+          Drivers/RealSense/realsense.cc
+          )
 endif()
 
 target_link_libraries(${REALSENSE}
