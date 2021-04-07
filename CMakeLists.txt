@@ -19,14 +19,15 @@ set(CMAKE_CXX_FLAGS_DEBUG "-O2 -g")
 set(CMAKE_C_FLAGS_RELEASE "-O3 -DEIGEN_NO_DEPRECATED_WARNING -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-variable -Wno-unused-parameter -Wno-missing-field-initializers -Wno-attributes -Wno-return-type")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DEIGEN_NO_DEPRECATED_WARNING -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-variable -Wno-unused-parameter -Wno-missing-field-initializers -Wno-attributes -Wno-return-type")
 
-include(FindOpenMP)
-LIST(APPEND CMAKE_C_FLAGS "-Wall -Wextra -DUSE_NVTX")
-LIST(APPEND CMAKE_CXX_FLAGS "-Wall -Wextra -DUSE_NVTX")
-
-find_package(CUDA QUIET REQUIRED)
-set(CUDA_PROPAGATE_HOST_FLAGS OFF)
-SET(CUDA_HOST_COMPILER /usr/bin/g++)
-LIST(APPEND CUDA_NVCC_FLAGS "--compiler-options -fno-strict-aliasing -use_fast_math")
+if(CUDA_BUILD)
+  include(FindOpenMP)
+  LIST(APPEND CMAKE_C_FLAGS "-Wall -Wextra -DUSE_NVTX")
+  LIST(APPEND CMAKE_CXX_FLAGS "-Wall -Wextra -DUSE_NVTX")
+  find_package(CUDA QUIET REQUIRED)
+  set(CUDA_PROPAGATE_HOST_FLAGS OFF)
+  SET(CUDA_HOST_COMPILER /usr/bin/g++)
+  LIST(APPEND CUDA_NVCC_FLAGS "--compiler-options -fno-strict-aliasing -use_fast_math")
+endif()
 
 # Check C++11 or C++0x support
 include(CheckCXXCompilerFlag)
@@ -35,21 +36,27 @@ CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
 if(COMPILER_SUPPORTS_CXX11)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -std=c++11")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-  set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -std=c++11")
+  if(CUDA_BUILD)
+    set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -std=c++11")
+  endif()
   add_definitions(-DCOMPILEDWITHC11)
   message(STATUS "Using flag -std=c++11.")
 elseif(COMPILER_SUPPORTS_CXX0X)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-  set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -std=c++0x")
+  if(CUDA_BUILD)
+    set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -std=c++0x")
+  endif()
   add_definitions(-DCOMPILEDWITHC0X)
   message(STATUS "Using flag -std=c++0x.")
 else()
   message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
-message(STATUS ${CUDACXX})
-message(STATUS ${CMAKE_CUDACXX_COMPILER})
-message(STATUS ${CMAKE_CUDA_COMPILER})
+if(CUDA_BUILD)
+  message(STATUS ${CUDACXX})
+  message(STATUS ${CMAKE_CUDACXX_COMPILER})
+  message(STATUS ${CMAKE_CUDA_COMPILER})
+endif()
 
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
 
@@ -72,59 +79,63 @@ include_directories(
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 
-cuda_include_directories(
-  ${CUDA_TOOLKIT_ROOT_DIR}/samples/common/inc
-)
+if(CUDA_BUILD)
+  cuda_include_directories(
+    ${CUDA_TOOLKIT_ROOT_DIR}/samples/common/inc
+  )
 
-cuda_add_library(${PROJECT_NAME} SHARED
-        src/System.cc
-        src/Tracking.cc
-        src/LocalMapping.cc
-        src/LoopClosing.cc
-        src/ORBextractor.cc
-        src/ORBmatcher.cc
-        src/FrameDrawer.cc
-        src/Converter.cc
-        src/MapPoint.cc
-        src/KeyFrame.cc
-        src/Map.cc
-        src/MapDrawer.cc
-        src/Optimizer.cc
-        src/PnPsolver.cc
-        src/Frame.cc
-        src/KeyFrameDatabase.cc
-        src/Sim3Solver.cc
-        src/Initializer.cc
-        src/Viewer.cc
-        src/SGFilter.cc
-        src/cuda/Allocator_gpu.cu
-        src/cuda/Fast_gpu.cu
-        src/cuda/Orb_gpu.cu
-        src/cuda/Cuda.cu
-        src/cuda/mat_norm.cu
-        src/HPose.cpp
-        src/Wrapper.cc
-        src/QrCodeTracker.cc
-        src/QrCode.cc
-        )
+  cuda_add_library(${PROJECT_NAME} SHARED
+          src/System.cc
+          src/Tracking.cc
+          src/LocalMapping.cc
+          src/LoopClosing.cc
+          src/ORBextractor.cc
+          src/ORBmatcher.cc
+          src/FrameDrawer.cc
+          src/Converter.cc
+          src/MapPoint.cc
+          src/KeyFrame.cc
+          src/Map.cc
+          src/MapDrawer.cc
+          src/Optimizer.cc
+          src/PnPsolver.cc
+          src/Frame.cc
+          src/KeyFrameDatabase.cc
+          src/Sim3Solver.cc
+          src/Initializer.cc
+          src/Viewer.cc
+          src/SGFilter.cc
+          src/cuda/Allocator_gpu.cu
+          src/cuda/Fast_gpu.cu
+          src/cuda/Orb_gpu.cu
+          src/cuda/Cuda.cu
+          src/cuda/mat_norm.cu
+          src/HPose.cpp
+          src/Wrapper.cc
+          src/QrCodeTracker.cc
+          src/QrCode.cc
+          )
 
-target_link_libraries(${PROJECT_NAME}
-        ${REALSENSE}
-        ${OpenCV_LIBS}
-        ${EIGEN3_LIBS}
-        ${Pangolin_LIBRARIES}
-        ${realsense2_LIBRARY}
-        ${PROJECT_SOURCE_DIR}/Thirdparty/DLib/lib/libDLib.so
-        ${PROJECT_SOURCE_DIR}/Thirdparty/fbow/lib/libfbow.so
-        ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
-        nvToolsExt
-        -lboost_system
-        )
+  target_link_libraries(${PROJECT_NAME}
+          ${REALSENSE}
+          ${OpenCV_LIBS}
+          ${EIGEN3_LIBS}
+          ${Pangolin_LIBRARIES}
+          ${realsense2_LIBRARY}
+          ${PROJECT_SOURCE_DIR}/Thirdparty/DLib/lib/libDLib.so
+          ${PROJECT_SOURCE_DIR}/Thirdparty/fbow/lib/libfbow.so
+          ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
+          nvToolsExt
+          -lboost_system
+          )
 
-# Adding RealSense driver library
-cuda_add_library(${REALSENSE} SHARED
-        Drivers/RealSense/realsense.cc
-        )
+  # Adding RealSense driver library
+  cuda_add_library(${REALSENSE} SHARED
+          Drivers/RealSense/realsense.cc
+          )
+else()
+
+endif()
 
 target_link_libraries(${REALSENSE}
         ${OpenCV_LIBS}
