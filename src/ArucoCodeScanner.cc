@@ -23,58 +23,54 @@ void ArucoCodeScanner::Scan(Mat _inputImage)
 {
   inputImage = _inputImage;
 
-  cv::aruco::detectMarkers(inputImage, dictionary, markerCorners, markerIds, parameters, rejectedCandidates);
+  cv::aruco::detectMarkers(_inputImage, dictionary, arucoBboxes, arucoIds, parameters, rejectedCandidates);
 
-  // try
-  // {
-  //   Rect r = boundingRect(bbox);
-  //   Point center(r.x+r.width/2, r.y+r.height/2);
-  //   arucoCenter = center;
-  // }
-  // catch(const std::exception& e){}
+  try
+  {
+    for(size_t i = 0; i < arucoBboxes.size(); i++)
+    {
+      Rect r = boundingRect(arucoBboxes[i]);
+      Point2f center(r.x+r.width/2, r.y+r.height/2);
+      arucoCenters[i] = center;
+    }
+  }
+  catch(const std::exception& e){}
 }
 
 // Scan for any Aruco code in the image and returns true if the code is
 // in the list of "good" ones.
-Point ArucoCodeScanner::Detect(cv::Mat _inputImage)
+Point2f ArucoCodeScanner::Detect(cv::Mat _inputImage)
 {
-  Point temp;
+  Point2f temp;
   std::string decodedData;
 
   this->Scan(_inputImage);
 
-  if (this->getDecodedData(decodedData)) {
-    temp.x = this->getBoundingBoxCenter().x - imgWidth/2;
-    temp.y = this->getBoundingBoxCenter().y - imgHeight/2;
-  } else {
-    // Fixing a high value for both X and Y in order to
-    // always return an initialized value.
-    temp.x = 9999;
-    temp.y = 9999;
-  }
+
+
   return(temp);
 }
 
-istream& operator >> (istream &fi, cv::Point &p)
-{
-   char char1, char2, char3;
-   fi >> char1 >> p.x >>char2 >> p.y >> char3;
-   if (char1=='[' &&  char2==',' && char3==']')
-    return fi;
-}
+// istream& operator >> (istream &fi, cv::Point &p)
+// {
+//    char char1, char2, char3;
+//    fi >> char1 >> p.x >>char2 >> p.y >> char3;
+//    if (char1=='[' &&  char2==',' && char3==']')
+//     return fi;
+// }
 
-istream& operator >> (istream &fi, cv::Point2d &p)
-{
-   char char1, char2, char3;
-   fi >> char1 >> p.x >>char2 >> p.y >> char3;
-   if (char1=='[' &&  char2==',' && char3==']')
-    return fi;
-}
+// istream& operator >> (istream &fi, cv::Point2d &p)
+// {
+//    char char1, char2, char3;
+//    fi >> char1 >> p.x >>char2 >> p.y >> char3;
+//    if (char1=='[' &&  char2==',' && char3==']')
+//     return fi;
+// }
 
 void ArucoCodeScanner::loadArucoCodeList()
 {
   std::string empty, code;
-  cv::Point bBoxCenter;
+  cv::Point2f bBoxCenter;
   std::ifstream in("arucoCodes.dat");
 
   int lineNum = 0;
@@ -97,24 +93,21 @@ void ArucoCodeScanner::loadArucoCodeList()
   }
 }
 
-Mat QrCodeTracker::getBoundingBox()
+vector<Mat> ArucoCodeScanner::getBoundingBoxes()
 {
-  return(bbox);
+  return(arucoBboxes);
 }
 
-Point QrCodeTracker::getBoundingBoxCenter()
+vector<Point2f> ArucoCodeScanner::getBoundingBoxCenters()
 {
-  return(qrCenter);
+  return(arucoCenters);
 }
 
-void QrCodeTracker::display()
+void ArucoCodeScanner::display()
 {
-  int n = bbox.rows;
-  for(int i = 0 ; i < n ; i++)
-  {
-    line(inputImage, Point2i(bbox.at<float>(i,0),bbox.at<float>(i,1)), Point2i(bbox.at<float>((i+1) % n,0), bbox.at<float>((i+1) % n,1)), Scalar(255,0,0), 3);
-  }
-  imshow("Result", inputImage);
+  cv::Mat outputImage = inputImage.clone();
+  cv::aruco::drawDetectedMarkers(outputImage, arucoBboxes, arucoIds);
+  imshow("Result", outputImage);
 }
 
 } //namespace ORB_SLAM
