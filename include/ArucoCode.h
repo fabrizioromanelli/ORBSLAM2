@@ -18,7 +18,7 @@ class ArucoCode
 {
 public:
   ArucoCode();
-  ArucoCode(int, cv::Point2f);
+  ArucoCode(int);
   void setCode(int);
   void setBboxCenter(cv::Point2f);
   int getCode();

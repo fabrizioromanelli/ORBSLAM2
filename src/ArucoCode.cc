@@ -14,7 +14,7 @@ namespace ORB_SLAM2
 
 ArucoCode::ArucoCode(){}
 
-ArucoCode::ArucoCode(int _code, Point2f _bBoxCenter) : code(_code), bBoxCenter(_bBoxCenter) {}
+ArucoCode::ArucoCode(int _code) : code(_code) {}
 
 void ArucoCode::setCode(int _code)
 {

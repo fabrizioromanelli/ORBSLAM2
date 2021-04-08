@@ -76,6 +76,8 @@ add_library(${PROJECT_NAME} SHARED
         src/HPose.cpp
         src/QrCodeTracker.cc
         src/QrCode.cc
+        src/ArucoCode.cc
+        src/ArucoCodeScanner.cc
         )
 
 target_link_libraries(${PROJECT_NAME}
@@ -115,6 +117,9 @@ target_link_libraries(mono_camera ${PROJECT_NAME})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/QRCode)
 add_executable(qrCode_live Test/Live/QRCode/qrCode.cc)
 target_link_libraries(qrCode_live ${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/ArucoCode)
+add_executable(arucoCode Test/Live/ArucoCode/arucoCode.cc)
+target_link_libraries(arucoCode ${PROJECT_NAME})
 
 # Build Tests for Replay sequences
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/IRD)
@@ -138,11 +143,6 @@ target_link_libraries(stereo_euroc ${PROJECT_NAME})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/QRCode)
 add_executable(qrCode_replay Test/Replay/QRCode/qrCode.cc)
 target_link_libraries(qrCode_replay ${PROJECT_NAME})
-
-# Build V-SLAM application
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Drone)
-add_executable(DroneVslam Drone/DroneVslam.cc)
-target_link_libraries(DroneVslam ${PROJECT_NAME})
 
 #
 # Tools
