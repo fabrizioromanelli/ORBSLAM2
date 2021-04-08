@@ -15,7 +15,7 @@ namespace ORB_SLAM2
 ArucoCodeScanner::ArucoCodeScanner()
 {
   parameters = aruco::DetectorParameters::create();
-  dictionary = aruco::getPredefinedDictionary(aruco::DICT_6X6_250);
+  dictionary = aruco::getPredefinedDictionary(aruco::DICT_ARUCO_ORIGINAL);
   loadArucoCodeList();
 }
 
