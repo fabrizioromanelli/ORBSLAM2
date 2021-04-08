@@ -18,15 +18,15 @@ class ArucoCode
 {
 public:
   ArucoCode();
-  ArucoCode(std::string, cv::Point);
-  void setCode(std::string);
-  void setBboxCenter(cv::Point);
-  std::string getCode();
-  cv::Point getBboxCenter();
+  ArucoCode(int, cv::Point2f);
+  void setCode(int);
+  void setBboxCenter(cv::Point2f);
+  int getCode();
+  cv::Point2f getBboxCenter();
 
 private:
-  std::string code;
-  cv::Point bBoxCenter;
+  int code;
+  cv::Point2f bBoxCenter;
 };
 
 } //namespace ORB_SLAM

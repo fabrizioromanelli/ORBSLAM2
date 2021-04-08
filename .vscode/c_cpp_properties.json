@@ -3,16 +3,16 @@
         {
             "name": "Linux",
             "includePath": [
+                "${default}",
                 "${workspaceFolder}/**",
                 "/usr/local/include/opencv4",
                 "/usr/local/include/eigen3"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
-            "cStandard": "c11",
-            "cppStandard": "c++17",
-            "intelliSenseMode": "gcc-x64",
-            "configurationProvider": "vector-of-bool.cmake-tools"
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++14",
+            "intelliSenseMode": "linux-gcc-x64"
         }
     ],
     "version": 4

@@ -14,24 +14,24 @@ namespace ORB_SLAM2
 
 ArucoCode::ArucoCode(){}
 
-ArucoCode::ArucoCode(std::string _code, cv::Point _bBoxCenter) : code(_code), bBoxCenter(_bBoxCenter) {}
+ArucoCode::ArucoCode(int _code, Point2f _bBoxCenter) : code(_code), bBoxCenter(_bBoxCenter) {}
 
-void ArucoCode::setCode(std::string _code)
+void ArucoCode::setCode(int _code)
 {
   code = _code;
 }
 
-void ArucoCode::setBboxCenter(cv::Point _bBoxCenter)
+void ArucoCode::setBboxCenter(Point2f _bBoxCenter)
 {
   bBoxCenter = _bBoxCenter;
 }
 
-std::string ArucoCode::getCode()
+int ArucoCode::getCode()
 {
   return code;
 }
 
-cv::Point ArucoCode::getBboxCenter()
+Point2f ArucoCode::getBboxCenter()
 {
   return bBoxCenter;
 }
