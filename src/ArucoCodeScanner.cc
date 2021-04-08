@@ -16,6 +16,7 @@ ArucoCodeScanner::ArucoCodeScanner()
 {
   parameters = aruco::DetectorParameters::create();
   dictionary = aruco::getPredefinedDictionary(aruco::DICT_6X6_250);
+  loadArucoCodeList();
 }
 
 // Scan for any Aruco code in the image
@@ -31,24 +32,34 @@ void ArucoCodeScanner::Scan(Mat _inputImage)
     {
       Rect r = boundingRect(arucoBboxes[i]);
       Point2f center(r.x+r.width/2, r.y+r.height/2);
-      arucoCenters[i] = center;
+      arucoCenters.push_back(center);
     }
   }
   catch(const std::exception& e){}
 }
 
-// Scan for any Aruco code in the image and returns true if the code is
-// in the list of "good" ones.
-vector<Point2f> ArucoCodeScanner::Detect(Mat _inputImage)
+// Scan for any Aruco code in the image pruning arucoBboxes and arucoIds
+// from the codes that are not in the list arucoCodes.dat.
+void ArucoCodeScanner::Detect(Mat _inputImage)
 {
-  vector<Point2f> temp;
-  std::string decodedData;
+  vector<int>::iterator idIt;
+  vector<vector<Point2f>>::iterator bboxesIt;
 
   this->Scan(_inputImage);
 
-
-
-  return(temp);
+  for(idIt = arucoIds.begin(), bboxesIt = arucoBboxes.begin(); idIt != arucoIds.end();)
+  {
+    if (isArucoValid(*idIt))
+    {
+      ++idIt;
+      ++bboxesIt;
+    }
+    else
+    {
+      arucoBboxes.erase(bboxesIt);
+      arucoIds.erase(idIt);
+    }
+  }
 }
 
 // istream& operator >> (istream &fi, Point &p)
@@ -69,28 +80,24 @@ vector<Point2f> ArucoCodeScanner::Detect(Mat _inputImage)
 
 void ArucoCodeScanner::loadArucoCodeList()
 {
-  // std::string empty, code;
-  // Point2f bBoxCenter;
-  // std::ifstream in("arucoCodes.dat");
+  std::ifstream in("arucoCodes.dat");
 
-  // int lineNum = 0;
-  // std::string line;
-  // while (std::getline(in, line))
-  // {
-  //   std::istringstream iss(line);
-  //   if (lineNum == 1)
-  //     code = line;
-  //   if (lineNum == 2)
-  //     iss >> bBoxCenter;
-  //   if (lineNum == 3) {
-  //     iss >> SLAMPosition;
-  //     lineNum = 0;
-  //     ArucoCode newQrCode(code, bBoxCenter);
-  //     this->addQrCodeToMap(newQrCode);
-  //     continue;
-  //   }
-  //   lineNum++;
-  // }
+  std::string line;
+  while (std::getline(in, line))
+  {
+    std::istringstream iss(line);
+    ArucoCode validArucoCode(stoi(line));
+    arucoValidCodes.push_back(validArucoCode);
+  }
+}
+
+bool ArucoCodeScanner::isArucoValid(int currentCode)
+{
+  for(vector<ArucoCode>::iterator it = arucoValidCodes.begin(); it!=arucoValidCodes.end(); it++)
+    if (it->getCode() == currentCode)
+      return true;
+
+  return false;
 }
 
 vector<vector<Point2f>> ArucoCodeScanner::getBoundingBoxes()

@@ -113,6 +113,8 @@ if(CUDA_BUILD)
           src/HPose.cpp
           src/QrCodeTracker.cc
           src/QrCode.cc
+          src/ArucoCode.cc
+          src/ArucoCodeScanner.cc
           )
 
   target_link_libraries(${PROJECT_NAME}
@@ -156,6 +158,8 @@ else()
           src/HPose.cpp
           src/QrCodeTracker.cc
           src/QrCode.cc
+          src/ArucoCode.cc
+          src/ArucoCodeScanner.cc
           )
 
   target_link_libraries(${PROJECT_NAME}
@@ -196,6 +200,9 @@ target_link_libraries(mono_camera ${PROJECT_NAME})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/QRCode)
 add_executable(qrCode_live Test/Live/QRCode/qrCode.cc)
 target_link_libraries(qrCode_live ${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/ArucoCode)
+add_executable(arucoCode Test/Live/ArucoCode/arucoCode.cc)
+target_link_libraries(arucoCode ${PROJECT_NAME})
 
 # Build Tests for Replay sequences
 # set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/IRD)

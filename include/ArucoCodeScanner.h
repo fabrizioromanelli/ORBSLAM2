@@ -25,22 +25,24 @@ public:
   ArucoCodeScanner();
   // Main scanner function. It is independent of the input sensor.
   void Scan(cv::Mat);
-  std::vector<cv::Point2f> Detect(cv::Mat);
+  void Detect(cv::Mat);
   std::vector<std::vector<cv::Point2f>> getBoundingBoxes();
   std::vector<cv::Point2f> getBoundingBoxCenters();
   void display();
-  void loadArucoCodeList();
 
 protected:
   cv::Mat inputImage;
 
 private:
+  void loadArucoCodeList();
+  bool isArucoValid(int);
+
   std::vector<int> arucoIds;
   std::vector<std::vector<cv::Point2f>> arucoBboxes, rejectedCandidates;
   cv::Ptr<cv::aruco::DetectorParameters> parameters;
   cv::Ptr<cv::aruco::Dictionary> dictionary;
   std::vector<cv::Point2f> arucoCenters;
-  std::vector<ArucoCode> arucoCodes;
+  std::vector<ArucoCode> arucoValidCodes;
 };
 
 } //namespace ORB_SLAM
