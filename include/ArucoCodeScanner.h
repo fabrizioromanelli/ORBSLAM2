@@ -12,6 +12,8 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/highgui.hpp>
 #include "ArucoCode.h"
 
 namespace ORB_SLAM2
@@ -24,8 +26,8 @@ public:
   // Main scanner function. It is independent of the input sensor.
   void Scan(cv::Mat);
   std::vector<cv::Point2f> Detect(cv::Mat);
-  std::vector<cv::Mat> getBoundingBoxes();
-  cv::Point getBoundingBoxCenters();
+  std::vector<std::vector<cv::Point2f>> getBoundingBoxes();
+  std::vector<cv::Point2f> getBoundingBoxCenters();
   void display();
   void loadArucoCodeList();
 
