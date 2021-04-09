@@ -40,7 +40,7 @@ void ArucoCodeScanner::Scan(Mat _inputImage)
 
 // Scan for any Aruco code in the image pruning arucoBboxes and arucoIds
 // from the codes that are not in the list arucoCodes.dat.
-void ArucoCodeScanner::Detect(Mat _inputImage)
+bool ArucoCodeScanner::Detect(Mat _inputImage)
 {
   vector<int>::iterator idIt;
   vector<vector<Point2f>>::iterator bboxesIt;
@@ -60,6 +60,9 @@ void ArucoCodeScanner::Detect(Mat _inputImage)
       arucoIds.erase(idIt);
     }
   }
+
+  if (arucoIds.size() != 0) return true;
+  else return false;
 }
 
 void ArucoCodeScanner::loadArucoCodeList()
