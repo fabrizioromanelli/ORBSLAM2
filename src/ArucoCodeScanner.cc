@@ -62,22 +62,6 @@ void ArucoCodeScanner::Detect(Mat _inputImage)
   }
 }
 
-// istream& operator >> (istream &fi, Point &p)
-// {
-//    char char1, char2, char3;
-//    fi >> char1 >> p.x >>char2 >> p.y >> char3;
-//    if (char1=='[' &&  char2==',' && char3==']')
-//     return fi;
-// }
-
-// istream& operator >> (istream &fi, Point2d &p)
-// {
-//    char char1, char2, char3;
-//    fi >> char1 >> p.x >>char2 >> p.y >> char3;
-//    if (char1=='[' &&  char2==',' && char3==']')
-//     return fi;
-// }
-
 void ArucoCodeScanner::loadArucoCodeList()
 {
   std::ifstream in("arucoCodes.dat");
@@ -115,6 +99,13 @@ void ArucoCodeScanner::display()
   Mat outputImage = inputImage.clone();
   aruco::drawDetectedMarkers(outputImage, arucoBboxes, arucoIds);
   imshow("Result", outputImage);
+}
+
+void ArucoCodeScanner::getImage(cv::Mat& img)
+{
+  Mat outputImage = inputImage.clone();
+  aruco::drawDetectedMarkers(outputImage, arucoBboxes, arucoIds);
+  img = outputImage;
 }
 
 } //namespace ORB_SLAM
