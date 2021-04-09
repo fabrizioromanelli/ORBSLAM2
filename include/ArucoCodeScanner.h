@@ -29,6 +29,7 @@ public:
   std::vector<std::vector<cv::Point2f>> getBoundingBoxes();
   std::vector<cv::Point2f> getBoundingBoxCenters();
   void display();
+  void getImage(cv::Mat&);
 
 protected:
   cv::Mat inputImage;
