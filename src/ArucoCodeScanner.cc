@@ -67,7 +67,7 @@ bool ArucoCodeScanner::Detect(Mat _inputImage)
 
 void ArucoCodeScanner::loadArucoCodeList()
 {
-  std::ifstream in("arucoCodes.dat");
+  std::ifstream in("/usr/local/share/ORB_SLAM2/arucoCodes.dat");
 
   std::string line;
   while (std::getline(in, line))
