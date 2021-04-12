@@ -19,7 +19,7 @@ using namespace std;
 using namespace cv;
 using namespace ORB_SLAM2;
 
-#define VSLAM_FREQUENCY 20.0 // Hz
+#define VSLAM_FREQUENCY 15.0 // Hz
 // #define DEBUG
 
 int main(int argc, char **argv)
@@ -37,7 +37,7 @@ int main(int argc, char **argv)
   }
 
   try {
-    RealSense realsense(RealSense::IRD);
+    RealSense realsense(RealSense::IRD, (uint32_t)VSLAM_FREQUENCY);
 
     // Clone parameters from command line
     bool display = false;
@@ -128,8 +128,8 @@ int main(int argc, char **argv)
       }
 
       // Sleep according to the VSLAM frequency
-      if(1/ttrack > VSLAM_FREQUENCY)
-        this_thread::sleep_for(chrono::microseconds(static_cast<size_t>((1/VSLAM_FREQUENCY-ttrack)*1e6)));
+      // if(1/ttrack > VSLAM_FREQUENCY)
+      //   this_thread::sleep_for(chrono::microseconds(static_cast<size_t>((1/VSLAM_FREQUENCY-ttrack)*1e6)));
     }
 
     // Stop all threads
