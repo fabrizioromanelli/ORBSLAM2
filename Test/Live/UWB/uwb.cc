@@ -24,6 +24,8 @@ using namespace ORB_SLAM2;
 #define UWB_FREQUENCY    2.0 // Hz
 // #define DEBUG
 
+void saveUWBreadings(const string &, vector<double>, vector<vector<uint16_t>>);
+
 int main(int argc, char **argv)
 {
   if(argc != 7)
@@ -41,7 +43,7 @@ int main(int argc, char **argv)
   try {
     // Initialize sensors
     RealSense realsense(RealSense::IRD, (uint32_t)VSLAM_FREQUENCY);
-    // initialize_UWB();
+    initialize_UWB();
 
     // Clone parameters from command line
     bool display = false;
@@ -83,7 +85,7 @@ int main(int argc, char **argv)
     chrono::steady_clock::time_point tUwb_prev;
 
     vector<double> uwbTimestamps;
-    vector<uint16_t[6]> uwbReadings;
+    vector<vector<uint16_t>> uwbReadings;
 
     // Main loop
     for(;;)
@@ -106,21 +108,21 @@ int main(int argc, char **argv)
 
       double ttrack = chrono::duration_cast<chrono::duration<double> >(tSlam_end - tSlam_start).count();
 
-      // Here we have to call for UWB readings only at least every 500ms
+      // Call UWB readings after 500ms have passed from the previous scan
       if(elapsedTime >= 1.0/UWB_FREQUENCY)
       {
-        if(/*read_UWB()*/true)
+        if(read_UWB())
         {
-          // uint16_t *uwd_distances;
-          // uwd_distances = get_UWB_dist();
+          uint16_t *uwb_distances;
+          uwb_distances = get_UWB_dist();
           // cout << fixed << setw(11) << setprecision(6) << "realsense.getIRLeftTimestamp(): " << realsense.getIRLeftTimestamp() << endl;
           uwbTimestamps.push_back(realsense.getIRLeftTimestamp());
-          uint16_t uwd_distances[6];
+          vector<uint16_t> tmp;
           for(int i = 0; i < 6; i++)
           {
-            uwd_distances[i] = rand();
+            tmp.push_back(uwb_distances[i]);
           }
-          uwbReadings.push_back(uwd_distances);
+          uwbReadings.push_back(tmp);
           elapsedTime = 0.0;
         }
         else
@@ -131,7 +133,7 @@ int main(int argc, char **argv)
       else
       {
         elapsedTime += chrono::duration_cast<chrono::duration<double> >(tSlam_end - tUwb_prev).count();
-        cout << "elapsedTime: " << elapsedTime << "s" << endl;
+        // cout << "elapsedTime: " << elapsedTime << "s" << endl;
       }
 
       tUwb_prev = chrono::steady_clock::now();
@@ -179,11 +181,28 @@ int main(int argc, char **argv)
     SLAM.SaveTrajectory("CameraTrajectory.dat");
 
     // Save UWB readings
-    // TODO
+    saveUWBreadings("UWBReadings.dat", uwbTimestamps, uwbReadings);
   }
   catch(exception& ex) {
     cout << ex.what() << endl;
   }
 
   return 0;
+}
+
+void saveUWBreadings(const string &filename, vector<double> timestamps, vector<vector<uint16_t>> readings)
+{
+  ofstream f;
+  f.open(filename.c_str());
+  f << fixed;
+
+  vector<vector<uint16_t>>::iterator itReadings = readings.begin();
+
+  for(vector<double>::iterator itTimestamps = timestamps.begin(); itTimestamps != timestamps.end(); itTimestamps++, itReadings++)
+  {
+    vector<uint16_t> _readings = *itReadings;
+    f << setprecision(6) << *itTimestamps << " " <<  setprecision(9) << _readings.at(0) << " " << _readings.at(1) << " " << _readings.at(2) << " " << _readings.at(3) << " " << _readings.at(4) << " " << _readings.at(5) << endl;
+  }
+  f.close();
+  cout << endl << "UWB readings saved!" << endl;
 }
