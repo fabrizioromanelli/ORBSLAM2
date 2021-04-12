@@ -13,6 +13,7 @@
 #include <System.h>
 #include <sys/stat.h>
 
+#include "uwb.h"
 #include "realsense.h"
 
 using namespace std;
@@ -37,7 +38,9 @@ int main(int argc, char **argv)
   }
 
   try {
+    // Initialize sensors
     RealSense realsense(RealSense::IRD, (uint32_t)VSLAM_FREQUENCY);
+    initialize_UWB();
 
     // Clone parameters from command line
     bool display = false;

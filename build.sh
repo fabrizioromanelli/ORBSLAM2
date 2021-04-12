@@ -36,7 +36,11 @@ cd build
 cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 make $1
 
-cd ../../../
+echo "Configuring and building Thirdparty/UWB ..."
+cd ../../uwb
+sudo cp libUWBranging.so /usr/local/lib/
+
+cd ../../
 
 cd Vocabulary
 VOCABULARYFILE=`pwd`"/orb_mur.fbow"

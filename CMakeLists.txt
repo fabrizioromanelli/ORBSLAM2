@@ -121,8 +121,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/ArucoCode)
 add_executable(arucoCode Test/Live/ArucoCode/arucoCode.cc)
 target_link_libraries(arucoCode ${PROJECT_NAME})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/UWB)
-add_executable(uwb Test/Live/UWB/uwb.cc)
-target_link_libraries(uwb ${PROJECT_NAME})
+add_executable(uwb Test/Live/UWB/uwb.cc ${PROJECT_SOURCE_DIR}/Thirdparty/uwb/source/uwb_mwc.c)
+target_link_libraries(uwb -lUWBranging ${PROJECT_NAME})
 
 # Build Tests for Replay sequences
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/IRD)
