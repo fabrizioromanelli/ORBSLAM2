@@ -21,6 +21,7 @@ using namespace cv;
 using namespace ORB_SLAM2;
 
 #define VSLAM_FREQUENCY 15.0 // Hz
+#define UWB_FREQUENCY    2.0 // Hz
 // #define DEBUG
 
 int main(int argc, char **argv)
@@ -40,7 +41,7 @@ int main(int argc, char **argv)
   try {
     // Initialize sensors
     RealSense realsense(RealSense::IRD, (uint32_t)VSLAM_FREQUENCY);
-    initialize_UWB();
+    // initialize_UWB();
 
     // Clone parameters from command line
     bool display = false;
@@ -75,17 +76,23 @@ int main(int argc, char **argv)
       dir_err = mkdir("depth", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
     }
 
-    chrono::steady_clock::time_point t1 = chrono::steady_clock::now();
-    chrono::steady_clock::time_point t1_prev = chrono::steady_clock::now();
+    double elapsedTime = 1.0/UWB_FREQUENCY; // time elapsed for synching UWB with VSLAM readings (s)
+    chrono::steady_clock::time_point tSlam_start;
+    chrono::steady_clock::time_point tSlam_end;
+    chrono::steady_clock::time_point tSlam_prev  = chrono::steady_clock::now();
+    chrono::steady_clock::time_point tUwb_prev;
+
+    vector<double> uwbTimestamps;
+    vector<uint16_t[6]> uwbReadings;
 
     // Main loop
     for(;;)
     {
-      t1 = chrono::steady_clock::now();
+      tSlam_start = chrono::steady_clock::now();
       #ifdef DEBUG
-        cout << "VSLAM frequency: " << 1/chrono::duration_cast<chrono::duration<double> >(t1 - t1_prev).count() << "Hz" << endl;
+        cout << "VSLAM frequency: " << 1/chrono::duration_cast<chrono::duration<double> >(tSlam_start - tSlam_prev).count() << "Hz" << endl;
       #endif
-      t1_prev = chrono::steady_clock::now();
+      tSlam_prev = chrono::steady_clock::now();
 
       realsense.run();
       // cout << fixed << setw(11) << setprecision(6) << "Timestamp   : " << realsense.getIRLeftTimestamp() << endl;
@@ -95,9 +102,39 @@ int main(int argc, char **argv)
       // Pass the IR Left and Depth images to the SLAM system
       cv::Mat cameraPose = SLAM.TrackRGBD(irMatrix, depthMatrix, realsense.getIRLeftTimestamp());
 
-      chrono::steady_clock::time_point t2 = chrono::steady_clock::now();
+      tSlam_end = chrono::steady_clock::now();
 
-      double ttrack = chrono::duration_cast<chrono::duration<double> >(t2 - t1).count();
+      double ttrack = chrono::duration_cast<chrono::duration<double> >(tSlam_end - tSlam_start).count();
+
+      // Here we have to call for UWB readings only at least every 500ms
+      if(elapsedTime >= 1.0/UWB_FREQUENCY)
+      {
+        if(/*read_UWB()*/true)
+        {
+          // uint16_t *uwd_distances;
+          // uwd_distances = get_UWB_dist();
+          // cout << fixed << setw(11) << setprecision(6) << "realsense.getIRLeftTimestamp(): " << realsense.getIRLeftTimestamp() << endl;
+          uwbTimestamps.push_back(realsense.getIRLeftTimestamp());
+          uint16_t uwd_distances[6];
+          for(int i = 0; i < 6; i++)
+          {
+            uwd_distances[i] = rand();
+          }
+          uwbReadings.push_back(uwd_distances);
+          elapsedTime = 0.0;
+        }
+        else
+        {
+          cout << "Error while reading UWBs!" << endl << flush;
+        }
+      }
+      else
+      {
+        elapsedTime += chrono::duration_cast<chrono::duration<double> >(tSlam_end - tUwb_prev).count();
+        cout << "elapsedTime: " << elapsedTime << "s" << endl;
+      }
+
+      tUwb_prev = chrono::steady_clock::now();
 
       #ifdef DEBUG
         cout << "Track frequency: " << 1/ttrack << "Hz" << endl;
@@ -140,6 +177,9 @@ int main(int argc, char **argv)
 
     // Save camera trajectory
     SLAM.SaveTrajectory("CameraTrajectory.dat");
+
+    // Save UWB readings
+    // TODO
   }
   catch(exception& ex) {
     cout << ex.what() << endl;
