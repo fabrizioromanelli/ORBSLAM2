@@ -120,6 +120,9 @@ target_link_libraries(qrCode_live ${PROJECT_NAME})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/ArucoCode)
 add_executable(arucoCode Test/Live/ArucoCode/arucoCode.cc)
 target_link_libraries(arucoCode ${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/UWB)
+add_executable(uwb Test/Live/UWB/uwb.cc)
+target_link_libraries(uwb ${PROJECT_NAME})
 
 # Build Tests for Replay sequences
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/IRD)
