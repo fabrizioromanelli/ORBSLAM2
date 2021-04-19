@@ -87,6 +87,9 @@ int main(int argc, char **argv)
     vector<double> uwbTimestamps;
     vector<vector<uint16_t>> uwbReadings;
 
+    float fx = 379.895904541016 / 640; // expressed in meters
+    float fy = 379.895904541016 / 480; // expressed in meters
+
     // Main loop
     for(;;)
     {
@@ -103,6 +106,7 @@ int main(int argc, char **argv)
 
       // Pass the IR Left and Depth images to the SLAM system
       cv::Mat cameraPose = SLAM.TrackRGBD(irMatrix, depthMatrix, realsense.getIRLeftTimestamp());
+      cv::Mat cameraCovariance = SLAM.GetCurrentCovarianceMatrix(fx, fy, cameraPose, false);
 
       tSlam_end = chrono::steady_clock::now();
 
