@@ -134,6 +134,8 @@ public:
 
     HPose& GetCurrentCameraPose();
 
+    cv::Mat GetCurrentCovarianceMatrix(float, float, cv::Mat, bool);
+
 private:
     // Save/Load functions
     void SaveMap(const string &filename);

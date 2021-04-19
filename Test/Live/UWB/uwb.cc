@@ -90,6 +90,9 @@ int main(int argc, char **argv)
     vector<double> uwbTimestamps;
     vector<vector<uint16_t>> uwbReadings;
 
+    float fx = 379.895904541016 / 640; // expressed in meters
+    float fy = 379.895904541016 / 480; // expressed in meters
+
     // Main loop
     for(;;)
     {
@@ -106,87 +109,7 @@ int main(int argc, char **argv)
 
       // Pass the IR Left and Depth images to the SLAM system
       cv::Mat cameraPose = SLAM.TrackRGBD(irMatrix, depthMatrix, realsense.getIRLeftTimestamp());
-
-      // Computing Visual odometry covariance matrix
-      if (SLAM.GetTrackingState() == Tracking::OK)
-      {
-        vector<MapPoint*> trackedPoints = SLAM.GetTrackedMapPoints();
-        std::vector<cv::Mat> featPos;
-        for (size_t i = 0; i < trackedPoints.size(); i++)
-        {
-          MapPoint* pMP = trackedPoints[i];
-          if(pMP)
-          {
-            // std::cout << "[map]: " << pMP->GetWorldPos() << std::endl;
-            featPos.push_back(pMP->GetWorldPos());
-          }
-        }
-
-        cv::Mat lambda = cv::Mat::zeros(2,2,CV_32F);
-        cv::Mat factor = cv::Mat::zeros(6,6,CV_32F);
-        float fx = 379.895904541016 / irMatrix.cols; // expressed in meters
-        float fy = 379.895904541016 / irMatrix.rows; // expressed in meters
-        lambda.at<float>(0,0) = 1.0/(fx*fx);
-        lambda.at<float>(1,1) = 1.0/(fy*fy);
-        cv::Mat Rcg = cv::Mat::zeros(3,3,CV_32F); // Rotation from Camera pose to Global frame
-        Rcg.at<float>(0,0) = cameraPose.at<float>(0,0);
-        Rcg.at<float>(0,1) = cameraPose.at<float>(0,1);
-        Rcg.at<float>(0,2) = cameraPose.at<float>(0,2);
-        Rcg.at<float>(1,0) = cameraPose.at<float>(1,0);
-        Rcg.at<float>(1,1) = cameraPose.at<float>(1,1);
-        Rcg.at<float>(1,2) = cameraPose.at<float>(1,2);
-        Rcg.at<float>(2,0) = cameraPose.at<float>(2,0);
-        Rcg.at<float>(2,1) = cameraPose.at<float>(2,1);
-        Rcg.at<float>(2,2) = cameraPose.at<float>(2,2);
-
-        for (size_t j = 0; j < featPos.size(); j++)
-        {
-          cv::Mat H1 = cv::Mat::zeros(2,3,CV_32F);
-          cv::Mat H2 = cv::Mat::zeros(3,6,CV_32F);
-          cv::Mat Pcf = cv::Mat::zeros(3,1,CV_32F); // Pose of feature in respect to Camera frame
-          cv::Mat Pgc = cv::Mat::zeros(3,1,CV_32F);; // Pose of camera in respect to Global frame
-          float a, b;
-          Pgc.at<float>(0) = cameraPose.at<float>(0,3);
-          Pgc.at<float>(1) = cameraPose.at<float>(1,3);
-          Pgc.at<float>(2) = cameraPose.at<float>(2,3);
-
-          Pcf = Rcg * (featPos[j] - Pgc);
-
-          if (Pcf.at<float>(2) == 0.0f)
-          {
-            a = 1000000;
-            b = 1000000000000;
-          }
-          else
-          {
-            a = 1/Pcf.at<float>(2);
-            b = 1/(Pcf.at<float>(2)*Pcf.at<float>(2));
-          }
-          H1.at<float>(0,0) = a;
-          H1.at<float>(0,2) = -Pcf.at<float>(0)*b;
-          H1.at<float>(1,1) = a;
-          H1.at<float>(1,2) = -Pcf.at<float>(1)*b;
-          H2.at<float>(0,1) = -Pcf.at<float>(2);
-          H2.at<float>(0,2) = Pcf.at<float>(1);
-          H2.at<float>(0,3) = -Rcg.at<float>(0,0);
-          H2.at<float>(0,4) = -Rcg.at<float>(0,1);
-          H2.at<float>(0,5) = -Rcg.at<float>(0,2);
-          H2.at<float>(1,0) = Pcf.at<float>(2);
-          H2.at<float>(1,2) = -Pcf.at<float>(0);
-          H2.at<float>(1,3) = -Rcg.at<float>(1,0);
-          H2.at<float>(1,4) = -Rcg.at<float>(1,1);
-          H2.at<float>(1,5) = -Rcg.at<float>(1,2);
-          H2.at<float>(2,0) = -Pcf.at<float>(1);
-          H2.at<float>(2,1) = Pcf.at<float>(0);
-          H2.at<float>(2,3) = -Rcg.at<float>(2,0);
-          H2.at<float>(2,4) = -Rcg.at<float>(2,1);
-          H2.at<float>(2,5) = -Rcg.at<float>(2,2);
-
-          cv::Mat tmp = H1*H2;
-          factor = factor + tmp.t() * lambda.inv() * tmp;
-        }
-        std::cout << factor.inv() << std::endl;
-      }
+      cv::Mat cameraCovariance = SLAM.GetCurrentCovarianceMatrix(fx, fy, cameraPose, false);
 
       tSlam_end = chrono::steady_clock::now();
 
