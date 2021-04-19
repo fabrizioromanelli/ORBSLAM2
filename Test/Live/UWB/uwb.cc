@@ -23,6 +23,7 @@ using namespace ORB_SLAM2;
 #define VSLAM_FREQUENCY 15.0 // Hz
 #define UWB_FREQUENCY    2.0 // Hz
 // #define DEBUG
+#define NO_UWB
 
 void saveUWBreadings(const string &, vector<double>, vector<vector<uint16_t>>);
 
@@ -43,7 +44,9 @@ int main(int argc, char **argv)
   try {
     // Initialize sensors
     RealSense realsense(RealSense::IRD, (uint32_t)VSLAM_FREQUENCY);
-    initialize_UWB();
+    #ifndef NO_UWB
+      initialize_UWB();
+    #endif
 
     // Clone parameters from command line
     bool display = false;
@@ -103,11 +106,27 @@ int main(int argc, char **argv)
 
       // Pass the IR Left and Depth images to the SLAM system
       cv::Mat cameraPose = SLAM.TrackRGBD(irMatrix, depthMatrix, realsense.getIRLeftTimestamp());
+      vector<cv::KeyPoint> tmp = SLAM.GetTrackedKeyPointsUn();
+      vector<MapPoint*> tmp2 = SLAM.GetTrackedMapPoints();
+
+      // std::cout << "mTrackedKeyPointsUn size: " << tmp.size() << std::endl;
+      // std::cout << "mTrackedMapPoints size: " << tmp2.size() << std::endl;
+      // std::cout << "[kpu]: " << tmp[0].pt << std::endl;
+      std::cout << SLAM.GetTrackingState() << std::endl;
+      std::cout << "-------------------" << std::endl;
+      if (SLAM.GetTrackingState() == Tracking::OK)
+      {
+        for (size_t i = 0; i < tmp2.size(); i++)
+        {
+          std::cout << "[map]: " << tmp2.at(i)->GetWorldPos() << std::endl;
+        }
+      }
 
       tSlam_end = chrono::steady_clock::now();
 
       double ttrack = chrono::duration_cast<chrono::duration<double> >(tSlam_end - tSlam_start).count();
 
+#ifndef NO_UWB
       // Call UWB readings after 500ms have passed from the previous scan
       if(elapsedTime >= 1.0/UWB_FREQUENCY)
       {
@@ -137,6 +156,7 @@ int main(int argc, char **argv)
       }
 
       tUwb_prev = chrono::steady_clock::now();
+#endif
 
       #ifdef DEBUG
         cout << "Track frequency: " << 1/ttrack << "Hz" << endl;
