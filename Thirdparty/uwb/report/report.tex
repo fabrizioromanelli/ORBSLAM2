@@ -1,0 +1,80 @@
+\documentclass[a4paper, 12pt, titlepage]{article}
+\usepackage[utf8]{inputenc}   % unicode package
+\usepackage[english]{babel}   % language package
+\usepackage{cancel}           % math style package
+\usepackage{bm} 			  % text style package
+\usepackage{mathtools}        % math style package
+\usepackage{amsmath}          % math style package
+\usepackage{enumitem}
+\usepackage{amsfonts}
+\usepackage{systeme}          % math style package
+\usepackage{color}            % text style package
+\usepackage{subfigure}
+\usepackage{fancyvrb}
+\usepackage{float} 			  % image style package
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, automata}
+\usepackage[margin=1in]{geometry}
+
+\linespread{1.2}
+
+%% Equation number like the section's
+\numberwithin{equation}{section}
+\numberwithin{figure}{section}
+
+\date{\Large{\today}}
+\title{\huge{Utilizzo dei moduli UWB}}
+\begin{document}
+\maketitle
+\setlength{\abovedisplayskip}{3mm}
+\setlength{\belowdisplayskip}{3mm}
+\newpage
+
+\section{Introduzione}
+    Questo documento spiega brevemente come utilizzare i moduli \textbf{UltraWide Band (UWB)} per lo scambio di dati e il misuramento delle distanza relative tra due o più agenti.
+\section{Struttura}
+    I componenti necessari al corretto utilizzo dei moduli UWB sono due:
+    \begin{itemize}
+        \item{un processo che si occupa della comunicazione tra i moduli}
+        \item{delle API per la configurazione, scrittura e lettura dei dati}
+    \end{itemize}
+    Per poter utilizzare i moduli UWB è necessario lanciare preventivamente il comando
+    \vspace{0.5em}
+    \begin{figure}[h]
+        \begin{BVerbatim}
+                ./ranging_service <UWB device file>
+        \end{BVerbatim}
+    \end{figure}
+    dove il secondo argomento rappresenta il device file creato una volta collegato il modulo UWB tramite cavo USB (di solito è qualcosa tipo \textit{/dev/ttyUSB0}, \textit{/dev/ttyAMA0}, etc.). \\ [1em]
+    \textit{nota:} si consiglia di lanciare il comando
+    \vspace{0.5em}
+    \begin{figure}[h]
+        \begin{BVerbatim}
+            nohup ./ranging_service <UWB device file> &
+        \end{BVerbatim}
+    \end{figure}
+    \noindent
+    \newline
+    in modo da avere il programma in background e svincolarlo dal terminale in uso. \\[2em]
+    \noindent
+    Una volta fatto ciò si può passare ad utilizzare le API messe a disposizione nel file \textit{source/uwb\_mwc.c}:
+    \begin{itemize}
+        \item{inizializzare i moduli tramite la funzione \texttt{initialize\_UWB()}}
+        \item{trasmettere dei dati tramite la funzione \texttt{write\_UWB(double data\_1, double data\_2)}}
+        \item{leggere i dati tramite la funzione \texttt{read\_UWB()}}
+        \item{recuperare i dati letti tramite la funzione \texttt{get\_UWB\_data()}}
+    \end{itemize}
+    \vspace{2em}
+    \newpage
+\section{Specifiche}
+    Di seguito sono specificate alcuni dettagli sui tipi di dati e su accortezze da avere per usare correttamente i moduli UWB.
+
+    \begin{itemize}
+        \item{il tempo di trasmissione dei dati e della funzionalità di \textit{ranging} (i.e. il calcolo delle distanze relative) impiega circa \textbf{500ms}, quindi è consigiabile chiamare le funzioni di scrittura/lettura con una freuenza non superiore, altrimenti potreste ancora leggere i vecchi valori}
+    \item{i dati vengono scambiati in modalità \textit{broadcast} quindi tutti gli agenti riceveranno i dati di tutti gli altri agenti}
+    \item{è \textbf{necessario} che il modulo UWB con id \texttt{0x4829} sia attivo e funzionante, in quanto è quello che gestisce la comunicazione tra tutti i moduli UWB}
+    \item{le distanze misurate (contenute nella variabile \texttt{uint16\_t distances[6]}) sono espresse in \textbf{centimetri (cm)}}
+    \item{nel caso in cui venga letta una distanza di \texttt{65535} può significare o che c'è stato un problema durante la funzione di ranging o che qualche nodo non è attivo: in entrambi i casi la funzione \texttt{read\_UWB()} ritornerà il valore \texttt{FALSE}}
+    \end{itemize}
+        
+\end{document}

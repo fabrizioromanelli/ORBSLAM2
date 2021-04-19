@@ -1,0 +1,6 @@
+1. Compilare libUWBranging
+2. Copiare libUWBranging.so in questa cartella
+3. Compilare telemetry_service
+4. Copiare il contenuto della cartella graphic_telemetry nel pc che fa da hotspot (o da cui si desidera vedere la telemetria)
+5. Avviare dalla macchina di telemetria il file telemetry_main.py. È scritto in python3, quindi assicurarsi di avere python 3 installato
+6. Avviare dal drone o da uno qualsiasi dei rover il processo telemetry_service ("sudo ./telemetry_service <ip macchina su cui gira telemetry_main.py>")
