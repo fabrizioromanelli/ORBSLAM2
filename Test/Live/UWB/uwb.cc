@@ -25,6 +25,7 @@ using namespace ORB_SLAM2;
 // #define DEBUG
 
 void saveUWBreadings(const string &, vector<double>, vector<vector<uint16_t>>);
+void saveCameraCovariances(const string &, vector<cv::Mat>);
 
 int main(int argc, char **argv)
 {
@@ -86,6 +87,7 @@ int main(int argc, char **argv)
 
     vector<double> uwbTimestamps;
     vector<vector<uint16_t>> uwbReadings;
+    vector<cv::Mat> covarianceMatrices, invCovarianceMatrices;
 
     float fx = 379.895904541016 / 640; // expressed in meters
     float fy = 379.895904541016 / 480; // expressed in meters
@@ -106,7 +108,8 @@ int main(int argc, char **argv)
 
       // Pass the IR Left and Depth images to the SLAM system
       cv::Mat cameraPose = SLAM.TrackRGBD(irMatrix, depthMatrix, realsense.getIRLeftTimestamp());
-      cv::Mat cameraCovariance = SLAM.GetCurrentCovarianceMatrix(fx, fy, cameraPose, false);
+      covarianceMatrices.push_back(SLAM.GetCurrentCovarianceMatrix(fx, fy, cameraPose, false));
+      invCovarianceMatrices.push_back(SLAM.GetCurrentCovarianceMatrix(fx, fy, cameraPose, true));
 
       tSlam_end = chrono::steady_clock::now();
 
@@ -166,9 +169,8 @@ int main(int argc, char **argv)
         imwrite(filename_depth, depthMatrix);
         }
 
-      int key = waitKey(1);
       // Stop SLAM when Spacebar is pressed or if the map changed (so a loop has been closed)
-      if( key == 32 || (SLAM.MapChanged() && autoclose)) {
+      if(SLAM.MapChanged() && autoclose) {
         cout << "Loop closed ==> shutting down SLAM" << endl;
         break;
       }
@@ -186,6 +188,12 @@ int main(int argc, char **argv)
 
     // Save UWB readings
     saveUWBreadings("UWBReadings.dat", uwbTimestamps, uwbReadings);
+
+    // Save covariance matrices
+    saveCameraCovariances("cMatrices.dat", covarianceMatrices);
+
+    // Save inverse covariance matrices
+    saveCameraCovariances("cMatricesInverse.dat", invCovarianceMatrices);
   }
   catch(exception& ex) {
     cout << ex.what() << endl;
@@ -209,4 +217,24 @@ void saveUWBreadings(const string &filename, vector<double> timestamps, vector<v
   }
   f.close();
   cout << endl << "UWB readings saved!" << endl;
+}
+
+void saveCameraCovariances(const string &filename, vector<cv::Mat> cMatrices)
+{
+  ofstream f;
+  f.open(filename.c_str());
+  f << fixed;
+
+  for(vector<cv::Mat>::iterator itCMatrices = cMatrices.begin(); itCMatrices != cMatrices.end(); itCMatrices++)
+  {
+    cv::Mat tmp = *itCMatrices;
+    f << setprecision(9);
+    for (size_t i = 0; i < 6; i++)
+      for (size_t j = 0; j < 6; j++)
+        f << tmp.at<float>(i,j) << " ";
+
+    f << endl;
+  }
+  f.close();
+  cout << endl << "Covariance matrices saved!" << endl;
 }
