@@ -23,7 +23,7 @@ using namespace ORB_SLAM2;
 #define VSLAM_FREQUENCY 15.0 // Hz
 #define UWB_FREQUENCY    2.0 // Hz
 // #define DEBUG
-#define NO_UWB
+// #define NO_UWB
 
 void saveUWBreadings(const string &, vector<double>, vector<vector<uint16_t>>);
 void saveCameraCovariances(const string &, vector<cv::Mat>);
@@ -174,7 +174,7 @@ int main(int argc, char **argv)
         imwrite(filename_depth, depthMatrix);
         }
 
-      // Stop SLAM when Spacebar is pressed or if the map changed (so a loop has been closed)
+      // Stop SLAM if the map changed (so a loop has been closed)
       if(SLAM.MapChanged() && autoclose) {
         cout << "Loop closed ==> shutting down SLAM" << endl;
         break;
