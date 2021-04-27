@@ -13,7 +13,6 @@
 #include <System.h>
 #include <sys/stat.h>
 
-#include "uwb.h"
 #include "realsense.h"
 
 using namespace std;
@@ -23,7 +22,7 @@ using namespace ORB_SLAM2;
 #define VSLAM_FREQUENCY 15.0 // Hz
 #define UWB_FREQUENCY    2.0 // Hz
 // #define DEBUG
-// #define NO_UWB
+#define NO_UWB
 
 void saveUWBreadings(const string &, vector<double>, vector<vector<uint16_t>>);
 void saveCameraCovariances(const string &, vector<cv::Mat>);
