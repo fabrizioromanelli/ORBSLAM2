@@ -13,23 +13,45 @@
 #include <System.h>
 #include <sys/stat.h>
 
+#include "UwbApi.h"
 #include "realsense.h"
 
 using namespace std;
 using namespace cv;
 using namespace ORB_SLAM2;
 
-#define VSLAM_FREQUENCY 15.0 // Hz
-#define UWB_FREQUENCY    2.0 // Hz
+#define VSLAM_FREQUENCY 30.0 // Hz
 // #define DEBUG
-#define NO_UWB
+// #define NO_UWB
+
+#define NODENUMBER 3
+const node_id_t uwb_master_id = 0x0E9E;
+const node_id_t uwb_slave_ids[NODENUMBER] = {0x45BB, 0x0C16, 0x4890};
+vector<double> uwbTimestamps;
+vector<vector<uint16_t>> uwbReadings;
+chrono::steady_clock::time_point tUwb;
 
 void saveUWBreadings(const string &, vector<double>, vector<vector<uint16_t>>);
 void saveCameraCovariances(const string &, vector<cv::Mat>);
 
+static void distanceFromUWBs(rall_descr_t* rall) {
+  multi_range_with(uwb_master_id, uwb_slave_ids, NODENUMBER);
+
+  vector<uint16_t> tmp;
+  for(int i = 0; i < NODENUMBER; i++)
+    tmp.push_back(rall->distances[i]);
+
+  uwbReadings.push_back(tmp);
+  auto nanoseconds_since_epoch = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+  double millis = (double)nanoseconds_since_epoch / 1000000.0;
+  // cout << fixed << setw(11) << setprecision(6) << "Timestamp UWB   : " << millis << " dist: " << rall->distances[0] << endl;
+  uwbTimestamps.push_back(millis);
+}
+
+
 int main(int argc, char **argv)
 {
-  if(argc != 7)
+  if(argc != 8)
   {
     cerr << endl << "Usage: ./uwb" << endl 
                  << "         path_to_vocabulary" << endl
@@ -37,16 +59,15 @@ int main(int argc, char **argv)
                  << "         display[ON/OFF]" << endl
                  << "         save images files[ON/OFF]" << endl
                  << "         auto close after loop closure[ON/OFF]" << endl
-                 << "         print camera trajectory[ON/OFF]" << endl;
+                 << "         print camera trajectory[ON/OFF]" << endl
+                 << "         specify device file name [e.g. /dev/ttyACM0]" << endl
+                 << "Example: ./Test/Live/UWB/uwb Vocabulary/orb_mur.fbow Config/RealSense-D435i-IRD.yaml OFF OFF OFF OFF /dev/ttyACM0" << endl;
     return 1;
   }
 
   try {
     // Initialize sensors
     RealSense realsense(RealSense::IRD, (uint32_t)VSLAM_FREQUENCY);
-    #ifndef NO_UWB
-      initialize_UWB();
-    #endif
 
     // Clone parameters from command line
     bool display = false;
@@ -69,6 +90,14 @@ int main(int argc, char **argv)
     if(printTrajS.compare("ON") == 0)
       printTraj = true;
 
+    #ifndef NO_UWB
+      init(argv[7]);
+      sleep(1);
+      // Registering callback to get distances from UWBs
+      register_rall_cb(distanceFromUWBs);
+      multi_range_with(uwb_master_id, uwb_slave_ids, NODENUMBER);
+    #endif
+
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
     System SLAM(argv[1], argv[2], System::RGBD, display, true);
 
@@ -81,14 +110,10 @@ int main(int argc, char **argv)
       dir_err = mkdir("depth", S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
     }
 
-    double elapsedTime = 1.0/UWB_FREQUENCY; // time elapsed for synching UWB with VSLAM readings (s)
     chrono::steady_clock::time_point tSlam_start;
     chrono::steady_clock::time_point tSlam_end;
     chrono::steady_clock::time_point tSlam_prev  = chrono::steady_clock::now();
-    chrono::steady_clock::time_point tUwb_prev;
 
-    vector<double> uwbTimestamps;
-    vector<vector<uint16_t>> uwbReadings;
     vector<cv::Mat> covarianceMatrices, invCovarianceMatrices;
 
     float fx = 379.895904541016 / 640; // expressed in meters
@@ -104,7 +129,7 @@ int main(int argc, char **argv)
       tSlam_prev = chrono::steady_clock::now();
 
       realsense.run();
-      // cout << fixed << setw(11) << setprecision(6) << "Timestamp   : " << realsense.getIRLeftTimestamp() << endl;
+      // cout << fixed << setw(11) << setprecision(6) << "Timestamp SLAM  : " << realsense.getIRLeftTimestamp() << endl;
       cv::Mat irMatrix    = realsense.getIRLeftMatrix();
       cv::Mat depthMatrix = realsense.getDepthMatrix();
 
@@ -116,38 +141,6 @@ int main(int argc, char **argv)
       tSlam_end = chrono::steady_clock::now();
 
       double ttrack = chrono::duration_cast<chrono::duration<double> >(tSlam_end - tSlam_start).count();
-
-#ifndef NO_UWB
-      // Call UWB readings after 500ms have passed from the previous scan
-      if(elapsedTime >= 1.0/UWB_FREQUENCY)
-      {
-        if(read_UWB())
-        {
-          uint16_t *uwb_distances;
-          uwb_distances = get_UWB_dist();
-          // cout << fixed << setw(11) << setprecision(6) << "realsense.getIRLeftTimestamp(): " << realsense.getIRLeftTimestamp() << endl;
-          uwbTimestamps.push_back(realsense.getIRLeftTimestamp());
-          vector<uint16_t> tmp;
-          for(int i = 0; i < 6; i++)
-          {
-            tmp.push_back(uwb_distances[i]);
-          }
-          uwbReadings.push_back(tmp);
-          elapsedTime = 0.0;
-        }
-        else
-        {
-          cout << "Error while reading UWBs!" << endl << flush;
-        }
-      }
-      else
-      {
-        elapsedTime += chrono::duration_cast<chrono::duration<double> >(tSlam_end - tUwb_prev).count();
-        // cout << "elapsedTime: " << elapsedTime << "s" << endl;
-      }
-
-      tUwb_prev = chrono::steady_clock::now();
-#endif
 
       #ifdef DEBUG
         cout << "Track frequency: " << 1/ttrack << "Hz" << endl;
@@ -217,7 +210,7 @@ void saveUWBreadings(const string &filename, vector<double> timestamps, vector<v
   for(vector<double>::iterator itTimestamps = timestamps.begin(); itTimestamps != timestamps.end(); itTimestamps++, itReadings++)
   {
     vector<uint16_t> _readings = *itReadings;
-    f << setprecision(6) << *itTimestamps << " " <<  setprecision(9) << _readings.at(0) << " " << _readings.at(1) << " " << _readings.at(2) << " " << _readings.at(3) << " " << _readings.at(4) << " " << _readings.at(5) << endl;
+    f << setprecision(6) << *itTimestamps << " " <<  setprecision(9) << _readings.at(0) << " " << _readings.at(1) << " " << _readings.at(2) << endl;
   }
   f.close();
   cout << endl << "UWB readings saved!" << endl;
