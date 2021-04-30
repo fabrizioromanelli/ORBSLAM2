@@ -34,6 +34,8 @@ chrono::steady_clock::time_point tUwb;
 void saveUWBreadings(const string &, vector<double>, vector<vector<uint16_t>>);
 void saveCameraCovariances(const string &, vector<cv::Mat>);
 void saveCameraPositions(const string &, vector<double>, vector<cv::Mat>);
+Eigen::Matrix<double,3,3> toMatrix3d(const cv::Mat &);
+std::vector<float> toQuaternion(const cv::Mat &);
 
 static void distanceFromUWBs(rall_descr_t* rall) {
   multi_range_with(uwb_master_id, uwb_slave_ids, NODENUMBER);
@@ -136,10 +138,14 @@ int main(int argc, char **argv)
 
       // Pass the IR Left and Depth images to the SLAM system
       cv::Mat cameraPose = SLAM.TrackRGBD(irMatrix, depthMatrix, realsense.getIRLeftTimestamp());
-      cameraPoses.push_back(cameraPose);
       covarianceMatrices.push_back(SLAM.GetCurrentCovarianceMatrix(fx, fy, cameraPose, false));
       invCovarianceMatrices.push_back(SLAM.GetCurrentCovarianceMatrix(fx, fy, cameraPose, true));
-      cameraTimestamps.push_back(realsense.getIRLeftTimestamp());
+
+      if (!cameraPose.empty())
+      {
+        cameraPoses.push_back(cameraPose);
+        cameraTimestamps.push_back(realsense.getIRLeftTimestamp());
+      }
 
       tSlam_end = chrono::steady_clock::now();
 
@@ -149,7 +155,7 @@ int main(int argc, char **argv)
         cout << "Track frequency: " << 1/ttrack << "Hz" << endl;
       #endif
 
-      if (printTraj)
+      if (printTraj && !cameraPose.empty())
         cout << "Camera position" << cameraPose << endl;
 
       // Saving files
@@ -253,12 +259,39 @@ void saveCameraPositions(const string &filename, vector<double> timestamps, vect
   for(vector<double>::iterator itTimestamps = timestamps.begin(); itTimestamps != timestamps.end(); itTimestamps++, itPositions++)
   {
     cv::Mat tmp = *itPositions;
-    f << setprecision(6) << *itTimestamps << " " << setprecision(9);
-    for (size_t i = 0; i < 6; i++)
-      f << tmp.at<float>(i) << " ";
 
-    f << endl;
+    cv::Mat Rwc = tmp.rowRange(0,3).colRange(0,3).t();
+    cv::Mat Twc = tmp.rowRange(0,3).col(3);
+
+    vector<float> q = toQuaternion(Rwc);
+
+    f << setprecision(6) << *itTimestamps << " " <<  setprecision(9) << Twc.at<float>(0) << " " << Twc.at<float>(1) << " " << Twc.at<float>(2) << " " << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << endl;
   }
   f.close();
   cout << endl << "Camera position pre-loop closure saved!" << endl;
+}
+
+Eigen::Matrix<double,3,3> toMatrix3d(const cv::Mat &cvMat3)
+{
+    Eigen::Matrix<double,3,3> M;
+
+    M << cvMat3.at<float>(0,0), cvMat3.at<float>(0,1), cvMat3.at<float>(0,2),
+         cvMat3.at<float>(1,0), cvMat3.at<float>(1,1), cvMat3.at<float>(1,2),
+         cvMat3.at<float>(2,0), cvMat3.at<float>(2,1), cvMat3.at<float>(2,2);
+
+    return M;
+}
+
+std::vector<float> toQuaternion(const cv::Mat &M)
+{
+    Eigen::Matrix<double,3,3> eigMat = toMatrix3d(M);
+    Eigen::Quaterniond q(eigMat);
+
+    std::vector<float> v(4);
+    v[0] = q.x();
+    v[1] = q.y();
+    v[2] = q.z();
+    v[3] = q.w();
+
+    return v;
 }
