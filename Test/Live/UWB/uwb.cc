@@ -261,7 +261,7 @@ void saveCameraPositions(const string &filename, vector<double> timestamps, vect
     cv::Mat tmp = *itPositions;
 
     cv::Mat Rwc = tmp.rowRange(0,3).colRange(0,3).t();
-    cv::Mat Twc = tmp.rowRange(0,3).col(3);
+    cv::Mat Twc = -Rwc*tmp.rowRange(0,3).col(3);
 
     vector<float> q = toQuaternion(Rwc);
 
