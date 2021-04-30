@@ -20,19 +20,20 @@ using namespace std;
 using namespace cv;
 using namespace ORB_SLAM2;
 
-#define VSLAM_FREQUENCY 30.0 // Hz
+#define VSLAM_FREQUENCY 15.0 // Hz
 // #define DEBUG
-// #define NO_UWB
+#define NO_UWB
 
 #define NODENUMBER 3
 const node_id_t uwb_master_id = 0x0E9E;
-const node_id_t uwb_slave_ids[NODENUMBER] = {0x45BB, 0x0C16, 0x4890};
+const node_id_t uwb_slave_ids[NODENUMBER] = {0x0C16, 0x45BB, 0x4890};
 vector<double> uwbTimestamps;
 vector<vector<uint16_t>> uwbReadings;
 chrono::steady_clock::time_point tUwb;
 
 void saveUWBreadings(const string &, vector<double>, vector<vector<uint16_t>>);
 void saveCameraCovariances(const string &, vector<cv::Mat>);
+void saveCameraPositions(const string &, vector<double>, vector<cv::Mat>);
 
 static void distanceFromUWBs(rall_descr_t* rall) {
   multi_range_with(uwb_master_id, uwb_slave_ids, NODENUMBER);
@@ -44,7 +45,6 @@ static void distanceFromUWBs(rall_descr_t* rall) {
   uwbReadings.push_back(tmp);
   auto nanoseconds_since_epoch = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
   double millis = (double)nanoseconds_since_epoch / 1000000.0;
-  // cout << fixed << setw(11) << setprecision(6) << "Timestamp UWB   : " << millis << " dist: " << rall->distances[0] << endl;
   uwbTimestamps.push_back(millis);
 }
 
@@ -114,7 +114,8 @@ int main(int argc, char **argv)
     chrono::steady_clock::time_point tSlam_end;
     chrono::steady_clock::time_point tSlam_prev  = chrono::steady_clock::now();
 
-    vector<cv::Mat> covarianceMatrices, invCovarianceMatrices;
+    vector<double> cameraTimestamps;
+    vector<cv::Mat> covarianceMatrices, invCovarianceMatrices, cameraPoses;
 
     float fx = 379.895904541016 / 640; // expressed in meters
     float fy = 379.895904541016 / 480; // expressed in meters
@@ -135,8 +136,10 @@ int main(int argc, char **argv)
 
       // Pass the IR Left and Depth images to the SLAM system
       cv::Mat cameraPose = SLAM.TrackRGBD(irMatrix, depthMatrix, realsense.getIRLeftTimestamp());
+      cameraPoses.push_back(cameraPose);
       covarianceMatrices.push_back(SLAM.GetCurrentCovarianceMatrix(fx, fy, cameraPose, false));
       invCovarianceMatrices.push_back(SLAM.GetCurrentCovarianceMatrix(fx, fy, cameraPose, true));
+      cameraTimestamps.push_back(realsense.getIRLeftTimestamp());
 
       tSlam_end = chrono::steady_clock::now();
 
@@ -182,6 +185,9 @@ int main(int argc, char **argv)
 
     // Save camera trajectory
     SLAM.SaveTrajectory("CameraTrajectory.dat");
+
+    // Save camera positions pre-loop closure
+    saveCameraPositions("CameraTrajectory-preLoopClosure.dat", cameraTimestamps, cameraPoses);
 
     // Save UWB readings
     saveUWBreadings("UWBReadings.dat", uwbTimestamps, uwbReadings);
@@ -234,4 +240,25 @@ void saveCameraCovariances(const string &filename, vector<cv::Mat> cMatrices)
   }
   f.close();
   cout << endl << "Covariance matrices saved!" << endl;
+}
+
+void saveCameraPositions(const string &filename, vector<double> timestamps, vector<cv::Mat> cPositions)
+{
+  ofstream f;
+  f.open(filename.c_str());
+  f << fixed;
+
+  vector<cv::Mat>::iterator itPositions = cPositions.begin();
+
+  for(vector<double>::iterator itTimestamps = timestamps.begin(); itTimestamps != timestamps.end(); itTimestamps++, itPositions++)
+  {
+    cv::Mat tmp = *itPositions;
+    f << setprecision(6) << *itTimestamps << " " << setprecision(9);
+    for (size_t i = 0; i < 6; i++)
+      f << tmp.at<float>(i) << " ";
+
+    f << endl;
+  }
+  f.close();
+  cout << endl << "Camera position pre-loop closure saved!" << endl;
 }
