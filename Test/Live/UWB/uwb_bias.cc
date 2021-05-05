@@ -69,9 +69,13 @@ int main(int argc, char **argv)
     {
       counter = 0;
       uwbReadings.clear(); // clean up stuff...
-      cout << endl << "Insert distance in centimeters (-1 to stop): " << endl;
+      cout << endl << "Insert distance in centimeters (-1 to stop): ";
       cin >> distance;
-      if (distance == -1) runFlag = false;
+      if (distance == -1)
+      {
+        runFlag = false;
+        continue;
+      }
 
       multi_range_with(uwb_master_id, uwb_slave_ids, NODENUMBER);
       cout << "Measuring..." << endl;
