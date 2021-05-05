@@ -22,7 +22,7 @@ using namespace ORB_SLAM2;
 
 #define VSLAM_FREQUENCY 15.0 // Hz
 // #define DEBUG
-#define NO_UWB
+// #define NO_UWB
 
 #define NODENUMBER 3
 const node_id_t uwb_master_id = 0x0E9E;
