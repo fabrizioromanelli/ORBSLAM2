@@ -16,8 +16,8 @@
 using namespace std;
 
 #define NODENUMBER 3
-#define NODETARGET 0    // Set the correct Node (i.e. U3)
-#define MEASURE_MX 2000 // Number of maximum measurements
+#define NODETARGET 1    // Set the correct Node (i.e. U3)
+#define MEASURE_MX 400 // Number of maximum measurements
 
 int counter = 0;
 
@@ -34,7 +34,7 @@ static void distanceFromUWBs(rall_descr_t* rall) {
   uint16_t tmp;
   tmp = rall->distances[NODETARGET];
 
-  if (tmp < 5000)
+  if (tmp < 800)
   {
     uwbReadings.push_back(tmp);
     counter++;
@@ -78,21 +78,21 @@ int main(int argc, char **argv)
       }
 
       multi_range_with(uwb_master_id, uwb_slave_ids, NODENUMBER);
-      cout << "Measuring..." << endl;
+      // cout << "Measuring..." << endl;
       while (counter < MEASURE_MX) 
       {
         sleep(1);
-        cout << ".";
+        // cout << ".";
       }
-      cout << endl;
+      // cout << endl;
 
-      uint16_t sum = 0;
+      long int sum = 0;
       // Computing average of the measurement
       for (size_t i = 0; i < uwbReadings.size(); i++)
       {
         sum = sum + uwbReadings[i];
       }
-      double averageMeasurement = sum/uwbReadings.size();
+      double averageMeasurement = (double)sum/(double)uwbReadings.size();
       cout << distance << " " << averageMeasurement << endl;
     }
   }
