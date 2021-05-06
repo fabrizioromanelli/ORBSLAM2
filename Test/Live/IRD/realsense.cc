@@ -68,6 +68,9 @@ int main(int argc, char **argv)
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
     System SLAM(argv[1], argv[2], System::RGBD, display, true);
 
+    float fx = 379.895904541016 / 640; // expressed in meters
+    float fy = 379.895904541016 / 480; // expressed in meters
+
     cout << endl << "-------" << endl;
     cout << "Start processing video stream ..." << endl;
 
@@ -99,9 +102,13 @@ int main(int argc, char **argv)
         cv::Mat depthMatrix = realsense.getDepthMatrix();
         // Pass the IR Left and Depth images to the SLAM system
         cv::Mat cameraPose = SLAM.TrackRGBD(irMatrix, depthMatrix, realsense.getIRLeftTimestamp());
+        cv::Mat covMat = SLAM.GetCurrentCovarianceMatrix(fx, fy, cameraPose, true);
 
         if (printTraj)
-          cout << "Camera position" << cameraPose << endl;
+        {
+          cout << cameraPose << endl;
+          cout << covMat << endl;
+        }
 
         // Saving files
         if (saveFile) {
