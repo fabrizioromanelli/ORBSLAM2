@@ -20,7 +20,7 @@ using namespace std;
 using namespace cv;
 using namespace ORB_SLAM2;
 
-#define VSLAM_FREQUENCY 15.0 // Hz
+#define VSLAM_FREQUENCY 30.0 // Hz
 // #define DEBUG
 // #define NO_UWB
 

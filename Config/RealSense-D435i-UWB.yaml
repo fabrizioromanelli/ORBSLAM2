@@ -32,7 +32,7 @@ Camera.k3: 0
 # Camera.k3: 2.3106074488014841e-02
 
 # Camera frames per second 
-Camera.fps: 15
+Camera.fps: 30
 
 # Refer to: https://github.com/IntelRealSense/librealsense/issues/2580
 
