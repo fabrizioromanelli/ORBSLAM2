@@ -89,7 +89,7 @@ target_link_libraries(${PROJECT_NAME}
         ${PROJECT_SOURCE_DIR}/Thirdparty/DLib/lib/libDLib.so
         ${PROJECT_SOURCE_DIR}/Thirdparty/fbow/lib/libfbow.so
         ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
-        ${PROJECT_SOURCE_DIR}/lib/libuwb.so
+#        ${PROJECT_SOURCE_DIR}/lib/libuwb.so
         )
 
 # Adding RealSense driver library
@@ -121,12 +121,12 @@ target_link_libraries(qrCode_live ${PROJECT_NAME})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/ArucoCode)
 add_executable(arucoCode Test/Live/ArucoCode/arucoCode.cc)
 target_link_libraries(arucoCode ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/UWB)
-add_executable(uwb Test/Live/UWB/uwb.cc)
-target_link_libraries(uwb -lpthread ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/UWB)
-add_executable(uwb_bias Test/Live/UWB/uwb_bias.cc)
-target_link_libraries(uwb_bias -lpthread ${PROJECT_NAME})
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/UWB)
+# add_executable(uwb Test/Live/UWB/uwb.cc)
+# target_link_libraries(uwb -lpthread ${PROJECT_NAME})
+# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/UWB)
+# add_executable(uwb_bias Test/Live/UWB/uwb_bias.cc)
+# target_link_libraries(uwb_bias -lpthread ${PROJECT_NAME})
 
 # # Build Tests for Replay sequences
 # set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/IRD)

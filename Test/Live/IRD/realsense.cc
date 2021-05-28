@@ -106,8 +106,10 @@ int main(int argc, char **argv)
 
         if (printTraj)
         {
-          cout << cameraPose << endl;
-          cout << covMat << endl;
+          cout.precision(2);
+          cout << fixed << setw(8) << "X: " << -cameraPose.at<float>(2,3) << setw(8) << " Y: " << -cameraPose.at<float>(0,3) << setw(8) << " Z: " << -cameraPose.at<float>(1,3) << endl;
+          // cout << cameraPose << endl;
+          // cout << covMat << endl;
         }
 
         // Saving files

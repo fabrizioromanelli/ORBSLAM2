@@ -36,7 +36,7 @@ cd build
 cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
 make $1
 
-cd ../../
+cd ../../..
 
 cd Vocabulary
 VOCABULARYFILE=`pwd`"/orb_mur.fbow"
