@@ -3,6 +3,7 @@
 *
 */
 
+#include <signal.h>
 #include <iostream>
 #include <algorithm>
 #include <fstream>
@@ -19,6 +20,15 @@ using namespace std;
 using namespace cv;
 using namespace ORB_SLAM2;
 
+System *pSLAM;
+
+// Handling CTRL+C event
+void my_handler(int s){
+  pSLAM->Shutdown();
+  sleep(5);
+  exit(1);
+}
+
 int main(int argc, char **argv)
 {
   if(argc != 8)
@@ -33,6 +43,14 @@ int main(int argc, char **argv)
                  << "         print camera trajectory[ON/OFF]" << endl;
     return 1;
   }
+
+  struct sigaction sigIntHandler;
+
+  sigIntHandler.sa_handler = my_handler;
+  sigemptyset(&sigIntHandler.sa_mask);
+  sigIntHandler.sa_flags = 0;
+
+  sigaction(SIGINT, &sigIntHandler, NULL);
 
   try {
     RealSense::sModality mode = RealSense::RGBD;
@@ -67,6 +85,7 @@ int main(int argc, char **argv)
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
     System SLAM(argv[1], argv[2], System::RGBD, display, true);
+    pSLAM = &SLAM;
 
     float fx = 379.895904541016 / 640; // expressed in meters
     float fy = 379.895904541016 / 480; // expressed in meters
