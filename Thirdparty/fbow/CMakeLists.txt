@@ -112,7 +112,7 @@ IF(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
    OR MINGW)
     set(ENABLE_PROFILING 		OFF CACHE BOOL "Enable profiling in the GCC compiler (Add flags: -g -pg)")
     set(USE_OMIT_FRAME_POINTER 	ON CACHE BOOL "Enable -fomit-frame-pointer for GCC")
-    if(${CMAKE_SYSTEM_PROCESSOR} MATCHES arm*) # We can use only -O2 because the -O3 causes gcc crash
+    if(${CMAKE_SYSTEM_PROCESSOR} MATCHES arm*) # We can use only -O2 because the -O3 causes gcc crashes
         set(USE_O2 ON CACHE BOOL "Enable -O2 for GCC")
         set(USE_FAST_MATH OFF CACHE BOOL "Enable -ffast-math for GCC")
 	unset(USE_SSE3 CACHE)
@@ -209,14 +209,14 @@ IF(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
     endif()
 
 
-    IF(${CMAKE_SYSTEM_PROCESSOR} MATCHES armv7l) # In ARM_COrtex8 with neon, enalble vectorized operations
+    IF(${CMAKE_SYSTEM_PROCESSOR} MATCHES armv7l) # In ARM_COrtex8 with neon, enable vectorized operations
         SET(EXTRA_C_FLAGS_RELEASE "${EXTRA_C_FLAGS_RELEASE}  ")
     ENDIF()
 
 
-    set(CMAKE_CXX_FLAGS_RELEASE "${VECTORIAL_INSTRUCTIONS} ${EXTRA_C_FLAGS_RELEASE}  -O3  -std=c++11 -Wall -DNDEBUG -Wno-ignored-attributes -Wno-unused-result")
-    set(CMAKE_CXX_FLAGS_DEBUG "${VECTORIAL_INSTRUCTIONS}  -g3  -DDEBUG -D_DEBUG   -std=c++11 -Wall -Wno-ignored-attributes -Wno-unused-result")
-    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${VECTORIAL_INSTRUCTIONS} -O2 -g3  -DDEBUG -D_DEBUG  -std=c++11 -Wall -Wno-ignored-attributes -Wno-unused-result")
+    set(CMAKE_CXX_FLAGS_RELEASE "${VECTORIAL_INSTRUCTIONS} ${EXTRA_C_FLAGS_RELEASE}  -O3 -ffast-math -flto -march=armv8-a+crc -mcpu=cortex-a57 -funroll-loops -fvect-cost-model=unlimited -mfpu=neon -funsafe-math-optimizations -std=c++11 -Wall -DNDEBUG -Wno-ignored-attributes -Wno-unused-result")
+    set(CMAKE_CXX_FLAGS_DEBUG "${VECTORIAL_INSTRUCTIONS}  -g3  -DDEBUG -D_DEBUG -ffast-math -flto -march=armv8-a+crc -mcpu=cortex-a57 -funroll-loops -fvect-cost-model=unlimited -mfpu=neon -funsafe-math-optimizations  -std=c++11 -Wall -Wno-ignored-attributes -Wno-unused-result")
+    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${VECTORIAL_INSTRUCTIONS} -O2 -g3 -ffast-math -flto -march=armv8-a+crc -mcpu=cortex-a57 -funroll-loops -fvect-cost-model=unlimited -mfpu=neon -funsafe-math-optimizations -DDEBUG -D_DEBUG  -std=c++11 -Wall -Wno-ignored-attributes -Wno-unused-result")
 
     message(STATUS "vec=${VECTORIAL_INSTRUCTIONS}")
     MESSAGE( STATUS "-------------------------------------------------------------------------------" )

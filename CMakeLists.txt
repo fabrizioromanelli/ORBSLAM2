@@ -11,13 +11,21 @@ MESSAGE("Build type: " ${CMAKE_BUILD_TYPE})
 OPTION(JETSON_BUILD "Jetson build is: " OFF)
 IF(JETSON_BUILD)
     ADD_DEFINITIONS(-D__ANDROID__)
-ENDIF(JETSON_BUILD)
+ENDIF()
 
-set(CMAKE_C_FLAGS_DEBUG "-O2 -g")
-set(CMAKE_CXX_FLAGS_DEBUG "-O2 -g")
+IF(JETSON_BUILD)
+  set(CMAKE_C_FLAGS_DEBUG "-O2 -g -ffast-math -flto -march=armv8-a+crc -mcpu=cortex-a57 -funroll-loops -fvect-cost-model=unlimited -mfpu=neon -funsafe-math-optimizations")
+  set(CMAKE_CXX_FLAGS_DEBUG "-O2 -g -ffast-math -flto -march=armv8-a+crc -mcpu=cortex-a57 -funroll-loops -fvect-cost-model=unlimited -mfpu=neon -funsafe-math-optimizations")
 
-set(CMAKE_C_FLAGS_RELEASE "-O3 -DEIGEN_NO_DEPRECATED_WARNING -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-variable -Wno-unused-parameter -Wno-missing-field-initializers -Wno-attributes -Wno-return-type")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DEIGEN_NO_DEPRECATED_WARNING -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-variable -Wno-unused-parameter -Wno-missing-field-initializers -Wno-attributes -Wno-return-type")
+  set(CMAKE_C_FLAGS_RELEASE "-O3 -ffast-math -flto -march=armv8-a+crc -mcpu=cortex-a57 -funroll-loops -fvect-cost-model=unlimited -mfpu=neon -funsafe-math-optimizations -DEIGEN_NO_DEPRECATED_WARNING -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-variable -Wno-unused-parameter -Wno-missing-field-initializers -Wno-attributes -Wno-return-type")
+  set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ffast-math -flto -march=armv8-a+crc -mcpu=cortex-a57 -funroll-loops -fvect-cost-model=unlimited -mfpu=neon -funsafe-math-optimizations -DEIGEN_NO_DEPRECATED_WARNING -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-variable -Wno-unused-parameter -Wno-missing-field-initializers -Wno-attributes -Wno-return-type")
+ELSE
+  set(CMAKE_C_FLAGS_DEBUG "-O2 -g")
+  set(CMAKE_CXX_FLAGS_DEBUG "-O2 -g")
+
+  set(CMAKE_C_FLAGS_RELEASE "-O3 -DEIGEN_NO_DEPRECATED_WARNING -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-variable -Wno-unused-parameter -Wno-missing-field-initializers -Wno-attributes -Wno-return-type")
+  set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DEIGEN_NO_DEPRECATED_WARNING -Wno-unused-but-set-variable -Wno-unused-function -Wno-unused-variable -Wno-unused-parameter -Wno-missing-field-initializers -Wno-attributes -Wno-return-type")
+ENDIF()
 
 if(CUDA_BUILD)
   include(FindOpenMP)
