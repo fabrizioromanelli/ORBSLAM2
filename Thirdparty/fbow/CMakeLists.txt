@@ -214,9 +214,9 @@ IF(CMAKE_CXX_COMPILER_ID MATCHES "GNU"
     ENDIF()
 
 
-    set(CMAKE_CXX_FLAGS_RELEASE "${VECTORIAL_INSTRUCTIONS} ${EXTRA_C_FLAGS_RELEASE}  -O3 -ffast-math -flto -march=armv8-a+crc -mcpu=cortex-a57 -funroll-loops -fvect-cost-model=unlimited -mfpu=neon-fp-armv8 -funsafe-math-optimizations -std=c++11 -Wall -DNDEBUG -Wno-ignored-attributes -Wno-unused-result")
-    set(CMAKE_CXX_FLAGS_DEBUG "${VECTORIAL_INSTRUCTIONS}  -g3  -DDEBUG -D_DEBUG -ffast-math -flto -march=armv8-a+crc -mcpu=cortex-a57 -funroll-loops -fvect-cost-model=unlimited -mfpu=neon-fp-armv8 -funsafe-math-optimizations  -std=c++11 -Wall -Wno-ignored-attributes -Wno-unused-result")
-    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${VECTORIAL_INSTRUCTIONS} -O2 -g3 -ffast-math -flto -march=armv8-a+crc -mcpu=cortex-a57 -funroll-loops -fvect-cost-model=unlimited -mfpu=neon-fp-armv8 -funsafe-math-optimizations -DDEBUG -D_DEBUG  -std=c++11 -Wall -Wno-ignored-attributes -Wno-unused-result")
+    set(CMAKE_CXX_FLAGS_RELEASE "${VECTORIAL_INSTRUCTIONS} ${EXTRA_C_FLAGS_RELEASE}  -O3 -ffast-math -flto -march=armv8-a+crc -mcpu=cortex-a57 -funroll-loops -fvect-cost-model=unlimited -funsafe-math-optimizations -std=c++11 -Wall -DNDEBUG -Wno-ignored-attributes -Wno-unused-result")
+    set(CMAKE_CXX_FLAGS_DEBUG "${VECTORIAL_INSTRUCTIONS}  -g3  -DDEBUG -D_DEBUG -ffast-math -flto -march=armv8-a+crc -mcpu=cortex-a57 -funroll-loops -fvect-cost-model=unlimited -funsafe-math-optimizations  -std=c++11 -Wall -Wno-ignored-attributes -Wno-unused-result")
+    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${VECTORIAL_INSTRUCTIONS} -O2 -g3 -ffast-math -flto -march=armv8-a+crc -mcpu=cortex-a57 -funroll-loops -fvect-cost-model=unlimited -funsafe-math-optimizations -DDEBUG -D_DEBUG  -std=c++11 -Wall -Wno-ignored-attributes -Wno-unused-result")
 
     message(STATUS "vec=${VECTORIAL_INSTRUCTIONS}")
     MESSAGE( STATUS "-------------------------------------------------------------------------------" )

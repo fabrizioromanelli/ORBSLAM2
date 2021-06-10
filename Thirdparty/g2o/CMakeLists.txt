@@ -54,8 +54,8 @@ ENDIF(UNIX)
 # ENDIF(OPENMP_FOUND AND G2O_USE_OPENMP)
 
 # Compiler specific options for gcc
-SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -ffast-math -flto -march=armv8-a+crc -mcpu=cortex-a57 -funroll-loops -fvect-cost-model=unlimited -mfpu=neon-fp-armv8 -funsafe-math-optimizations -D EIGEN_NO_DEPRECATED_WARNING")
-SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -ffast-math -flto -march=armv8-a+crc -mcpu=cortex-a57 -funroll-loops -fvect-cost-model=unlimited -mfpu=neon-fp-armv8 -funsafe-math-optimizations -D EIGEN_NO_DEPRECATED_WARNING")
+SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -ffast-math -flto -march=armv8-a+crc -mcpu=cortex-a57 -funroll-loops -fvect-cost-model=unlimited -funsafe-math-optimizations -D EIGEN_NO_DEPRECATED_WARNING")
+SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -ffast-math -flto -march=armv8-a+crc -mcpu=cortex-a57 -funroll-loops -fvect-cost-model=unlimited -funsafe-math-optimizations -D EIGEN_NO_DEPRECATED_WARNING")
 
 # activate warnings !!!
 SET(g2o_C_FLAGS "${g2o_C_FLAGS} -Wall -W -D EIGEN_NO_DEPRECATED_WARNING")
