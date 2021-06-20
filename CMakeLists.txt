@@ -324,7 +324,8 @@ install(DIRECTORY "Thirdparty/g2o/"
 install(DIRECTORY "include/"
         DESTINATION "/usr/local/include/${PROJECT_NAME}"
         FILES_MATCHING
-        PATTERN "*.h")
+        PATTERN "*.h"
+        PATTERN "*.hpp")
 
 install(DIRECTORY "Config/"
         DESTINATION "/usr/local/share/${PROJECT_NAME}/Config")
