@@ -100,8 +100,16 @@ int main(int argc, char **argv)
         // Pass the IR Left and Depth images to the SLAM system
         cv::Mat cameraPose = SLAM.TrackRGBD(irMatrix, depthMatrix, realsense.getIRLeftTimestamp());
 
-        if (printTraj)
-          cout << "Camera position" << cameraPose << endl;
+        if (printTraj && !cameraPose.empty())
+        {
+          cout.precision(2);
+          // cout << fixed << setw(8) << "X: " << -cameraPose.at<float>(2,3) << setw(8) << " Y: " << -cameraPose.at<float>(0,3) << setw(8) << " Z: " << -cameraPose.at<float>(1,3) << endl;
+          cv::Mat Rwc = cameraPose.rowRange(0, 3).colRange(0, 3).t();
+          cv::Mat Twc = -Rwc * cameraPose.rowRange(0, 3).col(3);
+          cout << fixed << setprecision(5) << setw(8) << "X: " << Twc.at<float>(2) << setw(8) << " Y: " << -Twc.at<float>(0) << setw(8) << " Z: " << -Twc.at<float>(1) << endl;
+          // cout << cameraPose << endl;
+          // cout << covMat << endl;
+        }
 
         // Saving files
         if (saveFile) {
