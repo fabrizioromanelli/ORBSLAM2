@@ -136,6 +136,8 @@ public:
 
     cv::Mat GetCurrentCovarianceMatrix(float, float, cv::Mat, bool);
 
+    vector<MapPoint*> getMap();
+
 private:
     // Save/Load functions
     void SaveMap(const string &filename);

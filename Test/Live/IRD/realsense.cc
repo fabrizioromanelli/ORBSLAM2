@@ -123,6 +123,13 @@ int main(int argc, char **argv)
         cv::Mat cameraPose = SLAM.TrackRGBD(irMatrix, depthMatrix, realsense.getIRLeftTimestamp());
         cv::Mat covMat = SLAM.GetCurrentCovarianceMatrix(fx, fy, cameraPose, true);
 
+        // Get the map points at the current VSLAM step
+        vector<ORB_SLAM2::MapPoint*> mapPoints = SLAM.getMap();
+        for (auto point: mapPoints){
+          cout << point->GetWorldPos() << endl;
+        }
+        cout << "****************************************************************" << endl;
+
         if (printTraj && !cameraPose.empty())
         {
           cout.precision(2);

@@ -690,6 +690,17 @@ cv::Mat System::GetCurrentCovarianceMatrix(float fx, float fy, cv::Mat cameraPos
   }
 }
 
+vector<MapPoint*> System::getMap()
+{
+  vector<MapPoint*> mapPoints;
+  vector<MapPoint*> _mapPoints = this->mpMap->GetAllMapPoints();
+  for (auto point: _mapPoints){
+    if (!point->isBad())
+      mapPoints.push_back(point);
+  }
+  return mapPoints;
+}
+
 void System::SaveMap(const string &filename)
 {
     std::ofstream out(filename, std::ios_base::binary);
