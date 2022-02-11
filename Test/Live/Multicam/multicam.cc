@@ -52,52 +52,66 @@ int main(int argc, char **argv)
 
   sigaction(SIGINT, &sigIntHandler, NULL);
 
-  rs2::context ctx; // Create librealsense context for managing devices
-  vector<rs2::pipeline> pipelines;
+  RealSense::sModality mode = RealSense::MULTI;
+  RealSense realsense(mode);
 
-  // Capture serial numbers before opening streaming
-  vector<string> serials, names;
-  for (auto&& dev : ctx.query_devices())
-  {
-    serials.push_back(dev.get_info(RS2_CAMERA_INFO_SERIAL_NUMBER));
-    names.push_back(dev.get_info(RS2_CAMERA_INFO_NAME));
-  }
+  // for(;;)
+  // {
+  //   realsense.run();
+  //   // rs2_pose pose = realsense.getPose();
+  //   // cout << fixed << setw(11) << setprecision(6) << pose.translation << " " << pose.rotation << " " << pose.tracker_confidence << endl;
+  // }
 
-  size_t i = 0;
-  // Start a streaming pipe per each connected device
-  for (auto&& serial : serials)
-  {
-    rs2::pipeline pipe(ctx);
-    rs2::config cfg;
-    cfg.enable_device(serial);
-    pipe.start(cfg);
-    pipelines.emplace_back(pipe);
-    cout << "Connecting to device: " << names[i++] << " serial: " << serial << endl;
-  }
+  // rs2::context ctx; // Create librealsense context for managing devices
+  // vector<rs2::pipeline> pipelines;
 
-  // Main app loop
-  while (false)
-  {
-    // Collect the new frames from all the connected devices
-    std::vector<rs2::frame> new_frames;
-    for (auto &&pipe : pipelines)
-    {
-      rs2::frameset fs;
-      if (pipe.poll_for_frames(&fs))
-      {
-        for (const rs2::frame& f : fs)
-          new_frames.emplace_back(f);
-      }
-    }
+  // // Capture serial numbers before opening streaming
+  // vector<string> serials, names;
+  // for (auto&& dev : ctx.query_devices())
+  // {
+  //   serials.push_back(dev.get_info(RS2_CAMERA_INFO_SERIAL_NUMBER));
+  //   names.push_back(dev.get_info(RS2_CAMERA_INFO_NAME));
+  // }
 
-    // Convert the newly-arrived frames to render-friendly format
-    for (const auto& frame : new_frames)
-    {
-      // Get the serial number of the current frame's device
-      auto serial = rs2::sensor_from_frame(frame)->get_info(RS2_CAMERA_INFO_SERIAL_NUMBER);
-      cout << "frame from: " << serial << endl;
-    }
-  }
+  // size_t i = 0;
+  // // Start a streaming pipe per each connected device
+  // for (auto&& serial : serials)
+  // {
+  //   rs2::pipeline pipe(ctx);
+  //   rs2::config cfg;
+  //   cfg.enable_device(serial);
+  //   pipe.start(cfg);
+  //   pipelines.emplace_back(pipe);
+  //   cout << "Connecting to device: " << names[i++] << " serial: " << serial << endl;
+  // }
+
+  // vector<double> timestamps;
+
+  // int j = 0;
+
+  // // Main app loop
+  // while (j < 100)
+  // {
+  //   // Collect the new frames from all the connected devices
+  //   vector<rs2::frame> new_frames;
+  //   for (auto &&pipe : pipelines)
+  //   {
+  //     rs2_pose pose;
+  //     auto frames = pipe.wait_for_frames();
+  //     auto pose_frame = frames.get_pose_frame();
+  //     if (pose_frame) {
+  //       pose = pose_frame.get_pose_data();
+  //       cout << fixed << setw(11) << setprecision(6) << pose.translation << " " << pose.rotation << " " << pose.tracker_confidence << " " << pose_frame.get_timestamp() << endl;
+  //       j++;
+  //     }
+  //     auto color_frame = frames.get_color_frame();
+  //     if (color_frame) {
+  //       int ttt = color_frame.get_height();
+  //       cout << fixed << setw(11) << setprecision(6) << ttt << " " << color_frame.get_timestamp() << endl;
+  //       j++;
+  //     }
+  //   }
+  // }
 
   // try {
   //   RealSense::sModality mode = RealSense::RGBD;

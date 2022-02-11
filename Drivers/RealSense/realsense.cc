@@ -4,7 +4,10 @@
 RealSense::RealSense(const sModality modality):
 sensorModality(modality), color_fps(30), ir_left_fps(30), ir_right_fps(30), depth_fps(30)
 {
-  initialize(MIN_DELTA_TIMEFRAMES_THRESHOLD);
+  if (modality == RGBD || modality == IRD || modality == IRL || modality == IRR)
+    initialize(MIN_DELTA_TIMEFRAMES_THRESHOLD);
+  else if (modality == MULTI)
+    initializeMulti(MIN_DELTA_TIMEFRAMES_THRESHOLD);
 }
 
 // Constructor with maximum delta timeframes as an input
@@ -48,6 +51,9 @@ void RealSense::run()
       break;
     case IRR:
       updateIRR();
+      break;
+    case MULTI:
+      updateMULTI();
       break;
     default:
       break;
@@ -95,6 +101,20 @@ rs2_time_t RealSense::getIRLeftTimestamp()
   if ((sensorModality == IRD) || (sensorModality == IRL)) {
     // Get each frame
     rs2::frame cFrame  = frameset.get_infrared_frame(IR_LEFT);
+    rs2_frame * frameP = cFrame.get();
+
+    // Get frame timestamp
+    return(rs2_get_frame_timestamp(frameP, &e));
+  } else {
+    return(-1);
+  }
+}
+
+rs2_time_t RealSense::getPoseTimestamp()
+{
+  if (sensorModality == MULTI) {
+    // Get each frame
+    auto cFrame = frameset2.get_pose_frame();
     rs2_frame * frameP = cFrame.get();
 
     // Get frame timestamp
@@ -182,6 +202,11 @@ cv::Mat RealSense::getIRRightMatrix()
   return(ir_right);
 }
 
+rs2_pose RealSense::getPose()
+{
+  return(pose);
+}
+
 // Get color frame
 rs2::frame RealSense::getColorFrame()
 {
@@ -212,6 +237,14 @@ void RealSense::initialize(rs2_time_t _maxDeltaTimeFrames)
   maxDeltaTimeframes = _maxDeltaTimeFrames;
   cv::setUseOptimized(true);
   initializeSensor();
+}
+
+// Initialize
+void RealSense::initializeMulti(rs2_time_t _maxDeltaTimeFrames)
+{
+  maxDeltaTimeframes = _maxDeltaTimeFrames;
+  cv::setUseOptimized(true);
+  initializeSensors();
 }
 
 // Initialize Sensor
@@ -292,6 +325,97 @@ inline void RealSense::initializeSensor()
   }
 }
 
+// Initialize Sensors for multicamera
+inline void RealSense::initializeSensors()
+{
+  rs2::context ctx; // Create librealsense context for managing devices
+  pipelines.reserve(2);
+
+  // Capture serial numbers before opening streaming
+  for (auto&& dev : ctx.query_devices())
+  {
+    serials.push_back(dev.get_info(RS2_CAMERA_INFO_SERIAL_NUMBER));
+    names.push_back(dev.get_info(RS2_CAMERA_INFO_NAME));
+  }
+
+  size_t i = 0;
+  // Start a streaming pipe per each connected device
+  for (auto&& serial : serials)
+  {
+    rs2::pipeline pipe(ctx);
+    rs2::config config;
+    config.enable_device(serial);
+
+    std::string t265("T265");
+    if (names[i].find(t265) != std::string::npos)
+    {
+      std::cout << "SDIODSISJD" << std::endl;
+      pipe.start(config);
+      pipelines[T265] = pipe;
+      // Camera warmup - dropping several first frames to let auto-exposure stabilize
+      for (uint32_t i = 0; i < warm_up_frames; i++)
+      {
+        // Wait for all configured streams to produce a frame
+        frameset2 = pipe.wait_for_frames();
+      }
+    }
+    else // should be a D435i
+    {
+      config.enable_stream( rs2_stream::RS2_STREAM_INFRARED, IR_LEFT, ir_left_width, ir_left_height, rs2_format::RS2_FORMAT_Y8, ir_left_fps );
+      // The following is just needed to get the correct baseline information, it will be then disabled.
+      config.enable_stream( rs2_stream::RS2_STREAM_INFRARED, IR_RIGHT, ir_right_width, ir_right_height, rs2_format::RS2_FORMAT_Y8, ir_right_fps );
+      config.enable_stream( rs2_stream::RS2_STREAM_DEPTH, depth_width, depth_height, rs2_format::RS2_FORMAT_Z16, depth_fps );
+
+      pipeline_profile = pipe.start(config);
+      realSense_device = pipeline_profile.get_device();
+
+      auto depth_sensor = realSense_device.first<rs2::depth_sensor>();
+      auto depth_stream = pipeline_profile.get_stream(RS2_STREAM_DEPTH);
+      auto ir_stream    = pipeline_profile.get_stream(RS2_STREAM_INFRARED, 2);
+
+      const float scale = depth_sensor.get_depth_scale();
+      rs2_intrinsics intrinsics = pipeline_profile.get_stream(RS2_STREAM_INFRARED).as<rs2::video_stream_profile>().get_intrinsics();
+      rs2_extrinsics extrinsics = depth_stream.get_extrinsics_to(ir_stream);
+
+      std::stringstream ss;
+      ss << "    " << std::left << std::setw(31) << "Width"      << ": " << intrinsics.width << std::endl <<
+            "    " << std::left << std::setw(31) << "Height"     << ": " << intrinsics.height << std::endl <<
+            "    " << std::left << std::setw(31) << "Distortion" << ": " << rs2_distortion_to_string(intrinsics.model) << std::endl <<
+            "    " << std::left << std::setw(31) << "Baseline"   << ": " << std::setprecision(15) << extrinsics.translation[0] << std::endl <<
+            "    " << std::left << std::setw(31) << "Camera.fx"  << ": " << std::setprecision(15) << intrinsics.fx << std::endl <<
+            "    " << std::left << std::setw(31) << "Camera.fy"  << ": " << std::setprecision(15) << intrinsics.fy << std::endl <<
+            "    " << std::left << std::setw(31) << "Camera.cx"  << ": " << std::setprecision(15) << intrinsics.ppx << std::endl <<
+            "    " << std::left << std::setw(31) << "Camera.cy"  << ": " << std::setprecision(15) << intrinsics.ppy << std::endl <<
+            "    " << std::left << std::setw(31) << "Camera.k1"  << ": " << std::setprecision(15) << intrinsics.coeffs[0] << std::endl <<
+            "    " << std::left << std::setw(31) << "Camera.k2"  << ": " << std::setprecision(15) << intrinsics.coeffs[1] << std::endl <<
+            "    " << std::left << std::setw(31) << "Camera.p1"  << ": " << std::setprecision(15) << intrinsics.coeffs[2] << std::endl <<
+            "    " << std::left << std::setw(31) << "Camera.p1"  << ": " << std::setprecision(15) << intrinsics.coeffs[3] << std::endl <<
+            "    " << std::left << std::setw(31) << "Camera.k3"  << ": " << std::setprecision(15) << intrinsics.coeffs[4] << std::endl <<
+            "    " << std::left << std::setw(31) << "DepthMapFactor" << ": " << 1/scale << std::endl <<
+            "    " << std::left << std::setw(31) << "Camera.bf"  << ": " << fabs(extrinsics.translation[0]*intrinsics.fx) << std::endl;
+
+      std::cout << ss.str() << std::endl;
+      pipe.stop();
+      config.disable_stream(RS2_STREAM_INFRARED, 2);
+      pipeline_profile = pipe.start(config);
+      realSense_device = pipeline_profile.get_device();
+      pipelines[D435I] = pipe;
+
+      // Disabled by default the laser projector
+      disableLaser();
+
+      // Camera warmup - dropping several first frames to let auto-exposure stabilize
+      for (uint32_t i = 0; i < warm_up_frames; i++)
+      {
+        // Wait for all configured streams to produce a frame
+        frameset = pipe.wait_for_frames();
+      }
+    }
+
+    i++;
+  }
+}
+
 void RealSense::enableLaser(float power)
 {
   auto depth_sensor = realSense_device.first<rs2::depth_sensor>();
@@ -342,18 +466,31 @@ void RealSense::updateIRR()
   updateInfraredIRRight();
 }
 
+void RealSense::updateMULTI()
+{
+  updateFrame();
+  updateInfraredIRLeft();
+  updateDepth();
+  updatePose();
+}
+
 // Update Frame
 inline void RealSense::updateFrame()
 {
-  frameset = pipeline.wait_for_frames();
+  if (sensorModality != MULTI) {
+    frameset = pipeline.wait_for_frames();
 
-  if (sensorModality == RGBD) {
-    // Retrieve Aligned Frame
-    rs2::align align( rs2_stream::RS2_STREAM_COLOR );
-    aligned_frameset = align.process( frameset );
-    if( !aligned_frameset.size() ){
-      return;
+    if (sensorModality == RGBD) {
+      // Retrieve Aligned Frame
+      rs2::align align( rs2_stream::RS2_STREAM_COLOR );
+      aligned_frameset = align.process( frameset );
+      if( !aligned_frameset.size() ){
+        return;
+      }
     }
+  } else {
+    frameset  = pipelines[D435I].wait_for_frames();
+    frameset2 = pipelines[T265].wait_for_frames();
   }
 }
 
@@ -401,6 +538,13 @@ inline void RealSense::updateInfraredIRRight()
   // Retrive Frame Information
   ir_right_width  = ir_right_frame.as<rs2::video_frame>().get_width();
   ir_right_height = ir_right_frame.as<rs2::video_frame>().get_height();
+}
+
+// Update Pose
+inline void RealSense::updatePose()
+{
+  auto pose_frame = frameset2.get_pose_frame();
+  pose = pose_frame.get_pose_data();
 }
 
 // Draw Data
