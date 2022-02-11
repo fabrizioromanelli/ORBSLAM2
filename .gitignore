@@ -13,6 +13,7 @@ Thirdparty/fbow/share/
 Vocabulary/orb_mur.fbow
 cmake-build-debug/
 cmake-build-release/
+Test/Live/Multicam/multicam_live
 Test/Live/IRD/realsense_live
 Test/Live/Monocular/mono_camera
 Test/Replay/IRD/realsense_replay
