@@ -225,6 +225,85 @@ cv::Mat System::TrackRGBD(const cv::Mat &im, const cv::Mat &depthmap, const doub
     return Tcw;
 }
 
+// Overload of the track RGBD function
+HPose System::TrackIRD(const cv::Mat &im, const cv::Mat &depthmap, const double &timestamp)
+{
+    if(mSensor!=RGBD)
+    {
+        cerr << "ERROR: you called TrackRGBD but input sensor was not set to RGBD." << endl;
+        exit(-1);
+    }
+
+    // Check mode change
+    {
+        unique_lock<mutex> lock(mMutexMode);
+        if(mbActivateLocalizationMode)
+        {
+            mpLocalMapper->RequestStop();
+
+            // Wait until Local Mapping has effectively stopped
+            while(!mpLocalMapper->isStopped())
+            {
+                std::this_thread::sleep_for(std::chrono::microseconds(1000));
+            }
+
+            mpTracker->InformOnlyTracking(true);
+            mbActivateLocalizationMode = false;
+        }
+        if(mbDeactivateLocalizationMode)
+        {
+            mpTracker->InformOnlyTracking(false);
+            mpLocalMapper->Release();
+            mbDeactivateLocalizationMode = false;
+        }
+    }
+
+    // Check reset
+    {
+        unique_lock<mutex> lock(mMutexReset);
+        if(mbReset)
+        {
+            mpTracker->Reset();
+            mbReset = false;
+        }
+    }
+
+    cv::Mat _Tcw = mpTracker->GrabImageRGBD(im, depthmap, timestamp);
+
+    unique_lock<mutex> lock2(mMutexState);
+    mTrackingState = mpTracker->mState;
+    mTrackedMapPoints = mpTracker->mCurrentFrame.mvpMapPoints;
+    mTrackedKeyPointsUn = mpTracker->mCurrentFrame.mvKeysUn;
+
+    HPose camPose;
+    // Conversion from ORB to WORLD reference frame
+    if (!_Tcw.empty()) {
+      cv::Mat Rwc = _Tcw.rowRange(0, 3).colRange(0, 3).t();
+      cv::Mat Twc = -Rwc * _Tcw.rowRange(0, 3).col(3);
+
+      Eigen::Matrix3f orMat;
+      orMat(0,0) = Rwc.at<float>(0,0);
+      orMat(0,1) = Rwc.at<float>(0,1);
+      orMat(0,2) = Rwc.at<float>(0,2);
+      orMat(1,0) = Rwc.at<float>(1,0);
+      orMat(1,1) = Rwc.at<float>(1,1);
+      orMat(1,2) = Rwc.at<float>(1,2);
+      orMat(2,0) = Rwc.at<float>(2,0);
+      orMat(2,1) = Rwc.at<float>(2,1);
+      orMat(2,2) = Rwc.at<float>(2,2);
+      Eigen::Quaternionf q_orb_tmp(orMat);
+      Eigen::Quaternionf _q_orb(q_orb_tmp.w(), -q_orb_tmp.z(), -q_orb_tmp.x(), -q_orb_tmp.y());
+
+      cv::Vec3f p_orb(Twc.at<float>(2), -Twc.at<float>(0), -Twc.at<float>(1));
+      cv::Vec4f q_orb(_q_orb.w(), _q_orb.x(), _q_orb.y(), _q_orb.z());
+
+      camPose.SetPosition(p_orb);
+      camPose.SetRotation(q_orb);
+    }
+
+    return camPose;
+}
+
 cv::Mat System::TrackMonocular(const cv::Mat &im, const double &timestamp)
 {
     if(mSensor != MONOCULAR)

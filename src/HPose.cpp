@@ -10,11 +10,11 @@
 
 
 ORB_SLAM2::HPose::HPose()
-    : m_Position(0, 0, 0), m_Rotation(0, 0, 0, 0)
+    : m_Position(0, 0, 0), m_Rotation(0, 0, 0, 0), _empty(true)
 { }
 
 ORB_SLAM2::HPose::HPose(const cv::Mat& twc, const cv::Mat& rwc)
-    : m_Position(0, 0, 0), m_Rotation(0, 0, 0, 0)
+    : m_Position(0, 0, 0), m_Rotation(0, 0, 0, 0), _empty(false)
 {
     SetPosition(twc);
     SetRotation(rwc);
@@ -25,11 +25,13 @@ void ORB_SLAM2::HPose::SetPosition(cv::Mat twc)
     m_Position[0] = twc.at<float>(0);
     m_Position[1] = twc.at<float>(1);
     m_Position[2] = twc.at<float>(2);
+    _empty = false;
 }
 
 void ORB_SLAM2::HPose::SetPosition(cv::Vec3f pos)
 {
     m_Position = pos;
+    _empty = false;
 }
 
 void ORB_SLAM2::HPose::SetRotation(cv::Mat rwc)
@@ -40,13 +42,35 @@ void ORB_SLAM2::HPose::SetRotation(cv::Mat rwc)
     m_Rotation[1] = q[1];
     m_Rotation[2] = q[2];
     m_Rotation[3] = q[3];
+    _empty = false;
 }
 
 void ORB_SLAM2::HPose::SetRotation(cv::Vec4f quaternion)
 {
     m_Rotation = quaternion;
+    _empty = false;
 }
 
+bool ORB_SLAM2::HPose::empty()
+{
+  return(_empty);
+}
+
+cv::Vec3f ORB_SLAM2::HPose::GetTranslation() const
+{
+  return m_Position;
+}
+
+cv::Vec4f ORB_SLAM2::HPose::GetRotation() const
+{
+  cv::Vec4f _Rotation;
+  _Rotation[0] = m_Rotation[1];
+  _Rotation[1] = m_Rotation[2];
+  _Rotation[2] = m_Rotation[3];
+  _Rotation[3] = m_Rotation[0];
+
+  return _Rotation;
+}
 
 cv::Vec4f ORB_SLAM2::HPose::GetRotationQuaternion() const
 {

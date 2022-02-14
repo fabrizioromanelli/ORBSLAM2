@@ -21,6 +21,10 @@ namespace ORB_SLAM2
         HPose();
         HPose(const cv::Mat& twc, const cv::Mat& rwc);
 
+        // New human-readable getters
+        cv::Vec3f GetTranslation() const;
+        cv::Vec4f GetRotation() const;
+
         cv::Vec4f GetRotationQuaternion() const;
         cv::Vec3f GetRotationEuler(bool degrees = false) const;
 
@@ -32,11 +36,14 @@ namespace ORB_SLAM2
 
         inline cv::Vec3f GetPosition() const;
 
+        bool empty();
+
     private:
         cv::Vec3f m_Position;    // Position (x, y, z)
         cv::Vec4f m_Rotation;    // Rotation (Quaternion)
 
         const double RADIANS_TO_DEGREES = 180.0/3.141592653589793238463;
+        bool _empty;
     };
 
     std::ostream& operator<<(std::ostream& os, const HPose& pose);

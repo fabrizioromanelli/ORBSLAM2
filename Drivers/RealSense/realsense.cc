@@ -12,9 +12,8 @@ sensorModality(modality), color_fps(30), ir_left_fps(30), ir_right_fps(30), dept
   }
   else if (modality == MULTI) {
     rs2::config _config, _config2;
-    config.reserve(2);
-    config[D435I] = _config;
-    config[T265] = _config2;
+    config.push_back(_config);
+    config.push_back(_config2);
     initializeMulti(MIN_DELTA_TIMEFRAMES_THRESHOLD);
   }
 }
@@ -215,7 +214,16 @@ cv::Mat RealSense::getIRRightMatrix()
 
 rs2_pose RealSense::getPose()
 {
-  return(pose);
+  rs2_pose tmp = pose;
+  tmp.translation.x = -pose.translation.z;
+  tmp.translation.y = -pose.translation.x;
+  tmp.translation.z = pose.translation.y;
+  tmp.rotation.w    = pose.rotation.w;
+  tmp.rotation.x    = pose.rotation.z;
+  tmp.rotation.y    = -pose.rotation.x;
+  tmp.rotation.z    = pose.rotation.y;
+
+  return(tmp);
 }
 
 // Get color frame
