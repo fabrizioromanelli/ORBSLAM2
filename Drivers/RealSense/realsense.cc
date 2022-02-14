@@ -419,7 +419,12 @@ void RealSense::disableLaser()
 void RealSense::finalize()
 {
   cv::destroyAllWindows();
-  pipeline.stop();
+  if (sensorModality != MULTI) {
+    pipeline.stop();
+  } else {
+    pipelines[D435I].stop();
+    pipelines[T265].stop();
+  }
 }
 
 // Update Data
