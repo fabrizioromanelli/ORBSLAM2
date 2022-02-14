@@ -4,12 +4,22 @@
 RealSense::RealSense(const sModality modality):
 sensorModality(modality), color_fps(30), ir_left_fps(30), ir_right_fps(30), depth_fps(30)
 {
-  if (modality == RGBD || modality == IRD || modality == IRL || modality == IRR)
+  if (modality == RGBD || modality == IRD || modality == IRL || modality == IRR) {
+    rs2::config _config;
+    config.reserve(1);
+    config[D435I] = _config;
     initialize(MIN_DELTA_TIMEFRAMES_THRESHOLD);
-  else if (modality == MULTI)
+  }
+  else if (modality == MULTI) {
+    rs2::config _config, _config2;
+    config.reserve(2);
+    config[D435I] = _config;
+    config[T265] = _config2;
     initializeMulti(MIN_DELTA_TIMEFRAMES_THRESHOLD);
+  }
 }
 
+// OBSOLETE CONSTRUCTOR
 // Constructor with maximum delta timeframes as an input
 RealSense::RealSense(const sModality modality, double maximumDeltaTimeframes):
 sensorModality(modality), color_fps(30), ir_left_fps(30), ir_right_fps(30), depth_fps(30)
@@ -23,6 +33,7 @@ sensorModality(modality), color_fps(30), ir_left_fps(30), ir_right_fps(30), dept
   }
 }
 
+// OBSOLETE CONSTRUCTOR
 RealSense::RealSense(const sModality modality, uint32_t fps):
 sensorModality(modality), color_fps(fps), ir_left_fps(fps), ir_right_fps(fps), depth_fps(fps)
 {
@@ -250,33 +261,30 @@ void RealSense::initializeMulti(rs2_time_t _maxDeltaTimeFrames)
 // Initialize Sensor
 inline void RealSense::initializeSensor()
 {
-  // Set Device Config
-  rs2::config config;
-
   switch (sensorModality)
   {
     case RGBD:
-      config.enable_stream( rs2_stream::RS2_STREAM_COLOR, color_width, color_height, rs2_format::RS2_FORMAT_BGR8, color_fps );
-      config.enable_stream( rs2_stream::RS2_STREAM_DEPTH, depth_width, depth_height, rs2_format::RS2_FORMAT_Z16, depth_fps );
+      config[D435I].enable_stream( rs2_stream::RS2_STREAM_COLOR, color_width, color_height, rs2_format::RS2_FORMAT_BGR8, color_fps );
+      config[D435I].enable_stream( rs2_stream::RS2_STREAM_DEPTH, depth_width, depth_height, rs2_format::RS2_FORMAT_Z16, depth_fps );
       break;
     case IRD:
-      config.enable_stream( rs2_stream::RS2_STREAM_INFRARED, IR_LEFT, ir_left_width, ir_left_height, rs2_format::RS2_FORMAT_Y8, ir_left_fps );
+      config[D435I].enable_stream( rs2_stream::RS2_STREAM_INFRARED, IR_LEFT, ir_left_width, ir_left_height, rs2_format::RS2_FORMAT_Y8, ir_left_fps );
       // The following is just needed to get the correct baseline information, it will be then disabled.
-      config.enable_stream( rs2_stream::RS2_STREAM_INFRARED, IR_RIGHT, ir_right_width, ir_right_height, rs2_format::RS2_FORMAT_Y8, ir_right_fps );
-      config.enable_stream( rs2_stream::RS2_STREAM_DEPTH, depth_width, depth_height, rs2_format::RS2_FORMAT_Z16, depth_fps );
+      config[D435I].enable_stream( rs2_stream::RS2_STREAM_INFRARED, IR_RIGHT, ir_right_width, ir_right_height, rs2_format::RS2_FORMAT_Y8, ir_right_fps );
+      config[D435I].enable_stream( rs2_stream::RS2_STREAM_DEPTH, depth_width, depth_height, rs2_format::RS2_FORMAT_Z16, depth_fps );
       break;
     case IRL:
-      config.enable_stream( rs2_stream::RS2_STREAM_INFRARED, IR_LEFT, ir_left_width, ir_left_height, rs2_format::RS2_FORMAT_Y8, ir_left_fps );
+      config[D435I].enable_stream( rs2_stream::RS2_STREAM_INFRARED, IR_LEFT, ir_left_width, ir_left_height, rs2_format::RS2_FORMAT_Y8, ir_left_fps );
       break;
     case IRR:
-      config.enable_stream( rs2_stream::RS2_STREAM_INFRARED, IR_RIGHT, ir_right_width, ir_right_height, rs2_format::RS2_FORMAT_Y8, ir_right_fps );
+      config[D435I].enable_stream( rs2_stream::RS2_STREAM_INFRARED, IR_RIGHT, ir_right_width, ir_right_height, rs2_format::RS2_FORMAT_Y8, ir_right_fps );
       break;
     default:
       std::cerr << "Invalid modality selected" << std::endl;
       break;
   }
 
-  pipeline_profile = pipeline.start(config);
+  pipeline_profile = pipeline.start(config[D435I]);
   realSense_device = pipeline_profile.get_device();
 
   // Refer to: https://github.com/raulmur/ORB_SLAM2/issues/259
@@ -309,8 +317,8 @@ inline void RealSense::initializeSensor()
 
     std::cout << ss.str() << std::endl;
     pipeline.stop();
-    config.disable_stream(RS2_STREAM_INFRARED, 2);
-    pipeline_profile = pipeline.start(config);
+    config[D435I].disable_stream(RS2_STREAM_INFRARED, 2);
+    pipeline_profile = pipeline.start(config[D435I]);
     realSense_device = pipeline_profile.get_device();
   }
 
@@ -343,13 +351,12 @@ inline void RealSense::initializeSensors()
   for (auto&& serial : serials)
   {
     rs2::pipeline pipe(ctx);
-    rs2::config config;
-    config.enable_device(serial);
 
     std::string t265("T265");
     if (names[i].find(t265) != std::string::npos)
     {
-      pipe.start(config);
+      config[T265].enable_device(serial);
+      pipe.start(config[T265]);
       pipelines[T265] = pipe;
       // Camera warmup - dropping several first frames to let auto-exposure stabilize
       for (uint32_t i = 0; i < warm_up_frames; i++)
@@ -361,10 +368,11 @@ inline void RealSense::initializeSensors()
     }
     else // should be a D435i
     {
-      config.enable_stream( rs2_stream::RS2_STREAM_INFRARED, IR_LEFT, ir_left_width, ir_left_height, rs2_format::RS2_FORMAT_Y8, ir_left_fps );
-      config.enable_stream( rs2_stream::RS2_STREAM_DEPTH, depth_width, depth_height, rs2_format::RS2_FORMAT_Z16, depth_fps );
+      config[D435I].enable_device(serial);
+      config[D435I].enable_stream( rs2_stream::RS2_STREAM_INFRARED, IR_LEFT, ir_left_width, ir_left_height, rs2_format::RS2_FORMAT_Y8, ir_left_fps );
+      config[D435I].enable_stream( rs2_stream::RS2_STREAM_DEPTH, depth_width, depth_height, rs2_format::RS2_FORMAT_Z16, depth_fps );
 
-      pipeline_profile = pipe.start(config);
+      pipeline_profile = pipe.start(config[D435I]);
       realSense_device = pipeline_profile.get_device();
       pipelines[D435I] = pipe;
 
@@ -382,6 +390,13 @@ inline void RealSense::initializeSensors()
 
     i++;
   }
+}
+
+void RealSense::resetPoseTrack()
+{
+  pipelines[T265].stop();
+  std::this_thread::sleep_for( std::chrono::seconds( 1 ) );
+  pipelines[T265].start(config[T265]);
 }
 
 void RealSense::enableLaser(float power)

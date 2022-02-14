@@ -18,6 +18,7 @@ Test/Live/IRD/realsense_live
 Test/Live/Monocular/mono_camera
 Test/Replay/IRD/realsense_replay
 Test/Live/QRCode/qrCode_live
+Test/Live/ArucoCode/arucoCode
 Test/Replay/QRCode/qrCode_replay
 Test/Replay/Monocular/mono_euroc
 Test/Replay/Monocular/mono_kitti

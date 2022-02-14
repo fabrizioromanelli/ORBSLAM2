@@ -1,6 +1,7 @@
 #ifndef __REALSENSE__
 #define __REALSENSE__
 
+#include <thread>
 #include <librealsense2/rs.hpp>
 #include <opencv2/opencv.hpp>
 
@@ -75,6 +76,8 @@ private:
 
   // Capture serial numbers before opening streaming
   std::vector<std::string> serials, names;
+
+  std::vector<rs2::config> config;
 public:
   // Constructor
   RealSense(const sModality);
@@ -115,6 +118,9 @@ public:
   rs2::frame getDepthFrame();
   rs2::frame getIRLeftFrame();
   rs2::frame getIRRightFrame();
+
+  // Reset pose tracking
+  void resetPoseTrack();
 
   // Control laser projector
   void enableLaser(float);
