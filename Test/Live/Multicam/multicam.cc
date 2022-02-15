@@ -121,11 +121,13 @@ int main(int argc, char **argv)
 
         if (printTraj) {
           // cout << fixed << setw(11) << setprecision(6) << "[D435i] " << " " << cameraPose.GetRotation()[0] << " " << cameraPose.GetRotation()[1] << " " << cameraPose.GetRotation()[2] << " " << cameraPose.GetRotation()[3] << endl;
-          cout << fixed << setw(11) << setprecision(6) << "[D435i] " << realsense->getIRLeftTimestamp() << " " << cameraPose.GetTranslation()[0] << " " << cameraPose.GetTranslation()[1] << " " << cameraPose.GetTranslation()[2] << " " << cameraPose.GetRotation()[0] << " " << cameraPose.GetRotation()[1] << " " << cameraPose.GetRotation()[2] << " " << cameraPose.GetRotation()[3] << endl;
+          // cout << fixed << setw(11) << setprecision(6) << "[D435i] " << realsense->getIRLeftTimestamp() << " " << cameraPose.GetTranslation()[0] << " " << cameraPose.GetTranslation()[1] << " " << cameraPose.GetTranslation()[2] << " " << cameraPose.GetRotation()[0] << " " << cameraPose.GetRotation()[1] << " " << cameraPose.GetRotation()[2] << " " << cameraPose.GetRotation()[3] << endl;
+          cout << fixed << setw(11) << setprecision(6) << "[D435i] " << cameraPose.GetTranslation()[2] << endl;
 
           // Pose from Intel RealSense T265
           // cout << fixed << setw(11) << setprecision(6) << "[ T265] " << " " << pose.rotation << endl;
-          cout << fixed << setw(11) << setprecision(6) << "[ T265] " << realsense->getPoseTimestamp() << " " << pose.translation << " " << pose.rotation << " " << pose.tracker_confidence << endl;
+          // cout << fixed << setw(11) << setprecision(6) << "[ T265] " << realsense->getPoseTimestamp() << " " << pose.translation << " " << pose.rotation << " " << pose.tracker_confidence << endl;
+          cout << fixed << setw(11) << setprecision(6) << "[ T265] " << pose.translation.z << endl;
         }
       }
 
