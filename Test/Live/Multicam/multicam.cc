@@ -86,8 +86,7 @@ int main(int argc, char **argv)
 
     bool firstReset = true;
 
-    vector<rs2_pose> t265Poses;
-    vector<HPose> orbPoses;
+    vector<rs2_pose> t265Poses, orbPoses;
     vector<rs2_time_t> t265Ts, orbTs;
 
     for(;;)
@@ -98,8 +97,18 @@ int main(int argc, char **argv)
       cv::Mat irMatrix    = realsense->getIRLeftMatrix();
       cv::Mat depthMatrix = realsense->getDepthMatrix();
 
-      // Pass the IR Left and Depth images to the SLAM system
+      // Pass the IR Left and Depth frames to the SLAM system
       HPose cameraPose = SLAM.TrackIRD(irMatrix, depthMatrix, realsense->getIRLeftTimestamp());
+      unsigned int ORBState = (SLAM.GetTrackingState() == Tracking::OK) ? 3 : 0;
+      rs2_pose orbPose;
+      orbPose.translation.x = cameraPose.GetTranslation()[0];
+      orbPose.translation.y = cameraPose.GetTranslation()[1];
+      orbPose.translation.z = cameraPose.GetTranslation()[2];
+      orbPose.rotation.x    = cameraPose.GetRotation()[0];
+      orbPose.rotation.y    = cameraPose.GetRotation()[1];
+      orbPose.rotation.z    = cameraPose.GetRotation()[2];
+      orbPose.rotation.w    = cameraPose.GetRotation()[3];
+      orbPose.tracker_confidence = ORBState;
 
       if (!cameraPose.empty())
       {
@@ -114,20 +123,14 @@ int main(int argc, char **argv)
 
         if (saveTraj) {
           t265Poses.push_back(pose);
-          orbPoses.push_back(cameraPose);
+          orbPoses.push_back(orbPose);
           t265Ts.push_back(realsense->getPoseTimestamp());
           orbTs.push_back(realsense->getIRLeftTimestamp());
         }
 
         if (printTraj) {
-          // cout << fixed << setw(11) << setprecision(6) << "[D435i] " << " " << cameraPose.GetRotation()[0] << " " << cameraPose.GetRotation()[1] << " " << cameraPose.GetRotation()[2] << " " << cameraPose.GetRotation()[3] << endl;
-          // cout << fixed << setw(11) << setprecision(6) << "[D435i] " << realsense->getIRLeftTimestamp() << " " << cameraPose.GetTranslation()[0] << " " << cameraPose.GetTranslation()[1] << " " << cameraPose.GetTranslation()[2] << " " << cameraPose.GetRotation()[0] << " " << cameraPose.GetRotation()[1] << " " << cameraPose.GetRotation()[2] << " " << cameraPose.GetRotation()[3] << endl;
-          cout << fixed << setw(11) << setprecision(6) << "[D435i] " << cameraPose.GetTranslation()[2] << endl;
-
-          // Pose from Intel RealSense T265
-          // cout << fixed << setw(11) << setprecision(6) << "[ T265] " << " " << pose.rotation << endl;
-          // cout << fixed << setw(11) << setprecision(6) << "[ T265] " << realsense->getPoseTimestamp() << " " << pose.translation << " " << pose.rotation << " " << pose.tracker_confidence << endl;
-          cout << fixed << setw(11) << setprecision(6) << "[ T265] " << pose.translation.z << endl;
+          cout << fixed << setw(11) << setprecision(6) << "[D435i] " << realsense->getIRLeftTimestamp() << " " << orbPose.translation << " " << orbPose.rotation << " " << orbPose.tracker_confidence << endl;
+          cout << fixed << setw(11) << setprecision(6) << "[ T265] " << realsense->getPoseTimestamp() << " " << pose.translation << " " << pose.rotation << " " << pose.tracker_confidence << endl;
         }
       }
 
@@ -187,11 +190,11 @@ void saveTrajectory(const string &filename, vector<T> &trajectory, vector<rs2_ti
   vector<rs2_time_t>::iterator tsIt = timestamps.begin();
   if constexpr(is_same<vector<T>,vector<rs2_pose>>::value) {
     for (vector<rs2_pose>::iterator it = trajectory.begin(); it != trajectory.end(); ++it, ++tsIt) {
-      f << *tsIt << " " << (*it).translation << " " << (*it).rotation << " " << (*it).tracker_confidence << endl;
+      f << *tsIt << ", " << (*it).translation << ", " << (*it).rotation << ", " << (*it).tracker_confidence << endl;
     }
   } else if constexpr(is_same<vector<T>,vector<HPose>>::value) {
     for (vector<HPose>::iterator it = trajectory.begin(); it != trajectory.end(); ++it, ++tsIt) {
-      f << *tsIt << " " << (*it).GetTranslation()[0] << " " << (*it).GetTranslation()[1] << " " << (*it).GetTranslation()[2] << " " << (*it).GetRotation()[0] << " " << (*it).GetRotation()[1] << " " << (*it).GetRotation()[2] << " " << (*it).GetRotation()[3] << endl;
+      f << *tsIt << ", " << (*it).GetTranslation()[0] << ", " << (*it).GetTranslation()[1] << ", " << (*it).GetTranslation()[2] << ", " << (*it).GetRotation()[0] << ", " << (*it).GetRotation()[1] << ", " << (*it).GetRotation()[2] << ", " << (*it).GetRotation()[3] << endl;
     }
   } else {
     cout << "Unknown type" << endl;
