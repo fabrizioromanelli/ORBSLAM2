@@ -23,9 +23,10 @@ using namespace ORB_SLAM2;
 bool running = true;
 
 // Handling CTRL+C event
-void my_handler(int s);
+void my_handler(int);
 template <typename T>
-void saveTrajectory(const string &filename, vector<T> &trajectory, vector<rs2_time_t> &timestamps);
+void saveTrajectory(const string &, vector<T> &, vector<rs2_time_t> &);
+void poseConversion(const HPose & , const unsigned int , rs2_pose & );
 
 int main(int argc, char **argv)
 {
@@ -97,41 +98,36 @@ int main(int argc, char **argv)
       cv::Mat irMatrix    = realsense->getIRLeftMatrix();
       cv::Mat depthMatrix = realsense->getDepthMatrix();
 
+      // ORBSLAM2 fails if it's running! We need to reset it.
+      if (!firstReset && pSLAM->GetTrackingState() == Tracking::LOST) {
+        pSLAM->Reset();
+      }
+
       // Pass the IR Left and Depth frames to the SLAM system
-      HPose cameraPose = SLAM.TrackIRD(irMatrix, depthMatrix, realsense->getIRLeftTimestamp());
-      unsigned int ORBState = (SLAM.GetTrackingState() == Tracking::OK) ? 3 : 0;
+      HPose cameraPose = pSLAM->TrackIRD(irMatrix, depthMatrix, realsense->getIRLeftTimestamp());
+      unsigned int ORBState = (pSLAM->GetTrackingState() == Tracking::OK) ? 3 : 0;
       rs2_pose orbPose;
-      orbPose.translation.x = cameraPose.GetTranslation()[0];
-      orbPose.translation.y = cameraPose.GetTranslation()[1];
-      orbPose.translation.z = cameraPose.GetTranslation()[2];
-      orbPose.rotation.x    = cameraPose.GetRotation()[0];
-      orbPose.rotation.y    = cameraPose.GetRotation()[1];
-      orbPose.rotation.z    = cameraPose.GetRotation()[2];
-      orbPose.rotation.w    = cameraPose.GetRotation()[3];
-      orbPose.tracker_confidence = ORBState;
+      poseConversion(cameraPose, ORBState, orbPose);
 
-      if (!cameraPose.empty())
-      {
-        // The first time I receive a valid ORB-SLAM2 sample, I have to reset
-        // the T265 tracker.
-        if (firstReset) {
-          realsense->resetPoseTrack();
-          realsense->run();
-          pose = realsense->getPose();
-          firstReset = false;
-        }
+      // The first time I receive a valid ORB-SLAM2 sample, I have to reset the T265 tracker.
+      if (!cameraPose.empty() && firstReset) {
+        realsense->resetPoseTrack();
+        realsense->run();
+        pose = realsense->getPose();
+        firstReset = false;
+      }
 
-        if (saveTraj) {
-          t265Poses.push_back(pose);
-          orbPoses.push_back(orbPose);
-          t265Ts.push_back(realsense->getPoseTimestamp());
-          orbTs.push_back(realsense->getIRLeftTimestamp());
-        }
+      if (saveTraj) {
+        t265Poses.push_back(pose);
+        orbPoses.push_back(orbPose);
+        orbTs.push_back(realsense->getIRLeftTimestamp());
+        t265Ts.push_back(realsense->getPoseTimestamp());
+      }
 
-        if (printTraj) {
-          cout << fixed << setw(11) << setprecision(6) << "[D435i] " << realsense->getIRLeftTimestamp() << " " << orbPose.translation << " " << orbPose.rotation << " " << orbPose.tracker_confidence << endl;
-          cout << fixed << setw(11) << setprecision(6) << "[ T265] " << realsense->getPoseTimestamp() << " " << pose.translation << " " << pose.rotation << " " << pose.tracker_confidence << endl;
-        }
+      if (printTraj) {
+        cout << fixed << setw(11) << setprecision(6) << "[D435i] " << realsense->getIRLeftTimestamp() << " " << orbPose.translation << " " << orbPose.rotation << " " << orbPose.tracker_confidence << endl;
+
+        cout << fixed << setw(11) << setprecision(6) << "[ T265] " << realsense->getPoseTimestamp() << " " << pose.translation << " " << pose.rotation << " " << pose.tracker_confidence << endl;
       }
 
       // Saving files
@@ -202,4 +198,16 @@ void saveTrajectory(const string &filename, vector<T> &trajectory, vector<rs2_ti
 
   f.close();
   cout << endl << "Trajectory saved!" << endl;
+}
+
+void poseConversion(const HPose & orbPose, const unsigned int orbState, rs2_pose & rs2Pose) {
+  rs2Pose.translation.x = orbPose.GetTranslation()[0];
+  rs2Pose.translation.y = orbPose.GetTranslation()[1];
+  rs2Pose.translation.z = orbPose.GetTranslation()[2];
+  rs2Pose.rotation.x    = orbPose.GetRotation()[0];
+  rs2Pose.rotation.y    = orbPose.GetRotation()[1];
+  rs2Pose.rotation.z    = orbPose.GetRotation()[2];
+  rs2Pose.rotation.w    = orbPose.GetRotation()[3];
+  rs2Pose.tracker_confidence = orbState;
+  return;
 }
