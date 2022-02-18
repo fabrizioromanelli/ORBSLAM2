@@ -160,8 +160,6 @@ int main(int argc, char **argv)
       saveTrajectory("t265.dat", t265Poses, t265Ts);
       saveTrajectory("orb.dat", orbPoses, orbTs);
     }
-    // // Save camera trajectory
-    // SLAM.SaveTrajectory("CameraTrajectory.dat");
   } catch(exception& ex) {
     cout << "Error! " << ex.what() << endl;
   }
