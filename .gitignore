@@ -62,3 +62,6 @@ lib/
 *.mapfile
 Drone/DroneVslam
 QRCodes.txt
+
+# Created if programs crash inside containers
+core
