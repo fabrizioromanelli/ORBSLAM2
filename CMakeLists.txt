@@ -74,10 +74,10 @@ add_library(${PROJECT_NAME} SHARED
         src/Initializer.cc
         src/Viewer.cc
         src/HPose.cpp
-        src/QrCodeTracker.cc
-        src/QrCode.cc
-        src/ArucoCode.cc
-        src/ArucoCodeScanner.cc
+        #src/QrCodeTracker.cc
+        #src/QrCode.cc
+        #src/ArucoCode.cc
+        #src/ArucoCodeScanner.cc
         )
 
 target_link_libraries(${PROJECT_NAME}
@@ -115,12 +115,12 @@ target_link_libraries(realsense_live ${PROJECT_NAME})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/Monocular)
 add_executable(mono_camera Test/Live/Monocular/mono_camera.cc)
 target_link_libraries(mono_camera ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/QRCode)
-add_executable(qrCode_live Test/Live/QRCode/qrCode.cc)
-target_link_libraries(qrCode_live ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/ArucoCode)
-add_executable(arucoCode Test/Live/ArucoCode/arucoCode.cc)
-target_link_libraries(arucoCode ${PROJECT_NAME})
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/QRCode)
+#add_executable(qrCode_live Test/Live/QRCode/qrCode.cc)
+#target_link_libraries(qrCode_live ${PROJECT_NAME})
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/ArucoCode)
+#add_executable(arucoCode Test/Live/ArucoCode/arucoCode.cc)
+#target_link_libraries(arucoCode ${PROJECT_NAME})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/Multicam)
 add_executable(multicam_live Test/Live/Multicam/multicam.cc)
 target_link_libraries(multicam_live ${PROJECT_NAME})
