@@ -76,11 +76,15 @@ public:
   bool isFinishedGBA(){
       unique_lock<std::mutex> lock(mMutexGBA);
       return mbFinishedGBA;
-  }   
+  }
 
   void RequestFinish();
 
   bool isFinished();
+
+  long unsigned int GetLoopCount() {
+    return loopCnt;
+  }
 
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
@@ -142,6 +146,8 @@ protected:
   g2o::Sim3 mg2oScw;
 
   long unsigned int mLastLoopKFid;
+
+  long unsigned int loopCnt;
 
   // Variables related to Global Bundle Adjustment
   bool mbRunningGBA;
