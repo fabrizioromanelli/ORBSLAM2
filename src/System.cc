@@ -26,6 +26,7 @@
 #include <pangolin/pangolin.h>
 #include <iomanip>
 #include <algorithm>
+#include <chrono>
 
 namespace ORB_SLAM2
 {
@@ -384,8 +385,15 @@ bool System::MapChanged()
 
 void System::Reset()
 {
+  // Wait for a Global Bundle Adjustment to finish
+  while (mpLoopCloser->isRunningGBA()) {
+    this_thread::sleep_for(chrono::milliseconds(500));
+  }
+
+  {
     unique_lock<mutex> lock(mMutexReset);
     mbReset = true;
+  }
 }
 
 void System::Shutdown()
