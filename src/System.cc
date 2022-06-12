@@ -25,6 +25,7 @@
 #include <thread>
 #include <pangolin/pangolin.h>
 #include <iomanip>
+#include <algorithm>
 
 namespace ORB_SLAM2
 {
@@ -769,15 +770,34 @@ cv::Mat System::GetCurrentCovarianceMatrix(float fx, float fy, cv::Mat cameraPos
   }
 }
 
-vector<MapPoint*> System::getMap()
+// Returns the currently stored map: each column is a 3D-point coordinates vector
+Eigen::MatrixXf System::getMap()
 {
-  vector<MapPoint*> mapPoints;
-  vector<MapPoint*> _mapPoints = this->mpMap->GetAllMapPoints();
-  for (auto point: _mapPoints){
-    if (!point->isBad())
-      mapPoints.push_back(point);
+  // Other threads must not update the map while this reads it
+  unique_lock<mutex> mapLock(mpMap->mMutexMapUpdate);
+
+  // Get all valid map points
+  vector<MapPoint *> mapPoints = mpMap->GetAllMapPoints();
+  mapPoints.erase(
+    remove_if(
+      mapPoints.begin(),
+      mapPoints.end(),
+      [] (MapPoint * p) { return p->isBad(); }),
+      mapPoints.end());
+  
+  // Fill a matrix with their coordinates ([X Y Z]w = [Z -X -Y]o)
+  Eigen::MatrixXf pointsMat(3, mapPoints.size());
+  unsigned int col = 0;
+  for (auto p : mapPoints) {
+    cv::Mat pPos = p->GetWorldPos();
+    pointsMat.col(col) = Eigen::Vector3f(
+      pPos.at<float>(2),
+      -pPos.at<float>(0),
+      -pPos.at<float>(1));
+    col++;
   }
-  return mapPoints;
+
+  return pointsMat;
 }
 
 void System::SaveMap(const string &filename)

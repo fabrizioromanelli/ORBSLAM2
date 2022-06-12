@@ -22,9 +22,10 @@
 #ifndef SYSTEM_H
 #define SYSTEM_H
 
-#include<string>
-#include<thread>
-#include<opencv2/core/core.hpp>
+#include <string>
+#include <thread>
+#include <opencv2/core/core.hpp>
+#include <Eigen/Dense>
 
 #include "Tracking.h"
 #include "FrameDrawer.h"
@@ -143,7 +144,8 @@ public:
 
     cv::Mat GetCurrentCovarianceMatrix(float, float, cv::Mat, bool);
 
-    vector<MapPoint*> getMap();
+    // Returns the currently stored map: each column is a 3D-point coordinates vector
+    Eigen::MatrixXf getMap();
 
 private:
     // Save/Load functions
