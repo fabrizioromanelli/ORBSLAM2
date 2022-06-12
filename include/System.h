@@ -145,7 +145,7 @@ public:
     cv::Mat GetCurrentCovarianceMatrix(float, float, cv::Mat, bool);
 
     // Returns the currently stored map: each column is a 3D-point coordinates vector
-    Eigen::MatrixXf getMap();
+    Eigen::MatrixXf GetMap();
 
 private:
     // Save/Load functions

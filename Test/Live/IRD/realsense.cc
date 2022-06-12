@@ -125,7 +125,7 @@ int main(int argc, char **argv)
         cv::Mat covMat = SLAM.GetCurrentCovarianceMatrix(fx, fy, cameraPose, true);
 
         // Get the map points at the current VSLAM step
-        Eigen::MatrixXf map = SLAM.getMap();
+        Eigen::MatrixXf map = SLAM.GetMap();
         cout << "points: " << map.cols() << " (" << map.rows() << " coordinates each)" << endl;
         cout << "****************************************************************" << endl;
 

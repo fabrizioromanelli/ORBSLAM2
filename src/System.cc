@@ -771,7 +771,7 @@ cv::Mat System::GetCurrentCovarianceMatrix(float fx, float fy, cv::Mat cameraPos
 }
 
 // Returns the currently stored map: each column is a 3D-point coordinates vector
-Eigen::MatrixXf System::getMap()
+Eigen::MatrixXf System::GetMap()
 {
   // Other threads must not update the map while this reads it
   unique_lock<mutex> mapLock(mpMap->mMutexMapUpdate);
