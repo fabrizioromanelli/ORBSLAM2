@@ -26,6 +26,7 @@
 #include <thread>
 #include <opencv2/core/core.hpp>
 #include <Eigen/Dense>
+#include <vector>
 
 #include "Tracking.h"
 #include "FrameDrawer.h"
@@ -145,7 +146,7 @@ public:
     cv::Mat GetCurrentCovarianceMatrix(float, float, cv::Mat, bool);
 
     // Returns the currently stored map: each column is a 3D-point coordinates vector
-    Eigen::MatrixXf GetMap();
+    std::vector<Eigen::Vector3f> GetMap();
 
 private:
     // Save/Load functions

@@ -778,8 +778,8 @@ cv::Mat System::GetCurrentCovarianceMatrix(float fx, float fy, cv::Mat cameraPos
   }
 }
 
-// Returns the currently stored map: each column is a 3D-point coordinates vector
-Eigen::MatrixXf System::GetMap()
+// Returns the currently stored map: each element is a 3D-point coordinates vector
+std::vector<Eigen::Vector3f> System::GetMap()
 {
   // Other threads must not update the map while this reads it
   unique_lock<mutex> mapLock(mpMap->mMutexMapUpdate);
@@ -792,20 +792,20 @@ Eigen::MatrixXf System::GetMap()
       mapPoints.end(),
       [] (MapPoint * p) { return p->isBad(); }),
       mapPoints.end());
-  
+
   // Fill a matrix with their coordinates ([X Y Z]w = [Z -X -Y]o)
-  Eigen::MatrixXf pointsMat(3, mapPoints.size());
-  unsigned int col = 0;
+  std::vector<Eigen::Vector3f> pointsVec;
+  pointsVec.reserve(mapPoints.size());
   for (auto p : mapPoints) {
     cv::Mat pPos = p->GetWorldPos();
-    pointsMat.col(col) = Eigen::Vector3f(
-      pPos.at<float>(2),
-      -pPos.at<float>(0),
-      -pPos.at<float>(1));
-    col++;
+    pointsVec.push_back(
+      Eigen::Vector3f(
+        pPos.at<float>(2),
+        -pPos.at<float>(0),
+        -pPos.at<float>(1)));
   }
 
-  return pointsMat;
+  return pointsVec;
 }
 
 void System::SaveMap(const string &filename)
