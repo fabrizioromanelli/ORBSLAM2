@@ -779,8 +779,17 @@ cv::Mat System::GetCurrentCovarianceMatrix(float fx, float fy, cv::Mat cameraPos
 }
 
 // Returns the currently stored map: each element is a 3D-point coordinates vector
-std::vector<Eigen::Vector3f> System::GetMap()
+std::vector<Eigen::Vector3f> System::GetMap(bool wait_gba)
 {
+  // If a Global Bundle Adjustment is running, abort this or wait for it
+  while (mpLoopCloser->isRunningGBA()) {
+    if (wait_gba) {
+      std::this_thread::sleep_for(std::chrono::seconds(1));
+    } else {
+      return std::vector<Eigen::Vector3f>();
+    }
+  }
+
   // Other threads must not update the map while this reads it
   unique_lock<mutex> mapLock(mpMap->mMutexMapUpdate);
 
