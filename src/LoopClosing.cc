@@ -28,8 +28,9 @@
 
 #include "Optimizer.h"
 
-#include<mutex>
-#include<thread>
+#include <chrono>
+#include <mutex>
+#include <thread>
 
 
 namespace ORB_SLAM2
@@ -679,6 +680,8 @@ void LoopClosing::RunGlobalBundleAdjustment(unsigned long nLoopKF)
 {
     cout << "Starting Global Bundle Adjustment" << endl;
 
+    std::chrono::steady_clock::time_point gba_begin = std::chrono::steady_clock::now();
+
     int idx =  mnFullBAIdx;
     mpOptimizer->GlobalBundleAdjustemnt(mpMap, 10, &mbStopGBA, nLoopKF, false);
 
@@ -693,11 +696,13 @@ void LoopClosing::RunGlobalBundleAdjustment(unsigned long nLoopKF)
 
         if(!mbStopGBA)
         {
-            cout << "Global Bundle Adjustment finished" << endl;
-            cout << "Updating map ..." << endl;
-            mpLocalMapper->RequestStop();
-            // Wait until Local Mapping has effectively stopped
+            std::chrono::steady_clock::time_point gba_end = std::chrono::steady_clock::now();
+            cout << "Global Bundle Adjustment finished (" << std::chrono::duration_cast<std::chrono::microseconds>(gba_end - gba_begin).count() << " us)" << endl;
+            cout << "Updating map..." << endl;
+            std::chrono::steady_clock::time_point map_update_begin = std::chrono::steady_clock::now();
 
+            // Wait until Local Mapping has effectively stopped
+            mpLocalMapper->RequestStop();
             while(!mpLocalMapper->isStopped() && !mpLocalMapper->isFinished())
             {
                 std::this_thread::sleep_for(std::chrono::microseconds(1000));
@@ -773,7 +778,8 @@ void LoopClosing::RunGlobalBundleAdjustment(unsigned long nLoopKF)
 
             mpLocalMapper->Release();
 
-            cout << "Map updated!" << endl;
+            std::chrono::steady_clock::time_point map_update_end = std::chrono::steady_clock::now();
+            cout << "Map updated! (" << std::chrono::duration_cast<std::chrono::microseconds>(map_update_end - map_update_begin).count() << " us)" << endl;
         }
 
         mbFinishedGBA = true;
