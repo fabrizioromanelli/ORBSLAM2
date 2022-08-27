@@ -398,28 +398,28 @@ void System::Reset()
 
 void System::Shutdown()
 {
-    std::cout << "Shutting DOWN RENDL" << std::endl;
+    std::cout << "Shutting down VSLAM system" << std::endl;
     mpLocalMapper->RequestFinish();
-    std::cout << "local mapper finished" << std::endl;
+    std::cout << "Stopping local mapper" << std::endl;
     mpLoopCloser->RequestFinish();
-    std::cout << "local mapper loop closer" << std::endl;
-    if(mpViewer)
+    std::cout << "Stopping loop closer" << std::endl;
+    if (mpViewer)
     {
         mpViewer->RequestFinish();
+        std::cout << "Stopping mapviewer" << std::endl;
         while(!mpViewer->isFinished())
         {
-            std::cout << "waiting for mapviewer to finish" << std::endl;
-            std::this_thread::sleep_for(std::chrono::microseconds(5000));
+            std::cerr << "Waiting for mapviewer to terminate" << std::endl;
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
         }
+        std::cout << "Mapviewer terminated" << std::endl;
     }
 
-    std::cout << "mapviewer finished" << std::endl;
-
     // Wait until all thread have effectively stopped
-    while(!mpLocalMapper->isFinished() || !mpLoopCloser->isFinished() || mpLoopCloser->isRunningGBA())
+    while (!mpLocalMapper->isFinished() || !mpLoopCloser->isFinished() || mpLoopCloser->isRunningGBA())
     {
-        std::this_thread::sleep_for(std::chrono::microseconds(5000));
-        std::cout << "waiting for everything to finish" << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::cerr << "Waiting for threads to terminate" << std::endl;
     }
 
     if (is_save_map)
