@@ -278,7 +278,7 @@ HPose System::TrackIRD(const cv::Mat &im, const cv::Mat &depthmap, const double 
     mTrackedKeyPointsUn = mpTracker->mCurrentFrame.mvKeysUn;
 
     HPose camPose;
-    // Conversion from ORB to WORLD reference frame
+    // Conversion from ORB to WORLD right-handed reference frame
     if (!_Tcw.empty()) {
       cv::Mat Rwc = _Tcw.rowRange(0, 3).colRange(0, 3).t();
       cv::Mat Twc = -Rwc * _Tcw.rowRange(0, 3).col(3);
@@ -297,7 +297,7 @@ HPose System::TrackIRD(const cv::Mat &im, const cv::Mat &depthmap, const double 
       Eigen::Quaternionf _q_orb(q_orb_tmp.w(), -q_orb_tmp.z(), -q_orb_tmp.x(), -q_orb_tmp.y());
 
       cv::Vec3f p_orb(Twc.at<float>(2), -Twc.at<float>(0), -Twc.at<float>(1));
-      cv::Vec4f q_orb(_q_orb.w(), _q_orb.x(), _q_orb.y(), _q_orb.z());
+      cv::Vec4f q_orb(_q_orb.w(), -_q_orb.x(), _q_orb.y(), _q_orb.z());
 
       camPose.SetPosition(p_orb);
       camPose.SetRotation(q_orb);
