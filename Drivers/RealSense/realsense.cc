@@ -384,11 +384,12 @@ inline void RealSense::initializeSensors()
       realSense_device = pipeline_profile.get_device();
       pipelines[D435I] = pipe;
 
-      auto advanced = realSense_device.as<rs400::advanced_mode>();
-      advanced.toggle_advanced_mode(true);
-      STHdad changeSTDdad = advanced.get_hdad();
-      changeSTDdad.ignoreSAD = 1;
-      advanced.set_hdad(changeSTDdad);
+      // Must do this twice every time you initialize a D400!
+      //auto advanced = realSense_device.as<rs400::advanced_mode>();
+      //advanced.toggle_advanced_mode(true);
+      //STHdad changeSTDdad = advanced.get_hdad();
+      //changeSTDdad.ignoreSAD = 1;
+      //advanced.set_hdad(changeSTDdad);
 
       // Disabled by default the laser projector
       disableLaser();
