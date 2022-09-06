@@ -3,6 +3,7 @@
 
 #include <thread>
 #include <librealsense2/rs.hpp>
+#include <librealsense2/rs_advanced_mode.hpp>
 #include <opencv2/opencv.hpp>
 
 class RealSense
