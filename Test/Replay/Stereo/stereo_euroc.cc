@@ -39,6 +39,7 @@ int main(int argc, char **argv)
     if(argc != 6)
     {
         cerr << endl << "Usage: ./stereo_euroc path_to_vocabulary path_to_settings path_to_left_folder path_to_right_folder path_to_times_file" << endl;
+        cerr << endl << "Example: ./stereo_euroc /usr/local/share/ORB_SLAM2/Vocabulary/orb_mur.fbow /usr/local/share/ORB_SLAM2/Config/Stereo-EuRoC.yaml ~/workspace/datasets/mav0/cam0/data ~/workspace/datasets/mav0/cam1/data /usr/local/share/ORB_SLAM2/Config/Stereo-EuRoC_TimeStamps/MH02.txt" << endl;
         return 1;
     }
 
@@ -137,7 +138,6 @@ int main(int argc, char **argv)
         cv::remap(imRight,imRightRect,M1r,M2r,cv::INTER_LINEAR);
 
         double tframe = vTimeStamp[ni];
-
 
 #ifdef COMPILEDWITHC11
         std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
