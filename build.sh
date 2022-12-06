@@ -9,13 +9,18 @@
 BUILD_TYPE=$2
 REALSENSE=$4
 
-echo "If you are running Ubuntu 22.04 and libboost 1.74, please change file /usr/include/boost/serialization/list.hpp"
-echo "adding the following: "
-echo "#include <boost/archive/detail/basic_iarchive.hpp>"
-echo "#include <boost/serialization/version.hpp>"
-echo "and substituting boost::serialization::library_version_type with:"
-echo "boost::archive::library_version_type"
-echo "This is a known bug in serialization boost module for version 1.74."
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+echo -e " "
+echo -e "${RED}If you are running Ubuntu 22.04 and libboost 1.74, please change file /usr/include/boost/serialization/list.hpp${NC}"
+echo -e "${RED}adding the following: ${NC}"
+echo -e "${RED}#include <boost/archive/detail/basic_iarchive.hpp>${NC}"
+echo -e "${RED}#include <boost/serialization/version.hpp>${NC}"
+echo -e "${RED}and substituting boost::serialization::library_version_type with:${NC}"
+echo -e "${RED}boost::archive::library_version_type${NC}"
+echo -e "${RED}This is a known bug in serialization boost module for version 1.74.${NC}"
+echo -e " "
 
 if [ "$1" == "" ]; then
   echo "No argument set for parallel jobs! Set -jx where x is the number of threads!"
