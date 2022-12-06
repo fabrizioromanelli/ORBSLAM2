@@ -1,6 +1,5 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 project(ORB_SLAM2)
-set(REALSENSE RealSense)
 
 IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE Release)
@@ -13,14 +12,24 @@ IF(JETSON_BUILD)
     ADD_DEFINITIONS(-D__ANDROID__)
 ENDIF(JETSON_BUILD)
 
+OPTION(REALSENSE_BUILD "Realsense build is: " ON)
+IF(REALSENSE_BUILD)
+  set(REALSENSE RealSense)
+ENDIF()
+
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -O3 -march=native -D EIGEN_NO_DEPRECATED_WARNING -Wno-ignored-attributes -Wno-unused-result")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3 -march=native -D EIGEN_NO_DEPRECATED_WARNING -Wno-ignored-attributes -Wno-unused-result")
 
-# Check C++11 or C++0x support
+# Check C++14, C++11 or C++0x support
 include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-std=c++14" COMPILER_SUPPORTS_CXX14) # Added to let ORBSLAM2 compile in Ubuntu 22.04
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
 CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
-if(COMPILER_SUPPORTS_CXX11)
+if(COMPILER_SUPPORTS_CXX14)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+  add_definitions(-DCOMPILEDWITHC11)
+  message(STATUS "Using flag -std=c++14.")
+elseif(COMPILER_SUPPORTS_CXX11)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
   add_definitions(-DCOMPILEDWITHC11)
   message(STATUS "Using flag -std=c++11.")
@@ -29,7 +38,7 @@ elseif(COMPILER_SUPPORTS_CXX0X)
   add_definitions(-DCOMPILEDWITHC0X)
   message(STATUS "Using flag -std=c++0x.")
 else()
-  message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
+  message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++14/C++11 support. Please use a different C++ compiler.")
 endif()
 
 LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
@@ -39,17 +48,26 @@ if(NOT OpenCV_FOUND)
   message(FATAL_ERROR "OpenCV > 4.5.1 not found.")
 endif()
 
-find_package(Eigen3 3.1.0 REQUIRED)
+find_package(Eigen3 3.1.0 REQUIRED NO_MODULE)
 find_package(Pangolin REQUIRED)
-find_package(realsense2 REQUIRED)
+IF(REALSENSE_BUILD)
+  find_package(realsense2 REQUIRED)
+ENDIF()
 
-include_directories(
-        ${PROJECT_SOURCE_DIR}
-        ${PROJECT_SOURCE_DIR}/include
-        ${PROJECT_SOURCE_DIR}/Drivers/RealSense
-        ${EIGEN3_INCLUDE_DIR}
-        ${Pangolin_INCLUDE_DIRS}
-)
+IF(REALSENSE_BUILD)
+  include_directories(
+          ${PROJECT_SOURCE_DIR}
+          ${PROJECT_SOURCE_DIR}/include
+          ${PROJECT_SOURCE_DIR}/Drivers/RealSense
+          ${EIGEN3_INCLUDE_DIR}
+          ${Pangolin_INCLUDE_DIRS})
+ELSE()
+  include_directories(
+    ${PROJECT_SOURCE_DIR}
+    ${PROJECT_SOURCE_DIR}/include
+    ${EIGEN3_INCLUDE_DIR}
+    ${Pangolin_INCLUDE_DIRS})
+ENDIF()
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 
@@ -80,26 +98,36 @@ add_library(${PROJECT_NAME} SHARED
         #src/ArucoCodeScanner.cc
         )
 
-target_link_libraries(${PROJECT_NAME}
-        ${REALSENSE}
-        ${OpenCV_LIBS}
-        ${EIGEN3_LIBS}
-        ${Pangolin_LIBRARIES}
-        ${realsense2_LIBRARY}
-        ${PROJECT_SOURCE_DIR}/Thirdparty/DLib/lib/libDLib.so
-        ${PROJECT_SOURCE_DIR}/Thirdparty/fbow/lib/libfbow.so
-        ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
-#        ${PROJECT_SOURCE_DIR}/lib/libuwb.so
-        )
+IF(REALSENSE_BUILD)
+  target_link_libraries(${PROJECT_NAME}
+          ${REALSENSE}
+          ${OpenCV_LIBS}
+          ${EIGEN3_LIBS}
+          ${Pangolin_LIBRARIES}
+          ${realsense2_LIBRARY}
+          ${PROJECT_SOURCE_DIR}/Thirdparty/DLib/lib/libDLib.so
+          ${PROJECT_SOURCE_DIR}/Thirdparty/fbow/lib/libfbow.so
+          ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
+  #        ${PROJECT_SOURCE_DIR}/lib/libuwb.so
+          )
 
-# Adding RealSense driver library
-add_library(${REALSENSE} SHARED
-        Drivers/RealSense/realsense.cc
-        )
+  # Adding RealSense driver library
+  add_library(${REALSENSE} SHARED Drivers/RealSense/realsense.cc)
+ELSE()
+  target_link_libraries(${PROJECT_NAME}
+  ${OpenCV_LIBS}
+  ${EIGEN3_LIBS}
+  ${Pangolin_LIBRARIES}
+  ${PROJECT_SOURCE_DIR}/Thirdparty/DLib/lib/libDLib.so
+  ${PROJECT_SOURCE_DIR}/Thirdparty/fbow/lib/libfbow.so
+  ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
+  #        ${PROJECT_SOURCE_DIR}/lib/libuwb.so
+  )
+ENDIF()
 
-target_link_libraries(${REALSENSE}
-        ${OpenCV_LIBS}
-        )
+IF(REALSENSE_BUILD)
+  target_link_libraries(${REALSENSE} ${OpenCV_LIBS})
+ENDIF()
 
 message(STATUS "Compile With map save/load function")
 find_library(BOOST_SERIALIZATION boost_serialization)
@@ -109,9 +137,14 @@ endif()
 target_link_libraries(${PROJECT_NAME} ${BOOST_SERIALIZATION})
 
 # Build Tests for Live cameras
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/IRD)
-add_executable(realsense_live Test/Live/IRD/realsense.cc)
-target_link_libraries(realsense_live ${PROJECT_NAME})
+IF(REALSENSE_BUILD)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/IRD)
+  add_executable(realsense_live Test/Live/IRD/realsense.cc)
+  target_link_libraries(realsense_live ${PROJECT_NAME})
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/Multicam)
+  add_executable(multicam_live Test/Live/Multicam/multicam.cc)
+  target_link_libraries(multicam_live ${PROJECT_NAME})
+ENDIF()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/Monocular)
 add_executable(mono_camera Test/Live/Monocular/mono_camera.cc)
 target_link_libraries(mono_camera ${PROJECT_NAME})
@@ -121,9 +154,6 @@ target_link_libraries(mono_camera ${PROJECT_NAME})
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/ArucoCode)
 #add_executable(arucoCode Test/Live/ArucoCode/arucoCode.cc)
 #target_link_libraries(arucoCode ${PROJECT_NAME})
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/Multicam)
-add_executable(multicam_live Test/Live/Multicam/multicam.cc)
-target_link_libraries(multicam_live ${PROJECT_NAME})
 # set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Live/UWB)
 # add_executable(uwb Test/Live/UWB/uwb.cc)
 # target_link_libraries(uwb -lpthread ${PROJECT_NAME})

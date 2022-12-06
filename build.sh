@@ -1,11 +1,21 @@
 #!/bin/bash
-# Usage: ./build.sh <parallel_jobs> <build_type> <ros>
+# Usage: ./build.sh <parallel_jobs> <build_type> <jetson_switch> <realsense_switch> <ros>
 #        parallel_jobs: -jx where x is the number of threads
 #        build_type   : could be one of the following: Release or Debug
 #        jetson_build : could be: ON or OFF
+#        realsense    : could be: ON or OFF
 #        ros          : could be ROS or left blank for standard compilation
 
 BUILD_TYPE=$2
+REALSENSE=$4
+
+echo "If you are running Ubuntu 22.04 and libboost 1.74, please change file /usr/include/boost/serialization/list.hpp"
+echo "adding the following: "
+echo "#include <boost/archive/detail/basic_iarchive.hpp>"
+echo "#include <boost/serialization/version.hpp>"
+echo "and substituting boost::serialization::library_version_type with:"
+echo "boost::archive::library_version_type"
+echo "This is a known bug in serialization boost module for version 1.74."
 
 if [ "$1" == "" ]; then
   echo "No argument set for parallel jobs! Set -jx where x is the number of threads!"
@@ -54,9 +64,17 @@ mkdir -p build
 cd build
 if [ "$BUILD_TYPE" == "Release" ] || [ "$BUILD_TYPE" == "Debug" ]; then
   if [ "$3" == "ON" ]; then
-    cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DJETSON_BUILD=ON
+    if [ REALSENSE == "ON" ]; then
+      cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DJETSON_BUILD=ON
+    else
+      cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DJETSON_BUILD=ON -DREALSENSE_BUILD=OFF
+    fi
   else
-    cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+    if [ REALSENSE == "ON" ]; then
+      cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+    else
+      cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DREALSENSE_BUILD=OFF
+    fi
   fi
 else
   echo "[ERROR] Invalid build type. Should be one of the following: Release/Debug."
@@ -69,7 +87,7 @@ sudo ldconfig
 
 cd ..
 
-if [ "$4" == "ROS" ]; then
+if [ "$5" == "ROS" ]; then
   echo "Building ROS nodes"
 
   cd Examples/ROS/ORB_SLAM2

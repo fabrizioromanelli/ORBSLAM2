@@ -43,6 +43,9 @@ cd ~/workspace || return 1
 
 # This adds libjasper-dev old repo
 sudo add-apt-repository "deb http://security.ubuntu.com/ubuntu xenial-security main"
+echo "If the previous fails, please add the key with apt-key:"
+echo "sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5"
+echo "Please check that the key is correct!"
 sudo apt-get update
 sudo apt-get install -y --no-install-recommends \
   libjasper1 \
