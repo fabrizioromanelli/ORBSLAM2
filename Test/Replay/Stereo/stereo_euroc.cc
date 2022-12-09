@@ -39,7 +39,7 @@ int main(int argc, char **argv)
     if(argc != 6)
     {
         cerr << endl << "Usage: ./stereo_euroc path_to_vocabulary path_to_settings path_to_left_folder path_to_right_folder path_to_times_file" << endl;
-        cerr << endl << "Example: ./stereo_euroc /usr/local/share/ORB_SLAM2/Vocabulary/orb_mur.fbow /usr/local/share/ORB_SLAM2/Config/Stereo-EuRoC.yaml ~/workspace/datasets/mav0/cam0/data ~/workspace/datasets/mav0/cam1/data /usr/local/share/ORB_SLAM2/Config/Stereo-EuRoC_TimeStamps/MH02.txt" << endl;
+        cerr << endl << "Example: .Test/Stereo/stereo_euroc /usr/local/share/ORB_SLAM2/Vocabulary/orb_mur.fbow /usr/local/share/ORB_SLAM2/Config/Stereo-EuRoC.yaml ~/workspace/datasets/MH_02/mav0/cam0/data ~/workspace/datasets/MH_02/mav0/cam1/data /usr/local/share/ORB_SLAM2/Config/Stereo-EuRoC_TimeStamps/MH02.txt" << endl;
         return 1;
     }
 
@@ -97,7 +97,6 @@ int main(int argc, char **argv)
     cv::Mat M1l,M2l,M1r,M2r;
     cv::initUndistortRectifyMap(K_l,D_l,R_l,P_l.rowRange(0,3).colRange(0,3),cv::Size(cols_l,rows_l),CV_32F,M1l,M2l);
     cv::initUndistortRectifyMap(K_r,D_r,R_r,P_r.rowRange(0,3).colRange(0,3),cv::Size(cols_r,rows_r),CV_32F,M1r,M2r);
-
 
     const int nImages = vstrImageLeft.size();
 
