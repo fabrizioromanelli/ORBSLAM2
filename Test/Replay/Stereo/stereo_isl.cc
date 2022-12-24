@@ -40,7 +40,7 @@ int main(int argc, char **argv)
   if(argc != 6)
   {
     cerr << endl << "Usage: ./stereo_isl path_to_vocabulary path_to_settings path_to_left_folder path_to_right_folder path_to_times_file" << endl;
-    cerr << endl << "Example: .Test/Stereo/stereo_isl /usr/local/share/ORB_SLAM2/Vocabulary/orb_mur.fbow /usr/local/share/ORB_SLAM2/Config/Stereo-isl.yaml ~/workspace/datasets/isl_01/left ~/workspace/datasets/isl_01/right ~/workspace/datasets/isl_01/timestamps.txt" << endl;
+    cerr << endl << "Example: .Test/Stereo/stereo_isl /usr/local/share/ORB_SLAM2/Vocabulary/orb_mur.fbow /usr/local/share/ORB_SLAM2/Config/Zed-M-Stereo.yaml ~/workspace/datasets/isl_01/left ~/workspace/datasets/isl_01/right ~/workspace/datasets/isl_01/timestamps.txt" << endl;
     return 1;
   }
 
@@ -73,7 +73,7 @@ int main(int argc, char **argv)
   const int nImages = vstrImageLeft.size();
 
   // Create SLAM system. It initializes all system threads and gets ready to process frames.
-  ORB_SLAM2::System SLAM(argv[1], argv[2], ORB_SLAM2::System::STEREO, false, false);
+  ORB_SLAM2::System SLAM(argv[1], argv[2], ORB_SLAM2::System::STEREO, false, false, true);
 
   // Vector for tracking time statistics
   vector<float> vTimesTrack;

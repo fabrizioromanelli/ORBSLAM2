@@ -48,7 +48,7 @@ Tools/GrabSequence/IRD/grab_sequence_realsense_ird
 depth/
 infrared/
 build/
-CameraTrajectory.txt
+CameraTrajectory*.txt
 *~
 *.dat
 *.bin

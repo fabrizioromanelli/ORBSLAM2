@@ -32,7 +32,7 @@ namespace ORB_SLAM2
 {
 
 System::System(const string &strVocFile, const string &strSettingsFile, const eSensor sensor,
-               const bool bUseViewer, bool is_save_map_):mSensor(sensor), is_save_map(is_save_map_), mpViewer(static_cast<Viewer*>(NULL)), mbReset(false),
+               const bool bUseViewer, bool is_save_map_, bool replayer_):mSensor(sensor), is_save_map(is_save_map_), replayer(replayer_), mpViewer(static_cast<Viewer*>(NULL)), mbReset(false),
         mbActivateLocalizationMode(false), mbDeactivateLocalizationMode(false), mCurrCameraPose()
 {
     cout << "Input sensor was set to: ";
@@ -164,6 +164,22 @@ cv::Mat System::TrackStereo(const cv::Mat &imLeft, const cv::Mat &imRight, const
             mpTracker->Reset();
             mbReset = false;
         }
+    }
+
+    // Fixes to cope with replays
+    // Wait until LoopCloser has effectively finished and LocalMapper
+    // has been released. This allows not to get new frames from the
+    // tracker (it actually freezes the images grabbing).
+    if (replayer) {
+      while(!mpLoopCloser->isFinishedGBA())
+      {
+          std::this_thread::sleep_for(std::chrono::microseconds(1000));
+      }
+
+      while(mpLocalMapper->isStopped())
+      {
+          std::this_thread::sleep_for(std::chrono::microseconds(1000));
+      }
     }
 
     cv::Mat Tcw = mpTracker->GrabImageStereo(imLeft, imRight, timestamp);
