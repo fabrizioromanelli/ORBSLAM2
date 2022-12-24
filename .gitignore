@@ -31,6 +31,7 @@ Test/Replay/ROS/ORB_SLAM2/RGBD
 Test/Replay/ROS/ORB_SLAM2/Stereo
 Test/Replay/ROS/ORB_SLAM2/build/
 Test/Replay/Stereo/stereo_euroc
+Test/Replay/Stereo/stereo_isl
 Test/Replay/Stereo/stereo_kitti
 Tools/Benchmarks/Live/Monocular/benchmark_mono_live
 Tools/Benchmarks/Replay/Monocular/benchmark_mono_replay
