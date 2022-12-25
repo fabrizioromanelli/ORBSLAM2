@@ -49,6 +49,7 @@ depth/
 infrared/
 build/
 CameraTrajectory*.txt
+*.asv
 *~
 *.dat
 *.bin
