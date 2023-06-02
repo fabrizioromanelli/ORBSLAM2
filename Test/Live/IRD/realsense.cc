@@ -25,6 +25,7 @@ System *pSLAM;
 
 // Handling CTRL+C event
 void my_handler(int s){
+  pSLAM->SaveTrajectory("CameraTrajectory.dat");
   pSLAM->Shutdown();
   sleep(5);
   exit(1);
@@ -85,7 +86,7 @@ int main(int argc, char **argv)
       printTraj = true;
 
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
-    System SLAM(argv[1], argv[2], System::RGBD, display, true);
+    System SLAM(argv[1], argv[2], System::RGBD, display, false);
     pSLAM = &SLAM;
 
     float fx = 379.895904541016 / 640; // expressed in meters
@@ -126,8 +127,8 @@ int main(int argc, char **argv)
 
         // Get the map points at the current VSLAM step
         std::vector<Eigen::Vector3f> map = SLAM.GetMap();
-        cout << "Map points: " << map.size() << endl;
-        cout << "****************************************************************" << endl;
+        // cout << "Map points: " << map.size() << endl;
+        // cout << "****************************************************************" << endl;
 
         if (printTraj && !cameraPose.empty())
         {
@@ -168,7 +169,6 @@ int main(int argc, char **argv)
 
     // Stop all threads
     SLAM.Shutdown();
-
     // Save camera trajectory
     SLAM.SaveTrajectory("CameraTrajectory.dat");
     // SLAM.SaveKeyFrameTrajectory("KeyFrameTrajectory.dat");

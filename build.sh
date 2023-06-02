@@ -69,13 +69,13 @@ mkdir -p build
 cd build
 if [ "$BUILD_TYPE" == "Release" ] || [ "$BUILD_TYPE" == "Debug" ]; then
   if [ "$3" == "ON" ]; then
-    if [ REALSENSE == "ON" ]; then
+    if [ $REALSENSE == "ON" ]; then
       cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DJETSON_BUILD=ON
     else
       cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DJETSON_BUILD=ON -DREALSENSE_BUILD=OFF
     fi
   else
-    if [ REALSENSE == "ON" ]; then
+    if [ $REALSENSE == "ON" ]; then
       cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE
     else
       cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DREALSENSE_BUILD=OFF
