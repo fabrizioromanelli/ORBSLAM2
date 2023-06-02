@@ -19,6 +19,9 @@ sudo apt-get install -y --no-install-recommends \
   # pkg-config \
   # libgl1-mesa \
 
+# Package for Ubuntu 22.04 WSL2
+#sudo apt-get install libboost-all-dev libglew-dev libavdevice-dev
+
 cd ~/workspace || return 1
 
 # Pangolin installation
