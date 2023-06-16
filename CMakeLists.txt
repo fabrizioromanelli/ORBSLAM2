@@ -162,9 +162,9 @@ ENDIF()
 # target_link_libraries(uwb_bias -lpthread ${PROJECT_NAME})
 
 # # Build Tests for Replay sequences
-# set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/IRD)
-# add_executable(realsense_replay Test/Replay/IRD/realsense.cc)
-# target_link_libraries(realsense_replay ${PROJECT_NAME})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/IRD)
+add_executable(realsense_replay Test/Replay/IRD/realsense.cc)
+target_link_libraries(realsense_replay ${PROJECT_NAME})
 # set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Test/Replay/Monocular)
 # add_executable(mono_euroc Test/Replay/Monocular/mono_euroc.cc)
 # target_link_libraries(mono_euroc ${PROJECT_NAME})

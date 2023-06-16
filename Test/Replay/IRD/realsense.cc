@@ -92,6 +92,7 @@ int main(int argc, char **argv)
   try {
     // Create SLAM system. It initializes all system threads and gets ready to process frames.
     System SLAM(argv[1], argv[2], System::RGBD, display, true);
+    // System SLAM(argv[1], argv[2], System::MONOCULAR, display, true);
 
     cout << endl << "-------" << endl;
     cout << "Start processing video stream ..." << endl;
@@ -109,6 +110,7 @@ int main(int argc, char **argv)
       // half size the infrared ones. (e.g. 320x240)
       cv::Mat imDresized;
       cv::resize(imD, imDresized, cv::Size(), 2, 2, cv::INTER_CUBIC);
+      // cv::resize(imD, imDresized, cv::Size(), 1, 1, cv::INTER_CUBIC); // For both images (e.g. 640x480)
 
       // The following converts jpgs 8bit to 16bits matrices
       if (depthExtension.find(".jpg") == 0)
@@ -119,6 +121,7 @@ int main(int argc, char **argv)
       // The following line works for images
       // half size the infrared ones. (e.g. 320x240)
       cv::Mat test = SLAM.TrackRGBD(imIR, imDresized, tframe);
+      // cv::Mat test = SLAM.TrackMonocular(imIR, tframe);
 
       // if (!test.empty()) {
       //   cout << test.type() << endl;

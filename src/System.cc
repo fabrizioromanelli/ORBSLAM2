@@ -601,11 +601,6 @@ void System::SaveTrajectoryKITTI(const string &filename)
 void System::SaveTrajectory(const string &filename)
 {
     cout << endl << "Saving camera trajectory to " << filename << " ..." << endl;
-    if(mSensor == MONOCULAR)
-    {
-        cerr << "ERROR: SaveTrajectory cannot be used for monocular." << endl;
-        return;
-    }
 
     vector<KeyFrame*> vpKFs = mpMap->GetAllKeyFrames();
     sort(vpKFs.begin(),vpKFs.end(),KeyFrame::lId);
